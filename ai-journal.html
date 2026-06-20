@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Journal | ProTrade</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+  <style>
+    body { font-family: "DM Sans", sans-serif; }
+    .material-symbols-outlined { vertical-align: middle; }
+    ::-webkit-scrollbar { width: 7px; }
+    ::-webkit-scrollbar-track { background: #101415; }
+    ::-webkit-scrollbar-thumb { background: #3f4650; border-radius: 999px; }
+  </style>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            background: "#101415",
+            surface: "#191c1e",
+            panel: "#1d2022",
+            panelHigh: "#272a2c",
+            line: "#45464d",
+            textMain: "#e0e3e5",
+            textMuted: "#c6c6cd",
+            primary: "#bec6e0",
+            secondary: "#adc6ff",
+            secondaryContainer: "#0566d9",
+            tertiary: "#4edea3",
+            danger: "#ffb4ab"
+          }
+        }
+      }
+    };
+  </script>
+</head>
+
+<body class="min-h-screen bg-background text-textMain">
+  <aside class="fixed left-0 top-0 hidden h-full w-[280px] flex-col border-r border-line bg-[#0b0f10] px-4 py-6 md:flex">
+    <div class="mb-10 px-2">
+      <a href="index.html">
+        <h1 class="text-3xl font-black text-primary">ProTrade</h1>
+        <p class="text-xs font-bold uppercase tracking-widest text-textMuted/70">Institutional Grade</p>
+      </a>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+      <a class="flex items-center gap-3 rounded-lg px-4 py-3 text-textMuted hover:bg-panelHigh hover:text-textMain" href="dashboard.html"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
+      <a class="flex items-center gap-3 rounded-lg px-4 py-3 text-textMuted hover:bg-panelHigh hover:text-textMain" href="trades.html"><span class="material-symbols-outlined">receipt_long</span>Trades</a>
+      <a class="flex items-center gap-3 rounded-lg px-4 py-3 text-textMuted hover:bg-panelHigh hover:text-textMain" href="calendar.html"><span class="material-symbols-outlined">calendar_month</span>Calendar</a>
+      <a class="flex items-center gap-3 rounded-lg px-4 py-3 text-textMuted hover:bg-panelHigh hover:text-textMain" href="analytics.html"><span class="material-symbols-outlined">analytics</span>Analytics</a>
+      <a class="flex items-center gap-3 rounded-lg px-4 py-3 text-textMuted hover:bg-panelHigh hover:text-textMain" href="psychology.html"><span class="material-symbols-outlined">psychology</span>Psychology</a>
+      <a class="flex items-center gap-3 rounded-lg bg-secondaryContainer px-4 py-3 font-semibold text-white" href="ai-journal.html"><span class="material-symbols-outlined">auto_stories</span>AI Journal</a>
+      <a class="flex items-center gap-3 rounded-lg px-4 py-3 text-textMuted hover:bg-panelHigh hover:text-textMain" href="settings.html"><span class="material-symbols-outlined">settings</span>Settings</a>
+    </nav>
+
+    <div class="rounded-xl border border-line bg-panel p-4">
+      <p class="text-sm font-bold">Journal System</p>
+      <p class="mt-1 text-xs text-textMuted">Entries are saved permanently in MongoDB.</p>
+    </div>
+  </aside>
+
+  <main class="min-h-screen md:ml-[280px]">
+    <header class="sticky top-0 z-30 border-b border-line bg-panel/95 backdrop-blur">
+      <div class="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-5">
+        <div>
+          <h1 class="text-xl font-bold">AI Journal</h1>
+          <p class="hidden text-xs text-textMuted sm:block">Reflect, learn and build better trading habits.</p>
+        </div>
+        <button id="newEntryBtn" class="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-[#283044] hover:opacity-90">
+          <span class="material-symbols-outlined text-[20px]">add</span>
+          New Entry
+        </button>
+      </div>
+    </header>
+
+    <div class="mx-auto max-w-[1600px] p-5 lg:p-8">
+      <div id="statusBar" class="mb-5 hidden rounded-xl border px-4 py-3 text-sm"></div>
+
+      <section class="grid grid-cols-2 gap-4 lg:grid-cols-6">
+        <div class="rounded-2xl border border-line bg-panel p-5">
+          <p class="text-xs font-bold uppercase tracking-wider text-textMuted">Total Entries</p>
+          <p id="statTotal" class="mt-2 text-3xl font-extrabold">0</p>
+        </div>
+        <div class="rounded-2xl border border-line bg-panel p-5">
+          <p class="text-xs font-bold uppercase tracking-wider text-textMuted">Completed</p>
+          <p id="statCompleted" class="mt-2 text-3xl font-extrabold text-tertiary">0</p>
+        </div>
+        <div class="rounded-2xl border border-line bg-panel p-5">
+          <p class="text-xs font-bold uppercase tracking-wider text-textMuted">Drafts</p>
+          <p id="statDrafts" class="mt-2 text-3xl font-extrabold text-secondary">0</p>
+        </div>
+        <div class="rounded-2xl border border-line bg-panel p-5">
+          <p class="text-xs font-bold uppercase tracking-wider text-textMuted">Linked Trades</p>
+          <p id="statLinked" class="mt-2 text-3xl font-extrabold">0</p>
+        </div>
+        <div class="rounded-2xl border border-line bg-panel p-5">
+          <p class="text-xs font-bold uppercase tracking-wider text-textMuted">Avg Confidence</p>
+          <p id="statConfidence" class="mt-2 text-3xl font-extrabold">0</p>
+        </div>
+        <div class="rounded-2xl border border-line bg-panel p-5">
+          <p class="text-xs font-bold uppercase tracking-wider text-textMuted">Avg Discipline</p>
+          <p id="statDiscipline" class="mt-2 text-3xl font-extrabold">0</p>
+        </div>
+      </section>
+
+      <section class="mt-6 rounded-2xl border border-line bg-panel p-5">
+        <div class="grid gap-3 md:grid-cols-[1fr_190px_170px_auto]">
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-textMuted">search</span>
+            <input id="searchInput" type="search" placeholder="Search title, symbol, lesson, tag or note..."
+              class="w-full rounded-xl border-line bg-background py-3 pl-11 pr-4 text-sm text-textMain focus:border-secondary focus:ring-secondary"/>
+          </div>
+          <select id="typeFilter" class="rounded-xl border-line bg-background text-sm text-textMain focus:border-secondary focus:ring-secondary">
+            <option value="">All entry types</option>
+            <option>Trade Review</option>
+            <option>Daily Review</option>
+            <option>Weekly Review</option>
+            <option>Free Note</option>
+          </select>
+          <select id="statusFilter" class="rounded-xl border-line bg-background text-sm text-textMain focus:border-secondary focus:ring-secondary">
+            <option value="">All statuses</option>
+            <option>Completed</option>
+            <option>Draft</option>
+          </select>
+          <button id="refreshBtn" class="rounded-xl border border-line bg-panelHigh px-4 py-3 text-sm font-bold hover:bg-[#323537]">
+            Refresh
+          </button>
+        </div>
+      </section>
+
+      <section class="mt-6">
+        <div class="mb-4 flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold">Journal Entries</h2>
+            <p id="entryCountText" class="text-sm text-textMuted">Loading...</p>
+          </div>
+        </div>
+
+        <div id="loadingState" class="rounded-2xl border border-line bg-panel p-10 text-center">
+          <span class="material-symbols-outlined animate-spin text-4xl text-secondary">progress_activity</span>
+          <p class="mt-3 text-textMuted">Loading journal data...</p>
+        </div>
+
+        <div id="emptyState" class="hidden rounded-2xl border border-dashed border-line bg-panel p-12 text-center">
+          <span class="material-symbols-outlined text-6xl text-textMuted">menu_book</span>
+          <h3 class="mt-4 text-xl font-bold">No journal entries yet</h3>
+          <p class="mt-2 text-textMuted">Create your first reflection and connect it to a trade.</p>
+          <button class="mt-5 rounded-lg bg-primary px-5 py-2.5 font-bold text-[#283044]" onclick="openEntryModal()">Create First Entry</button>
+        </div>
+
+        <div id="entriesGrid" class="hidden grid gap-4 xl:grid-cols-2"></div>
+      </section>
+    </div>
+  </main>
+
+  <div id="entryModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+    <div class="max-h-[94vh] w-full max-w-4xl overflow-y-auto rounded-2xl border border-line bg-panel shadow-2xl">
+      <div class="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-panel px-6 py-4">
+        <div>
+          <h2 id="modalTitle" class="text-xl font-bold">New Journal Entry</h2>
+          <p class="text-sm text-textMuted">Saved securely to MongoDB.</p>
+        </div>
+        <button id="closeModalBtn" class="rounded-full p-2 hover:bg-panelHigh"><span class="material-symbols-outlined">close</span></button>
+      </div>
+
+      <form id="entryForm" class="space-y-6 p-6">
+        <input id="entryId" type="hidden"/>
+
+        <div class="grid gap-5 md:grid-cols-2">
+          <label class="space-y-2">
+            <span class="text-sm font-bold">Title *</span>
+            <input id="title" maxlength="150" required placeholder="Example: EURUSD London Trade Review"
+              class="w-full rounded-xl border-line bg-background text-textMain focus:border-secondary focus:ring-secondary"/>
+          </label>
+
+          <label class="space-y-2">
+            <span class="text-sm font-bold">Journal Date</span>
+            <input id="journalDate" type="date"
+              class="w-full rounded-xl border-line bg-background text-textMain focus:border-secondary focus:ring-secondary"/>
+          </label>
+
+          <label class="space-y-2">
+            <span class="text-sm font-bold">Entry Type</span>
+            <select id="entryType" class="w-full rounded-xl border-line bg-background text-textMain focus:border-secondary focus:ring-secondary">
+              <option>Trade Review</option>
+              <option>Daily Review</option>
+              <option>Weekly Review</option>
+              <option>Free Note</option>
+            </select>
+          </label>
+
+          <label class="space-y-2">
+            <span class="text-sm font-bold">Linked Trade</span>
+            <select id="tradeId" class="w-full rounded-xl border-line bg-background text-textMain focus:border-secondary focus:ring-secondary">
+              <option value="">No linked trade</option>
+            </select>
+          </label>
+
+          <label class="space-y-2">
+            <span class="text-sm font-bold">Symbol</span>
+            <input id="symbol" maxlength="30" placeholder="EURUSD"
+              class="w-full rounded-xl border-line bg-background uppercase text-textMain focus:border-secondary focus:ring-secondary"/>
+          </label>
+
+          <label class="space-y-2">
+            <span class="text-sm font-bold">Mood</span>
+            <select id="mood" class="w-full rounded-xl border-line bg-background text-textMain focus:border-secondary focus:ring-secondary">
+              <option>Calm</option><option>Confident</option><option selected>Neutral</option>
+              <option>Anxious</option><option>Frustrated</option><option>Excited</option><option>Tired</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="block space-y-2">
+          <span class="text-sm font-bold">Summary</span>
+          <textarea id="summary" rows="3" maxlength="3000" placeholder="What happened in this trade or session?"
+            class="w-full rounded-xl border-line bg-background text-textMain focus:border-secondary focus:ring-secondary"></textarea>
+        </label>
+
+        <label class="block space-y-2">
+          <span class="text-sm font-bold">Reflection</span>
+          <textarea id="reflection" rows="4" maxlength="6000" placeholder="What did you think, feel and do?"
+            class="w-full rounded-xl border-line bg-background text-textMain focus:border-secondary focus:ring-secondary"></textarea>
+        </label>
+
+        <div class="grid gap-5 md:grid-cols-2">
+          <label class="space-y-2">
+            <span class="text-sm font-bold">Lessons</span>
+            <textarea id="lessons" rows="4" maxlength="4000" placeholder="What did you learn?"
+              class="w-full rounded-xl border-line bg-background text-textMain focus:border-secondary focus:ring-secondary"></textarea>
+          </label>
+
+          <label class="space-y-2">
+            <span class="text-sm font-bold">Action Plan</span>
+            <textarea id="actionPlan" rows="4" maxlength="4000" placeholder="What will you do next time?"
+              class="w-full rounded-xl border-line bg-background text-textMain focus:border-secondary focus:ring-secondary"></textarea>
+          </label>
+        </div>
+
+        <div class="grid gap-5 md:grid-cols-2">
+          <label class="space-y-2">
+            <span class="text-sm font-bold">Mistakes</span>
+            <input id="mistakes" placeholder="FOMO Entry, Early Exit, Over Risk"
+              class="w-full rounded-xl border-line bg-background text-textMain focus:border-secondary focus:ring-secondary"/>
+            <span class="text-xs text-textMuted">Separate items with commas.</span>
+          </label>
+
+          <label class="space-y-2">
+            <span class="text-sm font-bold">Tags</span>
+            <input id="tags" placeholder="breakout, london, disciplined"
+              class="w-full rounded-xl border-line bg-background text-textMain focus:border-secondary focus:ring-secondary"/>
+            <span class="text-xs text-textMuted">Separate items with commas.</span>
+          </label>
+        </div>
+
+        <div class="grid gap-5 md:grid-cols-2">
+          <label class="space-y-2 rounded-xl border border-line bg-background p-4">
+            <span class="flex justify-between text-sm font-bold"><span>Confidence</span><span id="confidenceValue" class="text-secondary">5/10</span></span>
+            <input id="confidence" type="range" min="1" max="10" value="5" class="w-full accent-blue-400"/>
+          </label>
+
+          <label class="space-y-2 rounded-xl border border-line bg-background p-4">
+            <span class="flex justify-between text-sm font-bold"><span>Discipline</span><span id="disciplineValue" class="text-tertiary">5/10</span></span>
+            <input id="discipline" type="range" min="1" max="10" value="5" class="w-full accent-emerald-400"/>
+          </label>
+        </div>
+
+        <label class="block space-y-2">
+          <span class="text-sm font-bold">Status</span>
+          <select id="entryStatus" class="w-full rounded-xl border-line bg-background text-textMain focus:border-secondary focus:ring-secondary">
+            <option>Draft</option>
+            <option>Completed</option>
+          </select>
+        </label>
+
+        <div class="flex flex-col-reverse gap-3 border-t border-line pt-5 sm:flex-row sm:justify-between">
+          <button id="deleteBtn" type="button" class="hidden rounded-lg border border-red-400/40 px-5 py-2.5 font-bold text-danger hover:bg-red-500/10">
+            Delete Entry
+          </button>
+          <div class="ml-auto flex gap-3">
+            <button id="cancelBtn" type="button" class="rounded-lg border border-line px-5 py-2.5 font-bold hover:bg-panelHigh">Cancel</button>
+            <button id="saveBtn" type="submit" class="rounded-lg bg-primary px-6 py-2.5 font-bold text-[#283044] hover:opacity-90">Save Entry</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+  const API_BASE = "https://protrader-backend-n8oj.onrender.com/api";
+  const JOURNALS_API = `${API_BASE}/journals`;
+  const TRADES_API = `${API_BASE}/trades`;
+
+  let journals = [];
+  let trades = [];
+  let selectedEntry = null;
+
+  const $ = (id) => document.getElementById(id);
+
+  function escapeHTML(value = "") {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function splitCommaList(value) {
+    return value.split(",").map(item => item.trim()).filter(Boolean);
+  }
+
+  function formatDate(value) {
+    if (!value) return "No date";
+    return new Intl.DateTimeFormat("en-IN", {
+      day: "2-digit", month: "short", year: "numeric"
+    }).format(new Date(value));
+  }
+
+  function formatPnL(value) {
+    const amount = Number(value || 0);
+    return `${amount >= 0 ? "+" : "-"}$${Math.abs(amount).toFixed(2)}`;
+  }
+
+  function showStatus(message, type = "success") {
+    const bar = $("statusBar");
+    bar.textContent = message;
+    bar.className = `mb-5 rounded-xl border px-4 py-3 text-sm ${
+      type === "error"
+        ? "border-red-400/40 bg-red-500/10 text-danger"
+        : "border-emerald-400/40 bg-emerald-500/10 text-tertiary"
+    }`;
+    bar.classList.remove("hidden");
+    setTimeout(() => bar.classList.add("hidden"), 5000);
+  }
+
+  async function request(url, options = {}) {
+    const response = await fetch(url, options);
+    let body = {};
+    try { body = await response.json(); } catch (_) {}
+
+    if (!response.ok || body.success === false) {
+      throw new Error(body.message || `Request failed (${response.status})`);
+    }
+    return body;
+  }
+
+  async function loadAll() {
+    $("loadingState").classList.remove("hidden");
+    $("emptyState").classList.add("hidden");
+    $("entriesGrid").classList.add("hidden");
+
+    try {
+      const [journalResponse, statsResponse, tradesResponse] = await Promise.all([
+        request(JOURNALS_API),
+        request(`${JOURNALS_API}/stats`),
+        request(TRADES_API)
+      ]);
+
+      journals = journalResponse.data || [];
+      trades = tradesResponse.data || [];
+
+      renderStats(statsResponse.data || {});
+      renderTradeOptions();
+      applyFilters();
+    } catch (error) {
+      $("loadingState").classList.add("hidden");
+      $("emptyState").classList.remove("hidden");
+      $("emptyState").innerHTML = `
+        <span class="material-symbols-outlined text-6xl text-danger">cloud_off</span>
+        <h3 class="mt-4 text-xl font-bold">Could not load journal data</h3>
+        <p class="mt-2 text-textMuted">${escapeHTML(error.message)}</p>
+        <button class="mt-5 rounded-lg bg-primary px-5 py-2.5 font-bold text-[#283044]" onclick="loadAll()">Try Again</button>`;
+      showStatus(error.message, "error");
+    }
+  }
+
+  function renderStats(stats) {
+    $("statTotal").textContent = stats.total || 0;
+    $("statCompleted").textContent = stats.completed || 0;
+    $("statDrafts").textContent = stats.drafts || 0;
+    $("statLinked").textContent = stats.linkedTrades || 0;
+    $("statConfidence").textContent = `${Number(stats.averageConfidence || 0).toFixed(1)}/10`;
+    $("statDiscipline").textContent = `${Number(stats.averageDiscipline || 0).toFixed(1)}/10`;
+  }
+
+  function renderTradeOptions() {
+    const select = $("tradeId");
+    select.innerHTML = `<option value="">No linked trade</option>` +
+      trades.map(trade => `
+        <option value="${trade._id}">
+          ${escapeHTML(trade.symbol || "Trade")} · ${formatDate(trade.tradeDate)} · ${formatPnL(trade.profitLoss)}
+        </option>
+      `).join("");
+  }
+
+  function applyFilters() {
+    const query = $("searchInput").value.trim().toLowerCase();
+    const type = $("typeFilter").value;
+    const status = $("statusFilter").value;
+
+    const filtered = journals.filter(entry => {
+      const searchable = [
+        entry.title, entry.symbol, entry.summary, entry.reflection,
+        entry.lessons, entry.actionPlan, ...(entry.mistakes || []), ...(entry.tags || [])
+      ].join(" ").toLowerCase();
+
+      return (!query || searchable.includes(query)) &&
+             (!type || entry.entryType === type) &&
+             (!status || entry.status === status);
+    });
+
+    renderEntries(filtered);
+  }
+
+  function renderEntries(items) {
+    $("loadingState").classList.add("hidden");
+    $("entryCountText").textContent = `${items.length} ${items.length === 1 ? "entry" : "entries"}`;
+
+    if (!items.length) {
+      $("entriesGrid").classList.add("hidden");
+      $("emptyState").classList.remove("hidden");
+      return;
+    }
+
+    $("emptyState").classList.add("hidden");
+    $("entriesGrid").classList.remove("hidden");
+
+    $("entriesGrid").innerHTML = items.map(entry => {
+      const trade = entry.trade || null;
+      const isComplete = entry.status === "Completed";
+      const tags = [...(entry.mistakes || []), ...(entry.tags || [])].slice(0, 5);
+
+      return `
+        <article class="rounded-2xl border border-line bg-panel p-5 transition hover:-translate-y-0.5 hover:border-secondary/60">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="mb-2 flex flex-wrap gap-2">
+                <span class="rounded-full bg-secondaryContainer/30 px-2.5 py-1 text-xs font-bold text-secondary">${escapeHTML(entry.entryType)}</span>
+                <span class="rounded-full px-2.5 py-1 text-xs font-bold ${isComplete ? "bg-emerald-500/15 text-tertiary" : "bg-blue-500/15 text-secondary"}">${escapeHTML(entry.status)}</span>
+              </div>
+              <h3 class="text-lg font-bold">${escapeHTML(entry.title)}</h3>
+              <p class="mt-1 text-sm text-textMuted">${formatDate(entry.journalDate)} ${entry.symbol ? `· ${escapeHTML(entry.symbol)}` : ""}</p>
+            </div>
+            <button onclick="editEntry('${entry._id}')" class="rounded-lg border border-line p-2 hover:bg-panelHigh" title="Edit">
+              <span class="material-symbols-outlined">edit</span>
+            </button>
+          </div>
+
+          <p class="mt-4 line-clamp-3 text-sm leading-6 text-textMuted">
+            ${escapeHTML(entry.summary || entry.reflection || "No reflection has been written yet.")}
+          </p>
+
+          ${trade ? `
+            <div class="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-background p-3 text-sm">
+              <span class="font-bold">${escapeHTML(trade.symbol || entry.symbol || "Trade")}</span>
+              <span class="${Number(trade.profitLoss || 0) >= 0 ? "text-tertiary" : "text-danger"} font-bold">${formatPnL(trade.profitLoss)}</span>
+              <span class="text-textMuted">${escapeHTML(trade.direction || "")} · ${escapeHTML(trade.result || "")}</span>
+            </div>` : ""}
+
+          <div class="mt-4 flex flex-wrap gap-2">
+            ${tags.length ? tags.map(tag => `<span class="rounded-full border border-line bg-panelHigh px-2.5 py-1 text-xs text-textMuted">${escapeHTML(tag)}</span>`).join("") : `<span class="text-xs text-textMuted">No tags</span>`}
+          </div>
+
+          <div class="mt-5 grid grid-cols-2 gap-3">
+            <div class="rounded-xl bg-background p-3">
+              <p class="text-xs uppercase tracking-wider text-textMuted">Confidence</p>
+              <p class="mt-1 font-bold text-secondary">${entry.confidence || 0}/10</p>
+            </div>
+            <div class="rounded-xl bg-background p-3">
+              <p class="text-xs uppercase tracking-wider text-textMuted">Discipline</p>
+              <p class="mt-1 font-bold text-tertiary">${entry.discipline || 0}/10</p>
+            </div>
+          </div>
+        </article>`;
+    }).join("");
+  }
+
+  function resetForm() {
+    $("entryForm").reset();
+    $("entryId").value = "";
+    $("journalDate").value = new Date().toISOString().slice(0, 10);
+    $("entryType").value = "Trade Review";
+    $("mood").value = "Neutral";
+    $("confidence").value = 5;
+    $("discipline").value = 5;
+    $("confidenceValue").textContent = "5/10";
+    $("disciplineValue").textContent = "5/10";
+    $("entryStatus").value = "Draft";
+    $("deleteBtn").classList.add("hidden");
+    selectedEntry = null;
+  }
+
+  function openEntryModal(entry = null) {
+    resetForm();
+    $("modalTitle").textContent = entry ? "Edit Journal Entry" : "New Journal Entry";
+
+    if (entry) {
+      selectedEntry = entry;
+      $("entryId").value = entry._id;
+      $("title").value = entry.title || "";
+      $("journalDate").value = entry.journalDate ? new Date(entry.journalDate).toISOString().slice(0, 10) : "";
+      $("entryType").value = entry.entryType || "Trade Review";
+      $("tradeId").value = entry.trade?._id || entry.trade || "";
+      $("symbol").value = entry.symbol || "";
+      $("mood").value = entry.mood || "Neutral";
+      $("summary").value = entry.summary || "";
+      $("reflection").value = entry.reflection || "";
+      $("lessons").value = entry.lessons || "";
+      $("actionPlan").value = entry.actionPlan || "";
+      $("mistakes").value = (entry.mistakes || []).join(", ");
+      $("tags").value = (entry.tags || []).join(", ");
+      $("confidence").value = entry.confidence || 5;
+      $("discipline").value = entry.discipline || 5;
+      $("confidenceValue").textContent = `${entry.confidence || 5}/10`;
+      $("disciplineValue").textContent = `${entry.discipline || 5}/10`;
+      $("entryStatus").value = entry.status || "Draft";
+      $("deleteBtn").classList.remove("hidden");
+    }
+
+    $("entryModal").classList.remove("hidden");
+    $("entryModal").classList.add("flex");
+  }
+
+  function closeEntryModal() {
+    $("entryModal").classList.add("hidden");
+    $("entryModal").classList.remove("flex");
+  }
+
+  function editEntry(id) {
+    const entry = journals.find(item => item._id === id);
+    if (entry) openEntryModal(entry);
+  }
+
+  async function saveEntry(event) {
+    event.preventDefault();
+
+    const id = $("entryId").value;
+    const payload = {
+      title: $("title").value.trim(),
+      journalDate: $("journalDate").value || new Date().toISOString(),
+      entryType: $("entryType").value,
+      trade: $("tradeId").value || null,
+      symbol: $("symbol").value.trim().toUpperCase(),
+      summary: $("summary").value.trim(),
+      reflection: $("reflection").value.trim(),
+      lessons: $("lessons").value.trim(),
+      actionPlan: $("actionPlan").value.trim(),
+      mistakes: splitCommaList($("mistakes").value),
+      tags: splitCommaList($("tags").value),
+      mood: $("mood").value,
+      confidence: Number($("confidence").value),
+      discipline: Number($("discipline").value),
+      status: $("entryStatus").value
+    };
+
+    $("saveBtn").disabled = true;
+    $("saveBtn").textContent = id ? "Updating..." : "Saving...";
+
+    try {
+      await request(id ? `${JOURNALS_API}/${id}` : JOURNALS_API, {
+        method: id ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      closeEntryModal();
+      showStatus(id ? "Journal entry updated successfully." : "Journal entry created successfully.");
+      await loadAll();
+    } catch (error) {
+      showStatus(error.message, "error");
+    } finally {
+      $("saveBtn").disabled = false;
+      $("saveBtn").textContent = "Save Entry";
+    }
+  }
+
+  async function deleteEntry() {
+    const id = $("entryId").value;
+    if (!id || !confirm("Delete this journal entry permanently?")) return;
+
+    $("deleteBtn").disabled = true;
+    $("deleteBtn").textContent = "Deleting...";
+
+    try {
+      await request(`${JOURNALS_API}/${id}`, { method: "DELETE" });
+      closeEntryModal();
+      showStatus("Journal entry deleted successfully.");
+      await loadAll();
+    } catch (error) {
+      showStatus(error.message, "error");
+    } finally {
+      $("deleteBtn").disabled = false;
+      $("deleteBtn").textContent = "Delete Entry";
+    }
+  }
+
+  $("newEntryBtn").addEventListener("click", () => openEntryModal());
+  $("closeModalBtn").addEventListener("click", closeEntryModal);
+  $("cancelBtn").addEventListener("click", closeEntryModal);
+  $("entryForm").addEventListener("submit", saveEntry);
+  $("deleteBtn").addEventListener("click", deleteEntry);
+  $("refreshBtn").addEventListener("click", loadAll);
+  $("searchInput").addEventListener("input", applyFilters);
+  $("typeFilter").addEventListener("change", applyFilters);
+  $("statusFilter").addEventListener("change", applyFilters);
+  $("confidence").addEventListener("input", e => $("confidenceValue").textContent = `${e.target.value}/10`);
+  $("discipline").addEventListener("input", e => $("disciplineValue").textContent = `${e.target.value}/10`);
+  $("tradeId").addEventListener("change", event => {
+    const trade = trades.find(item => item._id === event.target.value);
+    if (trade && !$("symbol").value.trim()) $("symbol").value = trade.symbol || "";
+  });
+  $("entryModal").addEventListener("click", event => {
+    if (event.target === $("entryModal")) closeEntryModal();
+  });
+
+  loadAll();
+</script>
+</body>
+</html>
