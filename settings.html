@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <script src="auth.js?v=3"></script>
+  <script src="auth.js?v=6"></script>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Settings | ProTrade</title>
@@ -1305,6 +1305,11 @@
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
+              Authorization: `Bearer ${
+                window.ProTradeAuth?.getToken?.() ||
+                sessionStorage.getItem("protrade_auth_token") ||
+                ""
+              }`,
             },
             body: JSON.stringify({
               currentPassword,
