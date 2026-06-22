@@ -432,6 +432,15 @@
             </span>
           </button>
 
+
+          <button class="tab-button flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left" data-tab="security">
+            <span class="material-symbols-outlined">shield_lock</span>
+            <span>
+              <span class="block font-bold">Security</span>
+              <span class="block text-xs" style="color:var(--muted)">Password and sessions</span>
+            </span>
+          </button>
+
           <button class="tab-button flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left" data-tab="system">
             <span class="material-symbols-outlined">dns</span>
             <span>
@@ -670,6 +679,124 @@
               </section>
             </div>
 
+
+            <div id="panel-security" class="tab-panel space-y-5">
+              <section class="panel rounded-2xl p-6 lg:p-7">
+                <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h2 class="text-xl font-extrabold">Change Password</h2>
+                    <p class="mt-1 text-sm" style="color:var(--muted)">
+                      Replace your exposed or old password and invalidate every older login session.
+                    </p>
+                  </div>
+                  <span class="rounded-full border px-3 py-1.5 text-xs font-extrabold"
+                        style="border-color:color-mix(in srgb,var(--green) 35%,var(--line));background:color-mix(in srgb,var(--green) 10%,transparent);color:var(--green)">
+                    Secure update
+                  </span>
+                </div>
+
+                <div id="passwordErrorBox" class="mb-5 hidden items-start gap-3 rounded-2xl border p-4 text-sm"
+                     style="border-color:color-mix(in srgb,var(--red) 45%,var(--line));background:color-mix(in srgb,var(--red) 9%,transparent);color:var(--red)">
+                  <span class="material-symbols-outlined">error</span>
+                  <span id="passwordErrorText">Password could not be changed.</span>
+                </div>
+
+                <div class="grid gap-5">
+                  <label>
+                    <span class="label">Current Password</span>
+                    <div class="relative">
+                      <input id="currentPassword" class="field pr-12" type="password"
+                             autocomplete="current-password" placeholder="Enter your current password"/>
+                      <button class="password-visibility absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5"
+                              style="color:var(--muted)" type="button" data-target="currentPassword"
+                              aria-label="Show current password">
+                        <span class="material-symbols-outlined text-[21px]">visibility</span>
+                      </button>
+                    </div>
+                  </label>
+
+                  <div class="grid gap-5 md:grid-cols-2">
+                    <label>
+                      <span class="label">New Password</span>
+                      <div class="relative">
+                        <input id="newPassword" class="field pr-12" type="password"
+                               autocomplete="new-password" placeholder="Create a strong password"/>
+                        <button class="password-visibility absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5"
+                                style="color:var(--muted)" type="button" data-target="newPassword"
+                                aria-label="Show new password">
+                          <span class="material-symbols-outlined text-[21px]">visibility</span>
+                        </button>
+                      </div>
+                    </label>
+
+                    <label>
+                      <span class="label">Confirm New Password</span>
+                      <div class="relative">
+                        <input id="confirmNewPassword" class="field pr-12" type="password"
+                               autocomplete="new-password" placeholder="Repeat the new password"/>
+                        <button class="password-visibility absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5"
+                                style="color:var(--muted)" type="button" data-target="confirmNewPassword"
+                                aria-label="Show confirmed password">
+                          <span class="material-symbols-outlined text-[21px]">visibility</span>
+                        </button>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="panel-soft mt-6 rounded-2xl p-5">
+                  <div class="flex items-center justify-between gap-4">
+                    <p class="font-extrabold">Password strength</p>
+                    <p id="passwordStrengthLabel" class="text-xs font-extrabold" style="color:var(--muted)">Not entered</p>
+                  </div>
+
+                  <div class="mt-3 grid grid-cols-4 gap-2">
+                    <div class="security-strength-bar h-1.5 rounded-full" style="background:var(--panel-3)"></div>
+                    <div class="security-strength-bar h-1.5 rounded-full" style="background:var(--panel-3)"></div>
+                    <div class="security-strength-bar h-1.5 rounded-full" style="background:var(--panel-3)"></div>
+                    <div class="security-strength-bar h-1.5 rounded-full" style="background:var(--panel-3)"></div>
+                  </div>
+
+                  <div class="mt-5 grid gap-2 text-xs md:grid-cols-2" style="color:var(--muted)">
+                    <p id="passwordRuleLength">○ At least 8 characters</p>
+                    <p id="passwordRuleUpper">○ One uppercase letter</p>
+                    <p id="passwordRuleLower">○ One lowercase letter</p>
+                    <p id="passwordRuleNumber">○ One number</p>
+                    <p id="passwordRuleSymbol">○ One special character</p>
+                    <p id="passwordRuleMatch">○ Confirmation matches</p>
+                  </div>
+                </div>
+
+                <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div class="flex items-start gap-3 text-sm" style="color:var(--muted)">
+                    <span class="material-symbols-outlined mt-0.5" style="color:var(--amber)">devices</span>
+                    <p class="leading-6">
+                      After changing the password, every older JWT session will stop working.
+                      This browser receives a fresh secure token automatically.
+                    </p>
+                  </div>
+
+                  <button id="changePasswordBtn" class="primary-btn min-w-[190px] rounded-xl px-5 py-3 font-extrabold"
+                          type="button">
+                    Change Password
+                  </button>
+                </div>
+              </section>
+
+              <section class="panel rounded-2xl p-6 lg:p-7">
+                <div class="flex items-start gap-4">
+                  <span class="material-symbols-outlined mt-0.5" style="color:var(--primary)">verified_user</span>
+                  <div>
+                    <h3 class="font-extrabold">Session protection</h3>
+                    <p class="mt-1 text-sm leading-6" style="color:var(--muted)">
+                      Passwords are stored as bcrypt hashes. The server never returns your password,
+                      and changing it invalidates tokens created with the previous session version.
+                    </p>
+                  </div>
+                </div>
+              </section>
+            </div>
+
             <div id="panel-system" class="tab-panel space-y-5">
               <section class="panel rounded-2xl p-6 lg:p-7">
                 <div class="mb-6">
@@ -772,6 +899,7 @@
       const API_BASE = "https://protrader-backend-n8oj.onrender.com/api";
       const SETTINGS_API = `${API_BASE}/settings`;
       const HEALTH_API = `${API_BASE}/health`;
+      const CHANGE_PASSWORD_API = `${API_BASE}/auth/change-password`;
 
       const fieldIds = [
         "fullName", "email", "timezone", "tradingRole", "currency",
@@ -1071,6 +1199,161 @@
         showToast("success", "Settings exported", "Your current settings were downloaded as JSON.");
       }
 
+
+      function showPasswordError(message) {
+        $("passwordErrorText").textContent = message;
+        $("passwordErrorBox").classList.remove("hidden");
+        $("passwordErrorBox").classList.add("flex");
+      }
+
+      function clearPasswordError() {
+        $("passwordErrorBox").classList.add("hidden");
+        $("passwordErrorBox").classList.remove("flex");
+      }
+
+      function passwordChecks() {
+        const password = $("newPassword").value;
+        const confirmation = $("confirmNewPassword").value;
+
+        return [
+          { id: "passwordRuleLength", pass: password.length >= 8 },
+          { id: "passwordRuleUpper", pass: /[A-Z]/.test(password) },
+          { id: "passwordRuleLower", pass: /[a-z]/.test(password) },
+          { id: "passwordRuleNumber", pass: /\d/.test(password) },
+          { id: "passwordRuleSymbol", pass: /[^A-Za-z0-9]/.test(password) },
+          {
+            id: "passwordRuleMatch",
+            pass: Boolean(password) && password === confirmation,
+          },
+        ];
+      }
+
+      function updatePasswordStrength() {
+        const password = $("newPassword").value;
+        const checks = passwordChecks();
+        const strengthChecks = checks.slice(0, 5);
+        const score = strengthChecks.filter((item) => item.pass).length;
+
+        const label =
+          !password ? "Not entered" :
+          score <= 2 ? "Weak" :
+          score === 3 ? "Fair" :
+          score === 4 ? "Good" : "Strong";
+
+        const strengthColor =
+          !password ? "var(--muted)" :
+          score <= 2 ? "var(--red)" :
+          score === 3 ? "var(--amber)" :
+          score === 4 ? "var(--primary)" : "var(--green)";
+
+        $("passwordStrengthLabel").textContent = label;
+        $("passwordStrengthLabel").style.color = strengthColor;
+
+        document.querySelectorAll(".security-strength-bar").forEach(
+          (bar, index) => {
+            bar.style.background =
+              index < Math.min(score, 4)
+                ? strengthColor
+                : "var(--panel-3)";
+          }
+        );
+
+        checks.forEach((check) => {
+          const element = $(check.id);
+          element.textContent =
+            `${check.pass ? "✓" : "○"} ` +
+            element.textContent.replace(/^[✓○]\s*/, "");
+          element.style.color = check.pass
+            ? "var(--green)"
+            : "var(--muted)";
+        });
+      }
+
+      async function changePassword() {
+        clearPasswordError();
+
+        const currentPassword = $("currentPassword").value;
+        const newPassword = $("newPassword").value;
+        const confirmPassword = $("confirmNewPassword").value;
+        const checks = passwordChecks();
+
+        if (!currentPassword || !newPassword || !confirmPassword) {
+          showPasswordError("Complete all three password fields.");
+          return;
+        }
+
+        if (checks.slice(0, 5).some((item) => !item.pass)) {
+          showPasswordError(
+            "The new password must satisfy every strength requirement."
+          );
+          return;
+        }
+
+        if (newPassword !== confirmPassword) {
+          showPasswordError("New password and confirmation do not match.");
+          return;
+        }
+
+        const button = $("changePasswordBtn");
+        button.disabled = true;
+        button.dataset.label = button.textContent;
+        button.textContent = "Changing…";
+
+        try {
+          const response = await fetch(CHANGE_PASSWORD_API, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({
+              currentPassword,
+              newPassword,
+              confirmPassword,
+            }),
+          });
+
+          const body = await response.json().catch(() => ({}));
+
+          if (!response.ok || body.success === false) {
+            throw new Error(body.message || "Password change failed.");
+          }
+
+          if (!body.token) {
+            throw new Error("The server did not return a new session token.");
+          }
+
+          sessionStorage.setItem(
+            window.ProTradeAuth?.TOKEN_KEY || "protrade_auth_token",
+            body.token
+          );
+
+          if (body.data) {
+            sessionStorage.setItem(
+              window.ProTradeAuth?.USER_KEY || "protrade_auth_user",
+              JSON.stringify(body.data)
+            );
+          }
+
+          $("currentPassword").value = "";
+          $("newPassword").value = "";
+          $("confirmNewPassword").value = "";
+          updatePasswordStrength();
+
+          showToast(
+            "success",
+            "Password changed",
+            "Your new password is active and older login sessions are now invalid."
+          );
+        } catch (error) {
+          showPasswordError(error.message);
+        } finally {
+          button.disabled = false;
+          button.textContent =
+            button.dataset.label || "Change Password";
+        }
+      }
+
       function switchTab(tabName) {
         document.querySelectorAll(".tab-button").forEach(button => {
           button.classList.toggle("active", button.dataset.tab === tabName);
@@ -1097,6 +1380,27 @@
           compareWithSnapshot();
         });
       });
+
+
+      document.querySelectorAll(".password-visibility").forEach((button) => {
+        button.addEventListener("click", () => {
+          const input = $(button.dataset.target);
+          const isVisible = input.type === "text";
+          input.type = isVisible ? "password" : "text";
+          button.querySelector("span").textContent =
+            isVisible ? "visibility" : "visibility_off";
+        });
+      });
+
+      $("newPassword")?.addEventListener("input", updatePasswordStrength);
+      $("confirmNewPassword")?.addEventListener(
+        "input",
+        updatePasswordStrength
+      );
+      $("changePasswordBtn")?.addEventListener(
+        "click",
+        changePassword
+      );
 
       $("headerSaveBtn").addEventListener("click", saveSettings);
       $("floatingSaveBtn").addEventListener("click", saveSettings);
