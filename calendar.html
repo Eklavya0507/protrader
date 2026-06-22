@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html class="dark" lang="en">
 <head>
+  <script src="auth.js"></script>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>Calendar | ProTrade Analytics</title>
@@ -53,9 +54,15 @@
     <a href="dashboard.html" class="w-full py-unit-md px-unit-lg bg-tertiary text-on-tertiary rounded-xl font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-unit-sm"><span class="material-symbols-outlined text-[20px]">workspace_premium</span>Upgrade to Pro</a>
     <div class="flex items-center gap-unit-md p-unit-sm border-t border-outline-variant pt-unit-lg">
       <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden"><span class="material-symbols-outlined text-primary">account_circle</span></div>
-      <div class="flex-1 min-w-0"><p class="font-title-md text-body-sm font-bold text-on-surface truncate">Alex Rivera</p><p class="font-label-uppercase text-[10px] text-tertiary flex items-center gap-1"><span class="material-symbols-outlined text-[12px]" style='font-variation-settings: "FILL" 1;'>verified</span>PRO MEMBER</p></div>
+      <div class="flex-1 min-w-0"><p class="font-title-md text-body-sm font-bold text-on-surface truncate"><span class="auth-user-name">Alex Rivera</span></p><p class="font-label-uppercase text-[10px] text-tertiary flex items-center gap-1"><span class="material-symbols-outlined text-[12px]" style='font-variation-settings: "FILL" 1;'>verified</span>PRO MEMBER</p></div>
     </div>
   </div>
+
+<button data-auth-logout type="button" class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-red-400/20 bg-red-400/5 px-4 py-2.5 text-sm font-bold text-red-300 transition hover:bg-red-400/10 disabled:opacity-60">
+  <span class="material-symbols-outlined text-[20px]">logout</span>
+  Logout
+</button>
+
 </aside>
 <main class="md:ml-[280px] min-h-screen">
 <header class="sticky top-0 z-40 bg-surface-container/95 backdrop-blur border-b border-outline-variant shadow-sm w-full">

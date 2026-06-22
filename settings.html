@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
+  <script src="auth.js"></script>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Settings | ProTrade</title>
@@ -325,12 +326,18 @@
       <div class="flex items-center gap-3">
         <div id="avatarSmall" class="flex h-11 w-11 items-center justify-center rounded-xl text-sm font-black" style="background:var(--panel-3);color:var(--primary)">G</div>
         <div class="min-w-0">
-          <p id="sidebarProfileName" class="truncate font-bold">Gautam</p>
+          <p id="sidebarProfileName" class="auth-user-name truncate font-bold">Gautam</p>
           <p class="text-xs" style="color:var(--muted)">Workspace owner</p>
         </div>
       </div>
     </div>
-  </aside>
+  
+<button data-auth-logout type="button" class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-red-400/20 bg-red-400/5 px-4 py-2.5 text-sm font-bold text-red-300 transition hover:bg-red-400/10 disabled:opacity-60">
+  <span class="material-symbols-outlined text-[20px]">logout</span>
+  Logout
+</button>
+
+</aside>
 
   <main class="min-h-screen md:ml-[280px]">
     <header class="topbar sticky top-0 z-40">
