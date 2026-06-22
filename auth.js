@@ -4,6 +4,7 @@
   const API_BASE = "https://protrader-backend-n8oj.onrender.com/api";
   const TOKEN_KEY = "protrade_auth_token";
   const USER_KEY = "protrade_auth_user";
+  const nativeFetch = window.fetch.bind(window);
 
   const currentPage =
     window.location.pathname.split("/").pop() || "index.html";
@@ -19,7 +20,6 @@
   ]);
 
   const isProtectedPage = protectedPages.has(currentPage);
-  const token = sessionStorage.getItem(TOKEN_KEY);
 
   const safeNextPage = (value) => {
     const candidate = String(value || "").trim();
@@ -38,6 +38,71 @@
     window.location.replace(`login.html?next=${next}`);
   };
 
+  let resolveReady;
+  let rejectReady;
+
+  const ready = new Promise((resolve, reject) => {
+    resolveReady = resolve;
+    rejectReady = reject;
+  });
+
+  const apiUrlFromInput = (input) => {
+    if (typeof input === "string") return input;
+    if (input instanceof URL) return input.href;
+    if (input && typeof input.url === "string") return input.url;
+    return "";
+  };
+
+  const isProtectedApiRequest = (url) =>
+    isProtectedPage &&
+    url.startsWith(API_BASE) &&
+    !url.startsWith(`${API_BASE}/auth/`);
+
+  const secureFetch = async (input, options = {}) => {
+    const url = apiUrlFromInput(input);
+
+    if (!isProtectedApiRequest(url)) {
+      return nativeFetch(input, options);
+    }
+
+    await ready;
+
+    const token = sessionStorage.getItem(TOKEN_KEY);
+
+    if (!token) {
+      clearSession();
+      redirectToLogin();
+      throw new Error("Authentication required.");
+    }
+
+    const headers = new Headers(
+      options.headers || (input instanceof Request ? input.headers : undefined)
+    );
+
+    headers.set("Authorization", `Bearer ${token}`);
+
+    if (!headers.has("Accept")) {
+      headers.set("Accept", "application/json");
+    }
+
+    const response = await nativeFetch(input, {
+      ...options,
+      headers,
+    });
+
+    if (response.status === 401) {
+      clearSession();
+      redirectToLogin();
+      throw new Error("Your login session has expired.");
+    }
+
+    return response;
+  };
+
+  // Existing page scripts use fetch(). This override adds the JWT token
+  // automatically to Trade, Journal and Settings API requests.
+  window.fetch = secureFetch;
+
   const createAuthOverlay = () => {
     if (!isProtectedPage || document.getElementById("protradeAuthOverlay")) {
       return;
@@ -55,13 +120,13 @@
         Verifying secure session
       </div>
       <div style="margin-top:8px;font:500 13px/1.5 Arial,sans-serif;color:#98a5ad;">
-        Connecting to ProTrade…
+        Loading your private workspace…
       </div>
       <div style="
         width:160px;height:4px;margin-top:18px;border-radius:999px;
         overflow:hidden;background:#252c30;">
         <div style="
-          width:45%;height:100%;border-radius:999px;background:#6f9cff;
+          width:45%;height:100%;border-radius:inherit;background:#6f9cff;
           animation:protradeAuthSlide 1s ease-in-out infinite alternate;"></div>
       </div>
     `;
@@ -98,6 +163,7 @@
 
   const updateUserInterface = (user) => {
     const displayName = user?.name || "Trader";
+    const email = user?.email || "";
     const initials = displayName
       .trim()
       .split(/\s+/)
@@ -114,25 +180,47 @@
       });
 
     document.querySelectorAll(".auth-user-email").forEach((element) => {
-      element.textContent = user?.email || "";
+      element.textContent = email;
     });
 
     document.querySelectorAll(".auth-user-initials").forEach((element) => {
       element.textContent = initials;
     });
 
-    const logoutButtons = document.querySelectorAll("[data-auth-logout]");
-    logoutButtons.forEach((button) => {
+    // Update old hardcoded profile labels that remain in some page designs.
+    document.querySelectorAll("p, span, div").forEach((element) => {
+      if (element.children.length > 0) return;
+
+      const value = element.textContent.trim();
+
+      if (["Alex Rivera", "Gautam Kumar", "Gautam"].includes(value)) {
+        element.textContent = displayName;
+      }
+
+      if (
+        value === "alex.rivera@protrade.com" ||
+        value === "gautamkuswha4467@gmail.com"
+      ) {
+        element.textContent = email;
+      }
+    });
+
+    document.querySelectorAll("[data-auth-logout]").forEach((button) => {
+      if (button.dataset.authBound === "true") return;
+      button.dataset.authBound = "true";
+
       button.addEventListener("click", async () => {
         button.disabled = true;
         const oldLabel = button.innerHTML;
         button.innerHTML = "Signing out…";
 
         try {
-          await fetch(`${API_BASE}/auth/logout`, {
+          await nativeFetch(`${API_BASE}/auth/logout`, {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem(TOKEN_KEY) || ""}`,
+              Authorization: `Bearer ${
+                sessionStorage.getItem(TOKEN_KEY) || ""
+              }`,
               Accept: "application/json",
             },
           });
@@ -146,39 +234,6 @@
       });
     });
   };
-
-  const authenticatedFetch = async (url, options = {}) => {
-    await window.ProTradeAuth.ready;
-
-    const activeToken = sessionStorage.getItem(TOKEN_KEY);
-    const headers = new Headers(options.headers || {});
-
-    headers.set("Authorization", `Bearer ${activeToken}`);
-    if (!headers.has("Accept")) {
-      headers.set("Accept", "application/json");
-    }
-
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    });
-
-    if (response.status === 401) {
-      clearSession();
-      redirectToLogin();
-      throw new Error("Your login session has expired.");
-    }
-
-    return response;
-  };
-
-  let resolveReady;
-  let rejectReady;
-
-  const ready = new Promise((resolve, reject) => {
-    resolveReady = resolve;
-    rejectReady = reject;
-  });
 
   window.ProTradeAuth = {
     API_BASE,
@@ -194,9 +249,11 @@
       }
     },
     authHeaders: () => ({
-      Authorization: `Bearer ${sessionStorage.getItem(TOKEN_KEY) || ""}`,
+      Authorization: `Bearer ${
+        sessionStorage.getItem(TOKEN_KEY) || ""
+      }`,
     }),
-    apiFetch: authenticatedFetch,
+    apiFetch: secureFetch,
     logout: () => {
       clearSession();
       window.location.replace("login.html?logout=1");
@@ -208,6 +265,8 @@
     return;
   }
 
+  const token = sessionStorage.getItem(TOKEN_KEY);
+
   if (!token) {
     redirectToLogin();
     return;
@@ -215,7 +274,7 @@
 
   document.addEventListener("DOMContentLoaded", createAuthOverlay);
 
-  fetch(`${API_BASE}/auth/me`, {
+  nativeFetch(`${API_BASE}/auth/me`, {
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: "application/json",
@@ -235,6 +294,7 @@
         updateUserInterface(user);
         removeAuthOverlay();
         resolveReady(user);
+
         window.dispatchEvent(
           new CustomEvent("protrade:auth-ready", { detail: user })
         );
