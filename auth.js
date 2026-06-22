@@ -53,11 +53,14 @@
     return "";
   };
 
-  const isProtectedApiRequest = (url) =>
-    isProtectedPage &&
-    url.startsWith(API_BASE) &&
-    !url.startsWith(`${API_BASE}/auth/`);
+  const isPublicAuthRequest = (url) =>
+  url.startsWith(`${API_BASE}/auth/login`) ||
+  url.startsWith(`${API_BASE}/auth/register`);
 
+const isProtectedApiRequest = (url) =>
+  isProtectedPage &&
+  url.startsWith(API_BASE) &&
+  !isPublicAuthRequest(url);
   const secureFetch = async (input, options = {}) => {
     const url = apiUrlFromInput(input);
 
