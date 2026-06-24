@@ -346,12 +346,29 @@
           const body = await response.json().catch(() => ({}));
 
           if (!response.ok || body.success === false) {
+            if (
+              body.code === "EMAIL_NOT_VERIFIED" ||
+              body.code === "VERIFICATION_EMAIL_FAILED"
+            ) {
+              window.location.replace(
+                `verify-email.html?status=sent&email=${encodeURIComponent(
+                  body.email || email
+                )}`
+              );
+              return;
+            }
+
             throw new Error(body.message || "Account creation failed.");
           }
 
-          sessionStorage.setItem(TOKEN_KEY, body.token);
-          sessionStorage.setItem(USER_KEY, JSON.stringify(body.data || null));
-          window.location.replace("dashboard.html");
+          const verificationEmail =
+            body.email || email;
+
+          window.location.replace(
+            `verify-email.html?status=sent&email=${encodeURIComponent(
+              verificationEmail
+            )}`
+          );
         } catch (error) {
           showError(error.message || "Could not connect to ProTrade.");
         } finally {

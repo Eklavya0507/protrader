@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verify Email | ProTrade Analytics</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: { sans: ["DM Sans", "sans-serif"] },
+          colors: {
+            background: "#080b0c",
+            card: "#151a1d",
+            card2: "#1d2326",
+            line: "#30383d",
+            text: "#edf2f5",
+            muted: "#9da8af",
+            blue: "#1266d9",
+            blueSoft: "#a9c2ff",
+            green: "#4ee0a4",
+            red: "#ff827b",
+            amber: "#ffc66d",
+          },
+          boxShadow: {
+            glow: "0 16px 60px rgba(18,102,217,.3)",
+            soft: "0 30px 90px rgba(0,0,0,.42)",
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { font-family: "DM Sans", sans-serif; }
+    .material-symbols-outlined {
+      font-variation-settings: "FILL" 0, "wght" 450, "GRAD" 0, "opsz" 24;
+    }
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+    .field {
+      width:100%;min-height:52px;border:1px solid #30383d;border-radius:14px;
+      background:#111719;color:#edf2f5;padding:0 46px 0 14px;outline:none;
+      transition:.18s ease;
+    }
+    .field:focus {
+      border-color:#4e89e9;
+      box-shadow:0 0 0 4px rgba(18,102,217,.16);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-background text-text selection:bg-blue selection:text-white">
+  <div class="fixed inset-0 -z-20 grid-bg opacity-70"></div>
+  <div class="fixed -right-56 -top-56 -z-10 h-[600px] w-[600px] rounded-full bg-blue/20 blur-[130px]"></div>
+  <div class="fixed -bottom-64 -left-52 -z-10 h-[600px] w-[600px] rounded-full bg-green/10 blur-[130px]"></div>
+
+  <main class="flex min-h-screen items-center justify-center px-5 py-10">
+    <section class="w-full max-w-[540px]">
+      <a href="login.html" class="mb-8 inline-flex items-center gap-2 text-sm font-bold text-muted hover:text-text">
+        <span class="material-symbols-outlined">arrow_back</span>
+        Back to sign in
+      </a>
+
+      <div class="rounded-[28px] border border-line bg-card p-6 shadow-soft sm:p-9">
+        <div id="iconBox" class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue/15 text-blueSoft">
+          <span id="mainIcon" class="material-symbols-outlined text-3xl">mark_email_unread</span>
+        </div>
+
+        <p class="mt-7 text-xs font-extrabold uppercase tracking-[.18em] text-blueSoft">
+          Account security
+        </p>
+        <h1 id="title" class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
+          Check your email
+        </h1>
+        <p id="description" class="mt-3 leading-7 text-muted">
+          We sent a verification link to your email address. Open it within 24 hours to activate your account.
+        </p>
+
+        <div id="messageBox" class="mt-6 hidden items-start gap-3 rounded-2xl border p-4 text-sm">
+          <span id="messageIcon" class="material-symbols-outlined">info</span>
+          <span id="messageText"></span>
+        </div>
+
+        <div id="resendPanel" class="mt-7 space-y-5">
+          <label class="block">
+            <span class="mb-2 block text-xs font-extrabold uppercase tracking-[.1em] text-muted">
+              Email address
+            </span>
+            <div class="relative">
+              <input id="email" class="field" type="email" autocomplete="email" placeholder="you@example.com"/>
+              <span class="material-symbols-outlined pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted">mail</span>
+            </div>
+          </label>
+
+          <button id="resendBtn" type="button"
+                  class="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl bg-blue px-5 font-extrabold text-white shadow-glow transition hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60">
+            <span id="resendText">Resend Verification Email</span>
+            <span id="resendIcon" class="material-symbols-outlined">send</span>
+          </button>
+        </div>
+
+        <a id="dashboardLink" href="dashboard.html"
+           class="mt-7 hidden min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl bg-green px-5 font-extrabold text-[#062519] shadow-glow">
+          Open Dashboard
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+
+        <div class="mt-6 rounded-2xl border border-line bg-card2 p-4 text-xs leading-6 text-muted">
+          Check Inbox, Spam and Promotions. Verification links expire after 24 hours.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const API_BASE =
+        "https://protrader-backend-n8oj.onrender.com/api/auth";
+      const TOKEN_KEY = "protrade_auth_token";
+      const USER_KEY = "protrade_auth_user";
+      const $ = (id) => document.getElementById(id);
+      const params = new URLSearchParams(window.location.search);
+
+      const email = String(params.get("email") || "")
+        .trim()
+        .toLowerCase();
+      const token = String(params.get("token") || "").trim();
+
+      $("email").value = email;
+
+      function showMessage(type, message) {
+        const box = $("messageBox");
+        box.className =
+          "mt-6 flex items-start gap-3 rounded-2xl border p-4 text-sm";
+
+        if (type === "success") {
+          box.style.borderColor = "rgba(78,224,164,.35)";
+          box.style.background = "rgba(78,224,164,.09)";
+          box.style.color = "#4ee0a4";
+          $("messageIcon").textContent = "check_circle";
+        } else {
+          box.style.borderColor = "rgba(255,130,123,.4)";
+          box.style.background = "rgba(255,130,123,.09)";
+          box.style.color = "#ff827b";
+          $("messageIcon").textContent = "error";
+        }
+
+        $("messageText").textContent = message;
+      }
+
+      function setResendLoading(loading) {
+        $("resendBtn").disabled = loading;
+        $("resendText").textContent =
+          loading ? "Sending…" : "Resend Verification Email";
+        $("resendIcon").textContent =
+          loading ? "progress_activity" : "send";
+        $("resendIcon").classList.toggle("animate-spin", loading);
+      }
+
+      async function verifyEmail() {
+        if (!token || !email) return;
+
+        $("title").textContent = "Verifying your email";
+        $("description").textContent =
+          "Please wait while ProTrade validates your secure verification link.";
+        $("mainIcon").textContent = "progress_activity";
+        $("mainIcon").classList.add("animate-spin");
+        $("resendPanel").classList.add("hidden");
+
+        try {
+          const response = await fetch(`${API_BASE}/verify-email`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({ email, token }),
+          });
+
+          const body = await response.json().catch(() => ({}));
+
+          if (!response.ok || body.success === false) {
+            throw new Error(
+              body.message || "Email verification failed."
+            );
+          }
+
+          sessionStorage.setItem(TOKEN_KEY, body.token);
+          sessionStorage.setItem(
+            USER_KEY,
+            JSON.stringify(body.data || null)
+          );
+
+          $("mainIcon").classList.remove("animate-spin");
+          $("mainIcon").textContent = "verified";
+          $("iconBox").style.background = "rgba(78,224,164,.12)";
+          $("iconBox").style.color = "#4ee0a4";
+          $("title").textContent = "Email verified";
+          $("description").textContent =
+            "Your ProTrade account is active and your private workspace is ready.";
+          showMessage("success", body.message);
+          $("dashboardLink").classList.remove("hidden");
+          $("dashboardLink").classList.add("flex");
+        } catch (error) {
+          $("mainIcon").classList.remove("animate-spin");
+          $("mainIcon").textContent = "link_off";
+          $("title").textContent = "Verification link unavailable";
+          $("description").textContent =
+            "Request a fresh verification email below.";
+          showMessage("error", error.message);
+          $("resendPanel").classList.remove("hidden");
+        }
+      }
+
+      $("resendBtn").addEventListener("click", async () => {
+        const resendEmail = $("email").value.trim().toLowerCase();
+
+        if (!resendEmail) {
+          showMessage("error", "Enter your email address.");
+          return;
+        }
+
+        setResendLoading(true);
+
+        try {
+          const response = await fetch(
+            `${API_BASE}/resend-verification`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify({ email: resendEmail }),
+            }
+          );
+
+          const body = await response.json().catch(() => ({}));
+
+          if (!response.ok || body.success === false) {
+            throw new Error(
+              body.message ||
+                "Verification email could not be sent."
+            );
+          }
+
+          showMessage("success", body.message);
+        } catch (error) {
+          showMessage("error", error.message);
+        } finally {
+          setResendLoading(false);
+        }
+      });
+
+      verifyEmail();
+    })();
+  </script>
+</body>
+</html>
