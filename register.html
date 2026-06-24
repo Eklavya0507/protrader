@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Create Account | ProTrade Analytics</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="google-config.js?v=1"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="google-auth.js?v=1" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
@@ -96,6 +99,20 @@
           <span id="errorMessage">Could not create account.</span>
         </div>
 
+
+        <div id="googleButtonWrapper" class="rounded-2xl border border-line bg-card/70 p-4">
+          <div id="googleSignInButton" class="flex min-h-[44px] w-full items-center justify-center"></div>
+          <p id="googleStatus" class="mt-2 text-center text-xs font-semibold text-muted"></p>
+        </div>
+
+        <div class="my-6 flex items-center gap-3">
+          <div class="h-px flex-1 bg-line"></div>
+          <span class="text-[11px] font-extrabold uppercase tracking-[.14em] text-muted">
+            Or continue with email
+          </span>
+          <div class="h-px flex-1 bg-line"></div>
+        </div>
+
         <form id="registerForm" class="space-y-5" novalidate>
           <label class="block">
             <span class="mb-2 block text-xs font-extrabold uppercase tracking-[.1em] text-muted">Full name</span>
@@ -154,7 +171,7 @@
 
           <label class="flex items-start gap-3 text-sm leading-6 text-muted">
             <input id="terms" type="checkbox" class="mt-1 h-4 w-4 rounded border-line bg-card text-blue focus:ring-blue"/>
-            <span>I understand that this is currently a single-workspace development build and user-owned trading data will be connected in the next backend phase.</span>
+            <span>I agree to create a private ProTrade workspace. My trades, journals and settings stay linked to my own account.</span>
           </label>
 
           <button id="submitBtn" type="submit" class="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl bg-blue px-5 font-extrabold text-white shadow-glow transition hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0">
@@ -203,7 +220,7 @@
             <div class="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-blue/15 text-blueSoft">
               <span class="material-symbols-outlined">lock_person</span>
             </div>
-            <div><p class="font-extrabold">Private data phase next</p><p class="mt-1 text-sm leading-6 text-muted">Each trade, journal and setting will be linked to the logged-in user.</p></div>
+            <div><p class="font-extrabold">Private user-owned data</p><p class="mt-1 text-sm leading-6 text-muted">Each trade, journal and setting stays linked to the signed-in user.</p></div>
           </div>
         </div>
       </div>
@@ -310,7 +327,7 @@
         }
 
         if (!$("terms").checked) {
-          showError("Please confirm the development-build notice.");
+          showError("Please confirm the account notice.");
           return;
         }
 

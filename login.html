@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sign In | ProTrade Analytics</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="google-config.js?v=1"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="google-auth.js?v=1" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
@@ -162,6 +165,20 @@
           <span id="errorMessage">Could not sign in.</span>
         </div>
 
+
+        <div id="googleButtonWrapper" class="rounded-2xl border border-line bg-card/70 p-4">
+          <div id="googleSignInButton" class="flex min-h-[44px] w-full items-center justify-center"></div>
+          <p id="googleStatus" class="mt-2 text-center text-xs font-semibold text-muted"></p>
+        </div>
+
+        <div class="my-6 flex items-center gap-3">
+          <div class="h-px flex-1 bg-line"></div>
+          <span class="text-[11px] font-extrabold uppercase tracking-[.14em] text-muted">
+            Or continue with email
+          </span>
+          <div class="h-px flex-1 bg-line"></div>
+        </div>
+
         <form id="loginForm" class="space-y-5" novalidate>
           <label class="block">
             <span class="mb-2 block text-xs font-extrabold uppercase tracking-[.1em] text-muted">Email address</span>
@@ -206,8 +223,8 @@
         </a>
 
         <div class="mt-5 rounded-2xl border border-line bg-card/70 p-4 text-xs leading-5 text-muted">
-          <strong class="text-text">GitHub sign-in is not active yet.</strong>
-          It requires a separate GitHub OAuth application and callback flow.
+          <strong class="text-text">Google Sign-In is connected securely.</strong>
+          ProTrade receives a verified Google identity token, never your Gmail password.
         </div>
 
         <p class="mt-7 text-center text-xs leading-5 text-muted">

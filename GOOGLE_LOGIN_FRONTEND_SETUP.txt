@@ -1,0 +1,25 @@
+PROTRADE GOOGLE SIGN-IN FRONTEND UPDATE
+
+NEW FILES
+google-config.js
+google-auth.js
+
+UPDATED
+login.html
+register.html
+
+IMPORTANT
+Open google-config.js and replace:
+PASTE_YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com
+
+with the Web Client ID created in Google Cloud Console.
+
+The Google Client ID is public configuration. Do not put the Google Client
+Secret in frontend code, GitHub Pages, or this file.
+
+FLOW
+1. Google button returns a signed Google ID token to the browser.
+2. Frontend POSTs the credential to /api/auth/google.
+3. Backend verifies the token with GOOGLE_CLIENT_ID.
+4. Backend creates or links the ProTrade user and returns the normal JWT.
+5. User enters the private Dashboard and sees only their own data.
