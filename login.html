@@ -322,6 +322,15 @@
           const body = await response.json().catch(() => ({}));
 
           if (!response.ok || body.success === false) {
+            if (body.code === "EMAIL_NOT_VERIFIED") {
+              window.location.replace(
+                `verify-email.html?status=sent&email=${encodeURIComponent(
+                  body.email || email
+                )}`
+              );
+              return;
+            }
+
             throw new Error(body.message || "Sign-in failed.");
           }
 
