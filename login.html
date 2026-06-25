@@ -241,8 +241,26 @@
       const AUTH_API = "https://protrader-backend-n8oj.onrender.com/api/auth";
       const TOKEN_KEY = "protrade_auth_token";
       const USER_KEY = "protrade_auth_user";
+      const VERIFY_SESSION_KEY = "protrade_email_verification_session";
+      const VERIFY_EMAIL_KEY = "protrade_email_verification_email";
+      const VERIFY_STARTED_KEY = "protrade_email_verification_started_at";
 
       const $ = (id) => document.getElementById(id);
+
+      const createFlowSessionId = () => {
+        const bytes = new Uint8Array(32);
+        crypto.getRandomValues(bytes);
+        return Array.from(bytes, (value) =>
+          value.toString(16).padStart(2, "0")
+        ).join("");
+      };
+
+      const saveVerificationSession = (email) => {
+        const sessionId = createFlowSessionId();
+        sessionStorage.setItem(VERIFY_SESSION_KEY, sessionId);
+        sessionStorage.setItem(VERIFY_EMAIL_KEY, email);
+        sessionStorage.setItem(VERIFY_STARTED_KEY, String(Date.now()));
+      };
       const params = new URLSearchParams(window.location.search);
 
       const safeNext = () => {
@@ -253,6 +271,30 @@
       if (params.get("logout") === "1") {
         $("logoutMessage").classList.remove("hidden");
         $("logoutMessage").classList.add("flex");
+      }
+
+      if (params.get("passwordReset") === "1") {
+        const box = $("logoutMessage");
+        box.querySelector("span:last-child").textContent =
+          "Password changed successfully. Sign in with your new password.";
+        box.classList.remove("hidden");
+        box.classList.add("flex");
+      }
+
+      if (params.get("verified") === "1") {
+        const box = $("logoutMessage");
+        box.querySelector("span:last-child").textContent =
+          "Email verified successfully. You can sign in now.";
+        box.classList.remove("hidden");
+        box.classList.add("flex");
+      }
+
+      const emailFromQuery = String(params.get("email") || "")
+        .trim()
+        .toLowerCase();
+
+      if (emailFromQuery) {
+        $("email").value = emailFromQuery;
       }
 
       const showError = (message) => {
@@ -323,9 +365,12 @@
 
           if (!response.ok || body.success === false) {
             if (body.code === "EMAIL_NOT_VERIFIED") {
+              const verificationEmail = body.email || email;
+              saveVerificationSession(verificationEmail);
+
               window.location.replace(
-                `verify-email.html?status=sent&email=${encodeURIComponent(
-                  body.email || email
+                `verify-email.html?status=resend&email=${encodeURIComponent(
+                  verificationEmail
                 )}`
               );
               return;

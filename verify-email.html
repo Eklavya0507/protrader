@@ -115,7 +115,7 @@
         </a>
 
         <div class="mt-6 rounded-2xl border border-line bg-card2 p-4 text-xs leading-6 text-muted">
-          Check Inbox, Spam and Promotions. Verification links expire after 24 hours.
+          Keep this page open on your original device. It checks securely every 4 seconds and continues automatically after verification.
         </div>
       </div>
     </section>
@@ -129,15 +129,87 @@
         "https://protrader-backend-n8oj.onrender.com/api/auth";
       const TOKEN_KEY = "protrade_auth_token";
       const USER_KEY = "protrade_auth_user";
+      const VERIFY_SESSION_KEY = "protrade_email_verification_session";
+      const VERIFY_EMAIL_KEY = "protrade_email_verification_email";
+      const VERIFY_STARTED_KEY = "protrade_email_verification_started_at";
+      const VERIFY_AUTO_RESEND_KEY =
+        "protrade_email_verification_auto_resend";
+      const POLL_INTERVAL_MS = 4000;
+      const SESSION_MAX_MS = 30 * 60 * 1000;
+
       const $ = (id) => document.getElementById(id);
       const params = new URLSearchParams(window.location.search);
 
-      const email = String(params.get("email") || "")
+      const token = String(params.get("token") || "").trim();
+      const status = String(params.get("status") || "").trim();
+      const urlEmail = String(params.get("email") || "")
         .trim()
         .toLowerCase();
-      const token = String(params.get("token") || "").trim();
+      const storedEmail = String(
+        sessionStorage.getItem(VERIFY_EMAIL_KEY) || ""
+      )
+        .trim()
+        .toLowerCase();
+      const email = urlEmail || storedEmail;
+
+      let pollTimer = null;
+      let pollInFlight = false;
+      let redirecting = false;
 
       $("email").value = email;
+
+      const createFlowSessionId = () => {
+        const bytes = new Uint8Array(32);
+        crypto.getRandomValues(bytes);
+        return Array.from(bytes, (value) =>
+          value.toString(16).padStart(2, "0")
+        ).join("");
+      };
+
+      const clearVerificationSession = () => {
+        sessionStorage.removeItem(VERIFY_SESSION_KEY);
+        sessionStorage.removeItem(VERIFY_EMAIL_KEY);
+        sessionStorage.removeItem(VERIFY_STARTED_KEY);
+        sessionStorage.removeItem(VERIFY_AUTO_RESEND_KEY);
+      };
+
+      const saveVerificationSession = (sessionEmail, sessionId) => {
+        sessionStorage.setItem(VERIFY_SESSION_KEY, sessionId);
+        sessionStorage.setItem(VERIFY_EMAIL_KEY, sessionEmail);
+        sessionStorage.setItem(VERIFY_STARTED_KEY, String(Date.now()));
+      };
+
+      const getOrCreateVerificationSession = (
+        sessionEmail,
+        forceNew = false
+      ) => {
+        const storedSession = String(
+          sessionStorage.getItem(VERIFY_SESSION_KEY) || ""
+        ).trim();
+        const savedEmail = String(
+          sessionStorage.getItem(VERIFY_EMAIL_KEY) || ""
+        )
+          .trim()
+          .toLowerCase();
+        const startedAt = Number(
+          sessionStorage.getItem(VERIFY_STARTED_KEY) || 0
+        );
+
+        const existingIsUsable =
+          !forceNew &&
+          /^[a-f0-9]{64}$/i.test(storedSession) &&
+          savedEmail === sessionEmail &&
+          startedAt > 0 &&
+          Date.now() - startedAt < SESSION_MAX_MS;
+
+        if (existingIsUsable) {
+          return storedSession.toLowerCase();
+        }
+
+        const sessionId = createFlowSessionId();
+        saveVerificationSession(sessionEmail, sessionId);
+        return sessionId;
+      };
 
       function showMessage(type, message) {
         const box = $("messageBox");
@@ -149,6 +221,11 @@
           box.style.background = "rgba(78,224,164,.09)";
           box.style.color = "#4ee0a4";
           $("messageIcon").textContent = "check_circle";
+        } else if (type === "waiting") {
+          box.style.borderColor = "rgba(169,194,255,.35)";
+          box.style.background = "rgba(18,102,217,.10)";
+          box.style.color = "#a9c2ff";
+          $("messageIcon").textContent = "sync";
         } else {
           box.style.borderColor = "rgba(255,130,123,.4)";
           box.style.background = "rgba(255,130,123,.09)";
@@ -168,9 +245,216 @@
         $("resendIcon").classList.toggle("animate-spin", loading);
       }
 
-      async function verifyEmail() {
+      function stopPolling() {
+        if (pollTimer) {
+          clearInterval(pollTimer);
+          pollTimer = null;
+        }
+      }
+
+      function showWaitingState(message) {
+        $("mainIcon").classList.add("animate-spin");
+        $("mainIcon").textContent = "progress_activity";
+        $("title").textContent = "Waiting for verification";
+        $("description").textContent =
+          "Open the verification email on your phone or another device. This page will continue automatically.";
+        showMessage(
+          "waiting",
+          message ||
+            "Securely checking your verification status every 4 seconds…"
+        );
+      }
+
+      function showOriginalDeviceSuccess(body) {
+        stopPolling();
+        clearVerificationSession();
+
+        sessionStorage.setItem(TOKEN_KEY, body.token);
+        sessionStorage.setItem(
+          USER_KEY,
+          JSON.stringify(body.data || null)
+        );
+
+        $("mainIcon").classList.remove("animate-spin");
+        $("mainIcon").textContent = "verified";
+        $("iconBox").style.background = "rgba(78,224,164,.12)";
+        $("iconBox").style.color = "#4ee0a4";
+        $("title").textContent = "Email verified";
+        $("description").textContent =
+          "Verification was completed on your other device. Opening your private workspace…";
+        showMessage("success", body.message);
+        $("resendPanel").classList.add("hidden");
+        $("dashboardLink").classList.remove("hidden");
+        $("dashboardLink").classList.add("flex");
+
+        if (!redirecting) {
+          redirecting = true;
+          setTimeout(() => {
+            window.location.replace("dashboard.html");
+          }, 1200);
+        }
+      }
+
+      async function checkVerificationStatus() {
+        if (pollInFlight || redirecting) return;
+
+        const currentEmail = $("email").value.trim().toLowerCase();
+        const sessionId = String(
+          sessionStorage.getItem(VERIFY_SESSION_KEY) || ""
+        ).trim();
+
+        if (!currentEmail || !/^[a-f0-9]{64}$/i.test(sessionId)) {
+          return;
+        }
+
+        const startedAt = Number(
+          sessionStorage.getItem(VERIFY_STARTED_KEY) || 0
+        );
+
+        if (!startedAt || Date.now() - startedAt >= SESSION_MAX_MS) {
+          stopPolling();
+          showMessage(
+            "error",
+            "The automatic waiting session expired. Resend the email to start a new session."
+          );
+          $("mainIcon").classList.remove("animate-spin");
+          $("mainIcon").textContent = "timer_off";
+          return;
+        }
+
+        pollInFlight = true;
+
+        try {
+          const response = await fetch(
+            `${API_BASE}/verification-status`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify({
+                email: currentEmail,
+                sessionId,
+              }),
+            }
+          );
+
+          const body = await response.json().catch(() => ({}));
+
+          if (!response.ok || body.success === false) {
+            throw new Error(
+              body.message || "Verification status could not be checked."
+            );
+          }
+
+          if (body.verified && body.token) {
+            showOriginalDeviceSuccess(body);
+            return;
+          }
+
+          if (body.status === "expired") {
+            stopPolling();
+            clearVerificationSession();
+            $("mainIcon").classList.remove("animate-spin");
+            $("mainIcon").textContent = "timer_off";
+            showMessage(
+              "error",
+              body.message ||
+                "The waiting session expired. Resend the verification email."
+            );
+          }
+        } catch (error) {
+          console.warn("Verification polling:", error.message);
+        } finally {
+          pollInFlight = false;
+        }
+      }
+
+      function startPolling(message) {
+        const currentEmail = $("email").value.trim().toLowerCase();
+        if (!currentEmail) return;
+
+        getOrCreateVerificationSession(currentEmail);
+        showWaitingState(message);
+        checkVerificationStatus();
+
+        if (!pollTimer) {
+          pollTimer = setInterval(
+            checkVerificationStatus,
+            POLL_INTERVAL_MS
+          );
+        }
+      }
+
+      async function sendVerificationEmail({
+        forceNewSession = false,
+        automatic = false,
+      } = {}) {
+        const resendEmail = $("email").value.trim().toLowerCase();
+
+        if (!resendEmail) {
+          showMessage("error", "Enter your email address.");
+          return;
+        }
+
+        stopPolling();
+        const verificationSessionId =
+          getOrCreateVerificationSession(
+            resendEmail,
+            forceNewSession
+          );
+
+        setResendLoading(true);
+
+        try {
+          const response = await fetch(
+            `${API_BASE}/resend-verification`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify({
+                email: resendEmail,
+                verificationSessionId,
+              }),
+            }
+          );
+
+          const body = await response.json().catch(() => ({}));
+
+          if (!response.ok || body.success === false) {
+            throw new Error(
+              body.message ||
+                "Verification email could not be sent."
+            );
+          }
+
+          sessionStorage.setItem(
+            VERIFY_AUTO_RESEND_KEY,
+            `${resendEmail}:${verificationSessionId}`
+          );
+
+          startPolling(
+            automatic
+              ? "Verification email requested. Waiting for you to open it…"
+              : body.message
+          );
+        } catch (error) {
+          showMessage("error", error.message);
+          $("mainIcon").classList.remove("animate-spin");
+          $("mainIcon").textContent = "mark_email_unread";
+        } finally {
+          setResendLoading(false);
+        }
+      }
+
+      async function verifyEmailFromLink() {
         if (!token || !email) return;
 
+        stopPolling();
         $("title").textContent = "Verifying your email";
         $("description").textContent =
           "Please wait while ProTrade validates your secure verification link.";
@@ -196,17 +480,50 @@
             );
           }
 
+          $("mainIcon").classList.remove("animate-spin");
+          $("mainIcon").textContent = "verified";
+          $("iconBox").style.background = "rgba(78,224,164,.12)";
+          $("iconBox").style.color = "#4ee0a4";
+          $("title").textContent = "Email verified";
+
+          if (body.continueOnOriginalDevice || !body.token) {
+            const localSession = String(
+              sessionStorage.getItem(VERIFY_SESSION_KEY) || ""
+            ).trim();
+            const localEmail = String(
+              sessionStorage.getItem(VERIFY_EMAIL_KEY) || ""
+            )
+              .trim()
+              .toLowerCase();
+
+            if (
+              localEmail === email &&
+              /^[a-f0-9]{64}$/i.test(localSession)
+            ) {
+              $("resendPanel").classList.add("hidden");
+              startPolling(
+                "Verification confirmed. Finishing sign-in on this device…"
+              );
+              return;
+            }
+
+            $("description").textContent =
+              "Your original ProTrade page will continue automatically. You can return to that device now.";
+            showMessage("success", body.message);
+            $("dashboardLink").href = "login.html?verified=1";
+            $("dashboardLink").innerHTML =
+              'Go to Sign In <span class="material-symbols-outlined">login</span>';
+            $("dashboardLink").classList.remove("hidden");
+            $("dashboardLink").classList.add("flex");
+            return;
+          }
+
           sessionStorage.setItem(TOKEN_KEY, body.token);
           sessionStorage.setItem(
             USER_KEY,
             JSON.stringify(body.data || null)
           );
 
-          $("mainIcon").classList.remove("animate-spin");
-          $("mainIcon").textContent = "verified";
-          $("iconBox").style.background = "rgba(78,224,164,.12)";
-          $("iconBox").style.color = "#4ee0a4";
-          $("title").textContent = "Email verified";
           $("description").textContent =
             "Your ProTrade account is active and your private workspace is ready.";
           showMessage("success", body.message);
@@ -223,47 +540,37 @@
         }
       }
 
-      $("resendBtn").addEventListener("click", async () => {
-        const resendEmail = $("email").value.trim().toLowerCase();
+      $("resendBtn").addEventListener("click", () => {
+        sendVerificationEmail({ forceNewSession: true });
+      });
 
-        if (!resendEmail) {
-          showMessage("error", "Enter your email address.");
-          return;
-        }
-
-        setResendLoading(true);
-
-        try {
-          const response = await fetch(
-            `${API_BASE}/resend-verification`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-              body: JSON.stringify({ email: resendEmail }),
-            }
-          );
-
-          const body = await response.json().catch(() => ({}));
-
-          if (!response.ok || body.success === false) {
-            throw new Error(
-              body.message ||
-                "Verification email could not be sent."
-            );
-          }
-
-          showMessage("success", body.message);
-        } catch (error) {
-          showMessage("error", error.message);
-        } finally {
-          setResendLoading(false);
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && pollTimer) {
+          checkVerificationStatus();
         }
       });
 
-      verifyEmail();
+      window.addEventListener("online", checkVerificationStatus);
+      window.addEventListener("beforeunload", stopPolling);
+
+      if (token && email) {
+        verifyEmailFromLink();
+      } else if (email) {
+        if (status === "resend") {
+          const sessionId = getOrCreateVerificationSession(email);
+          const autoResendMarker = String(
+            sessionStorage.getItem(VERIFY_AUTO_RESEND_KEY) || ""
+          );
+
+          if (autoResendMarker === `${email}:${sessionId}`) {
+            startPolling();
+          } else {
+            sendVerificationEmail({ automatic: true });
+          }
+        } else {
+          startPolling();
+        }
+      }
     })();
   </script>
 </body>

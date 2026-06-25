@@ -236,7 +236,24 @@
       const AUTH_API = "https://protrader-backend-n8oj.onrender.com/api/auth";
       const TOKEN_KEY = "protrade_auth_token";
       const USER_KEY = "protrade_auth_user";
+      const VERIFY_SESSION_KEY = "protrade_email_verification_session";
+      const VERIFY_EMAIL_KEY = "protrade_email_verification_email";
+      const VERIFY_STARTED_KEY = "protrade_email_verification_started_at";
       const $ = (id) => document.getElementById(id);
+
+      const createFlowSessionId = () => {
+        const bytes = new Uint8Array(32);
+        crypto.getRandomValues(bytes);
+        return Array.from(bytes, (value) =>
+          value.toString(16).padStart(2, "0")
+        ).join("");
+      };
+
+      const saveVerificationSession = (email, sessionId) => {
+        sessionStorage.setItem(VERIFY_SESSION_KEY, sessionId);
+        sessionStorage.setItem(VERIFY_EMAIL_KEY, email);
+        sessionStorage.setItem(VERIFY_STARTED_KEY, String(Date.now()));
+      };
 
       const showError = (message) => {
         $("errorMessage").textContent = message;
@@ -333,6 +350,9 @@
 
         setLoading(true);
 
+        const verificationSessionId = createFlowSessionId();
+        saveVerificationSession(email, verificationSessionId);
+
         try {
           const response = await fetch(`${AUTH_API}/register`, {
             method: "POST",
@@ -340,7 +360,12 @@
               "Content-Type": "application/json",
               Accept: "application/json",
             },
-            body: JSON.stringify({ name, email, password }),
+            body: JSON.stringify({
+              name,
+              email,
+              password,
+              verificationSessionId,
+            }),
           });
 
           const body = await response.json().catch(() => ({}));
@@ -351,7 +376,7 @@
               body.code === "VERIFICATION_EMAIL_FAILED"
             ) {
               window.location.replace(
-                `verify-email.html?status=sent&email=${encodeURIComponent(
+                `verify-email.html?status=resend&email=${encodeURIComponent(
                   body.email || email
                 )}`
               );
