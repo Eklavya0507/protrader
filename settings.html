@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <script src="auth.js?v=6"></script>
+  <script src="auth.js"></script>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Settings | ProTrade</title>
@@ -507,7 +507,7 @@
                   <div>
                     <h3 class="font-extrabold">Authentication status</h3>
                     <p class="mt-1 text-sm leading-6" style="color:var(--muted)">
-                      This project currently uses one global workspace. Password changes and multiple user profiles will become available after the authentication module is added.
+                      Your profile and trading workspace are private to this account. The same account data stays synchronized across your authorized devices.
                     </p>
                   </div>
                 </div>
@@ -671,7 +671,7 @@
                   <label class="flex cursor-pointer items-center justify-between gap-5 py-5">
                     <div>
                       <p class="font-bold">Email notifications</p>
-                      <p class="mt-1 text-sm" style="color:var(--muted)">Preference is saved now; email delivery will be added with authentication.</p>
+                      <p class="mt-1 text-sm" style="color:var(--muted)">Receive account-security and workflow emails when those notifications are enabled.</p>
                     </div>
                     <input id="emailNotifications" class="toggle" type="checkbox"/>
                   </label>
@@ -771,8 +771,8 @@
                   <div class="flex items-start gap-3 text-sm" style="color:var(--muted)">
                     <span class="material-symbols-outlined mt-0.5" style="color:var(--amber)">devices</span>
                     <p class="leading-6">
-                      After changing the password, every older JWT session will stop working.
-                      This browser receives a fresh secure token automatically.
+                      After changing the password, older device sessions stop working.
+                      This browser receives a fresh managed session automatically.
                     </p>
                   </div>
 
@@ -783,14 +783,54 @@
                 </div>
               </section>
 
+
+
+              <section class="panel rounded-2xl p-6 lg:p-7">
+                <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h2 class="text-xl font-extrabold">Active Devices</h2>
+                    <p class="mt-1 text-sm" style="color:var(--muted)">
+                      Your trading data stays shared across devices. Only login sessions are managed separately for security.
+                    </p>
+                  </div>
+                  <button id="refreshSessionsBtn" class="secondary-btn rounded-xl px-4 py-2.5 text-sm font-extrabold" type="button">
+                    <span class="material-symbols-outlined mr-1 align-middle text-[19px]">refresh</span>Refresh
+                  </button>
+                </div>
+
+                <div id="legacySessionNotice" class="mb-5 hidden rounded-2xl border p-4 text-sm"
+                     style="border-color:color-mix(in srgb,var(--amber) 40%,var(--line));background:color-mix(in srgb,var(--amber) 8%,transparent);color:var(--amber)">
+                  This browser is upgrading an older login. Refresh this page once to finish session management.
+                </div>
+
+                <div id="sessionsLoading" class="panel-soft rounded-2xl p-5 text-sm font-bold" style="color:var(--muted)">
+                  Loading active devices…
+                </div>
+
+                <div id="sessionsEmpty" class="panel-soft hidden rounded-2xl p-5 text-sm" style="color:var(--muted)">
+                  No managed device sessions were found. Sign out and sign in again.
+                </div>
+
+                <div id="sessionsList" class="grid gap-3"></div>
+
+                <div class="mt-6 flex flex-col gap-3 border-t pt-5 sm:flex-row" style="border-color:var(--line)">
+                  <button id="logoutOthersBtn" class="secondary-btn rounded-xl px-4 py-3 font-extrabold" type="button">
+                    Logout All Other Devices
+                  </button>
+                  <button id="logoutAllBtn" class="danger-btn rounded-xl px-4 py-3 font-extrabold" type="button">
+                    Logout All Devices
+                  </button>
+                </div>
+              </section>
+
               <section class="panel rounded-2xl p-6 lg:p-7">
                 <div class="flex items-start gap-4">
                   <span class="material-symbols-outlined mt-0.5" style="color:var(--primary)">verified_user</span>
                   <div>
                     <h3 class="font-extrabold">Session protection</h3>
                     <p class="mt-1 text-sm leading-6" style="color:var(--muted)">
-                      Passwords are stored as bcrypt hashes. The server never returns your password,
-                      and changing it invalidates tokens created with the previous session version.
+                      Passwords are stored as bcrypt hashes. Refresh tokens are rotated and stored only as hashes on the server.
+                      Revoked devices cannot continue using protected ProTrade data.
                     </p>
                   </div>
                 </div>
@@ -900,6 +940,7 @@
       const SETTINGS_API = `${API_BASE}/settings`;
       const HEALTH_API = `${API_BASE}/health`;
       const CHANGE_PASSWORD_API = `${API_BASE}/auth/change-password`;
+      const SESSIONS_API = `${API_BASE}/auth/sessions`;
 
       const fieldIds = [
         "fullName", "email", "timezone", "tradingRole", "currency",
@@ -1328,16 +1369,21 @@
             throw new Error("The server did not return a new session token.");
           }
 
-          sessionStorage.setItem(
-            window.ProTradeAuth?.TOKEN_KEY || "protrade_auth_token",
-            body.token
-          );
-
-          if (body.data) {
+          try {
+            await window.ProTradeAuth?.upgradeToken?.(body.token, body.data);
+          } catch (sessionError) {
+            console.warn("Fresh managed session will be completed after reload:", sessionError);
             sessionStorage.setItem(
-              window.ProTradeAuth?.USER_KEY || "protrade_auth_user",
-              JSON.stringify(body.data)
+              window.ProTradeAuth?.TOKEN_KEY || "protrade_auth_token",
+              body.token
             );
+
+            if (body.data) {
+              sessionStorage.setItem(
+                window.ProTradeAuth?.USER_KEY || "protrade_auth_user",
+                JSON.stringify(body.data)
+              );
+            }
           }
 
           $("currentPassword").value = "";
@@ -1359,6 +1405,215 @@
         }
       }
 
+
+
+      const escapeSessionText = (value) =>
+        String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+
+      const formatSessionTime = (value) => {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "Unknown";
+
+        const seconds = Math.max(0, Math.round((Date.now() - date.getTime()) / 1000));
+        if (seconds < 60) return "Just now";
+        if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
+        if (seconds < 86400) return `${Math.floor(seconds / 3600)} hr ago`;
+        if (seconds < 604800) return `${Math.floor(seconds / 86400)} day(s) ago`;
+
+        return date.toLocaleString();
+      };
+
+      const sessionIcon = (deviceType) =>
+        deviceType === "mobile"
+          ? "smartphone"
+          : deviceType === "tablet"
+            ? "tablet_mac"
+            : "laptop_windows";
+
+      function renderSessions(payload) {
+        const sessions = Array.isArray(payload?.data) ? payload.data : [];
+        $("sessionsLoading")?.classList.add("hidden");
+        $("legacySessionNotice")?.classList.toggle(
+          "hidden",
+          payload?.legacySession !== true
+        );
+        $("sessionsEmpty")?.classList.toggle("hidden", sessions.length > 0);
+
+        const list = $("sessionsList");
+        if (!list) return;
+
+        list.innerHTML = sessions
+          .map((session) => {
+            const location =
+              session.approximateLocation &&
+              session.approximateLocation !== "Location unavailable"
+                ? session.approximateLocation
+                : session.timezone || "Location unavailable";
+
+            return `
+              <article class="panel-soft rounded-2xl p-5" data-session-card="${escapeSessionText(session.id)}">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div class="flex min-w-0 items-start gap-4">
+                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
+                         style="background:color-mix(in srgb,var(--primary) 12%,var(--panel-3));color:var(--primary)">
+                      <span class="material-symbols-outlined">${sessionIcon(session.deviceType)}</span>
+                    </div>
+                    <div class="min-w-0">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <p class="font-extrabold">${escapeSessionText(session.deviceName || "Unknown device")}</p>
+                        ${session.isCurrent ? `
+                          <span class="rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider"
+                                style="background:color-mix(in srgb,var(--green) 12%,transparent);color:var(--green)">
+                            Current device
+                          </span>` : ""}
+                        ${session.isNewDevice ? `
+                          <span class="rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider"
+                                style="background:color-mix(in srgb,var(--amber) 12%,transparent);color:var(--amber)">
+                            New device
+                          </span>` : ""}
+                      </div>
+                      <p class="mt-1 text-sm" style="color:var(--muted)">
+                        ${escapeSessionText(location)} · IP ${escapeSessionText(session.ipAddress || "Unavailable")}
+                      </p>
+                      <p class="mt-1 text-xs" style="color:var(--muted)">
+                        Last active ${escapeSessionText(formatSessionTime(session.lastActiveAt))} · Signed in ${escapeSessionText(formatSessionTime(session.signedInAt))}
+                      </p>
+                    </div>
+                  </div>
+
+                  ${session.isCurrent ? `
+                    <button class="secondary-btn rounded-xl px-4 py-2.5 text-sm font-extrabold" type="button" data-signout-current>
+                      Sign Out This Device
+                    </button>` : `
+                    <button class="danger-btn rounded-xl px-4 py-2.5 text-sm font-extrabold" type="button"
+                            data-revoke-session="${escapeSessionText(session.id)}">
+                      Logout Device
+                    </button>`}
+                </div>
+              </article>
+            `;
+          })
+          .join("");
+
+        list.querySelectorAll("[data-revoke-session]").forEach((button) => {
+          button.addEventListener("click", () => revokeDeviceSession(button));
+        });
+
+        list.querySelectorAll("[data-signout-current]").forEach((button) => {
+          button.addEventListener("click", () => {
+            if (confirm("Sign out this browser now?")) {
+              window.ProTradeAuth?.logout?.();
+            }
+          });
+        });
+      }
+
+      async function loadSessions({ silent = false } = {}) {
+        if (!silent) {
+          $("sessionsLoading")?.classList.remove("hidden");
+        }
+
+        try {
+          const response = await fetch(SESSIONS_API, {
+            headers: { Accept: "application/json" },
+          });
+          const body = await response.json().catch(() => ({}));
+
+          if (!response.ok || body.success === false) {
+            throw new Error(body.message || "Active devices could not be loaded.");
+          }
+
+          renderSessions(body);
+        } catch (error) {
+          $("sessionsLoading")?.classList.add("hidden");
+          showToast("error", "Sessions unavailable", error.message);
+        }
+      }
+
+      async function revokeDeviceSession(button) {
+        const sessionId = button.dataset.revokeSession;
+        if (!sessionId || !confirm("Logout this device from ProTrade?")) return;
+
+        button.disabled = true;
+        const oldLabel = button.textContent;
+        button.textContent = "Logging out…";
+
+        try {
+          const response = await fetch(`${SESSIONS_API}/${encodeURIComponent(sessionId)}`, {
+            method: "DELETE",
+          });
+          const body = await response.json().catch(() => ({}));
+
+          if (!response.ok || body.success === false) {
+            throw new Error(body.message || "Device could not be logged out.");
+          }
+
+          showToast("success", "Device logged out", body.message);
+          await loadSessions({ silent: true });
+        } catch (error) {
+          showToast("error", "Logout failed", error.message);
+        } finally {
+          button.disabled = false;
+          button.textContent = oldLabel;
+        }
+      }
+
+      async function logoutOtherDevices() {
+        if (!confirm("Logout every other phone and computer? This browser will stay signed in.")) return;
+
+        const button = $("logoutOthersBtn");
+        button.disabled = true;
+
+        try {
+          const response = await fetch(`${SESSIONS_API}/logout-others`, {
+            method: "POST",
+          });
+          const body = await response.json().catch(() => ({}));
+
+          if (!response.ok || body.success === false) {
+            throw new Error(body.message || "Other devices could not be logged out.");
+          }
+
+          showToast("success", "Other devices logged out", body.message);
+          await loadSessions({ silent: true });
+        } catch (error) {
+          showToast("error", "Logout failed", error.message);
+        } finally {
+          button.disabled = false;
+        }
+      }
+
+      async function logoutAllDevices() {
+        if (!confirm("Logout all devices, including this browser? You will need to sign in again.")) return;
+
+        const button = $("logoutAllBtn");
+        button.disabled = true;
+
+        try {
+          const response = await fetch(`${SESSIONS_API}/logout-all`, {
+            method: "POST",
+          });
+          const body = await response.json().catch(() => ({}));
+
+          if (!response.ok || body.success === false) {
+            throw new Error(body.message || "All devices could not be logged out.");
+          }
+        } catch (error) {
+          showToast("error", "Logout failed", error.message);
+          button.disabled = false;
+          return;
+        }
+
+        window.ProTradeAuth?.clearSession?.();
+        window.location.replace("login.html?logout=all");
+      }
+
+
       function switchTab(tabName) {
         document.querySelectorAll(".tab-button").forEach(button => {
           button.classList.toggle("active", button.dataset.tab === tabName);
@@ -1368,12 +1623,21 @@
           panel.classList.toggle("active", panel.id === `panel-${tabName}`);
         });
 
+        if (tabName === "security") {
+          loadSessions();
+        }
+
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
       document.querySelectorAll(".tab-button").forEach(button => {
         button.addEventListener("click", () => switchTab(button.dataset.tab));
       });
+
+
+      $("refreshSessionsBtn")?.addEventListener("click", () => loadSessions());
+      $("logoutOthersBtn")?.addEventListener("click", logoutOtherDevices);
+      $("logoutAllBtn")?.addEventListener("click", logoutAllDevices);
 
       fieldIds.forEach(id => {
         const element = $(id);

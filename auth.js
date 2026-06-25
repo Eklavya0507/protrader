@@ -4,6 +4,8 @@
   const API_BASE = "https://protrader-backend-n8oj.onrender.com/api";
   const TOKEN_KEY = "protrade_auth_token";
   const USER_KEY = "protrade_auth_user";
+  const REFRESH_TOKEN_KEY = "protrade_refresh_token";
+  const SESSION_ID_KEY = "protrade_session_id";
   const nativeFetch = window.fetch.bind(window);
 
   const currentPage =
@@ -28,9 +30,39 @@
       : "dashboard.html";
   };
 
+  const getTimezone = () => {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+    } catch {
+      return "";
+    }
+  };
+
   const clearSession = () => {
     sessionStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(USER_KEY);
+    sessionStorage.removeItem(REFRESH_TOKEN_KEY);
+    sessionStorage.removeItem(SESSION_ID_KEY);
+  };
+
+  const saveSessionPayload = (body = {}) => {
+    if (body.token) {
+      sessionStorage.setItem(TOKEN_KEY, body.token);
+    }
+
+    if (body.refreshToken) {
+      sessionStorage.setItem(REFRESH_TOKEN_KEY, body.refreshToken);
+    }
+
+    if (body.sessionId) {
+      sessionStorage.setItem(SESSION_ID_KEY, body.sessionId);
+    }
+
+    if (body.data) {
+      sessionStorage.setItem(USER_KEY, JSON.stringify(body.data));
+    }
+
+    return body;
   };
 
   const redirectToLogin = () => {
@@ -55,12 +87,165 @@
 
   const isPublicAuthRequest = (url) =>
     url.startsWith(`${API_BASE}/auth/login`) ||
-    url.startsWith(`${API_BASE}/auth/register`);
+    url.startsWith(`${API_BASE}/auth/register`) ||
+    url.startsWith(`${API_BASE}/auth/google`) ||
+    url.startsWith(`${API_BASE}/auth/verify-email`) ||
+    url.startsWith(`${API_BASE}/auth/verification-status`) ||
+    url.startsWith(`${API_BASE}/auth/resend-verification`) ||
+    url.startsWith(`${API_BASE}/auth/forgot-password`) ||
+    url.startsWith(`${API_BASE}/auth/reset-password`) ||
+    url.startsWith(`${API_BASE}/auth/password-reset-status`) ||
+    url.startsWith(`${API_BASE}/auth/sessions/refresh`);
 
   const isProtectedApiRequest = (url) =>
     isProtectedPage &&
     url.startsWith(API_BASE) &&
     !isPublicAuthRequest(url);
+
+  const withClientHeaders = (headersInput) => {
+    const headers = new Headers(headersInput || undefined);
+
+    if (!headers.has("Accept")) {
+      headers.set("Accept", "application/json");
+    }
+
+    const timezone = getTimezone();
+    if (timezone && !headers.has("X-Client-Timezone")) {
+      headers.set("X-Client-Timezone", timezone);
+    }
+
+    return headers;
+  };
+
+  let refreshPromise = null;
+
+  const refreshManagedSession = async () => {
+    if (refreshPromise) return refreshPromise;
+
+    const refreshToken = sessionStorage.getItem(REFRESH_TOKEN_KEY);
+
+    if (!refreshToken) {
+      throw new Error("A refresh session is not available.");
+    }
+
+    refreshPromise = (async () => {
+      const response = await nativeFetch(
+        `${API_BASE}/auth/sessions/refresh`,
+        {
+          method: "POST",
+          headers: withClientHeaders({
+            "Content-Type": "application/json",
+          }),
+          body: JSON.stringify({ refreshToken }),
+        }
+      );
+
+      const body = await response.json().catch(() => ({}));
+
+      if (!response.ok || body.success === false || !body.token) {
+        throw new Error(body.message || "Your session could not be refreshed.");
+      }
+
+      saveSessionPayload(body);
+      return body;
+    })();
+
+    try {
+      return await refreshPromise;
+    } finally {
+      refreshPromise = null;
+    }
+  };
+
+  const upgradeLegacyToken = async (legacyToken, user = null) => {
+    const token = String(legacyToken || "").trim();
+
+    if (!token) {
+      throw new Error("Authentication token is missing.");
+    }
+
+    const response = await nativeFetch(`${API_BASE}/auth/sessions/start`, {
+      method: "POST",
+      headers: withClientHeaders({
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      }),
+      body: JSON.stringify({}),
+    });
+
+    const body = await response.json().catch(() => ({}));
+
+    if (!response.ok || body.success === false || !body.token) {
+      throw new Error(body.message || "Secure session could not be started.");
+    }
+
+    if (!body.data && user) body.data = user;
+    saveSessionPayload(body);
+    return body;
+  };
+
+  const ensureManagedSession = async () => {
+    let token = sessionStorage.getItem(TOKEN_KEY);
+    const refreshToken = sessionStorage.getItem(REFRESH_TOKEN_KEY);
+
+    if (!token && refreshToken) {
+      const refreshed = await refreshManagedSession();
+      return refreshed.token;
+    }
+
+    if (!token) {
+      throw new Error("Authentication required.");
+    }
+
+    if (!refreshToken) {
+      try {
+        const upgraded = await upgradeLegacyToken(token);
+        token = upgraded.token;
+      } catch (error) {
+        // Backward compatibility during deployment: the old token can still
+        // load the workspace. The next page refresh will try again.
+        console.warn("Managed session upgrade pending:", error.message);
+      }
+    }
+
+    return token;
+  };
+
+  const performProtectedFetch = async (input, options = {}, allowRefresh = true) => {
+    const token = sessionStorage.getItem(TOKEN_KEY);
+
+    if (!token) {
+      throw new Error("Authentication required.");
+    }
+
+    const headers = withClientHeaders(
+      options.headers || (input instanceof Request ? input.headers : undefined)
+    );
+    headers.set("Authorization", `Bearer ${token}`);
+
+    const response = await nativeFetch(input, {
+      ...options,
+      headers,
+    });
+
+    if (response.status !== 401 || !allowRefresh) {
+      return response;
+    }
+
+    try {
+      const refreshed = await refreshManagedSession();
+      const retryHeaders = withClientHeaders(headers);
+      retryHeaders.set("Authorization", `Bearer ${refreshed.token}`);
+
+      return nativeFetch(input, {
+        ...options,
+        headers: retryHeaders,
+      });
+    } catch (error) {
+      clearSession();
+      throw error;
+    }
+  };
 
   const secureFetch = async (input, options = {}) => {
     const url = apiUrlFromInput(input);
@@ -71,40 +256,15 @@
 
     await ready;
 
-    const token = sessionStorage.getItem(TOKEN_KEY);
-
-    if (!token) {
+    try {
+      return await performProtectedFetch(input, options, true);
+    } catch (error) {
       clearSession();
       redirectToLogin();
-      throw new Error("Authentication required.");
+      throw error;
     }
-
-    const headers = new Headers(
-      options.headers || (input instanceof Request ? input.headers : undefined)
-    );
-
-    headers.set("Authorization", `Bearer ${token}`);
-
-    if (!headers.has("Accept")) {
-      headers.set("Accept", "application/json");
-    }
-
-    const response = await nativeFetch(input, {
-      ...options,
-      headers,
-    });
-
-    if (response.status === 401) {
-      clearSession();
-      redirectToLogin();
-      throw new Error("Your login session has expired.");
-    }
-
-    return response;
   };
 
-  // Existing page scripts use fetch(). This override adds the JWT token
-  // automatically to Trade, Journal and Settings API requests.
   window.fetch = secureFetch;
 
   const createAuthOverlay = () => {
@@ -191,7 +351,6 @@
       element.textContent = initials;
     });
 
-    // Update old hardcoded profile labels that remain in some page designs.
     document.querySelectorAll("p, span, div").forEach((element) => {
       if (element.children.length > 0) return;
 
@@ -219,17 +378,13 @@
         button.innerHTML = "Signing out…";
 
         try {
-          await nativeFetch(`${API_BASE}/auth/logout`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${
-                sessionStorage.getItem(TOKEN_KEY) || ""
-              }`,
-              Accept: "application/json",
-            },
-          });
+          await performProtectedFetch(
+            `${API_BASE}/auth/sessions/current`,
+            { method: "DELETE" },
+            true
+          );
         } catch (error) {
-          console.warn("Logout API request was not completed:", error);
+          console.warn("Session revoke request was not completed:", error);
         } finally {
           clearSession();
           button.innerHTML = oldLabel;
@@ -239,12 +394,31 @@
     });
   };
 
+  const logoutCurrentDevice = async () => {
+    try {
+      await performProtectedFetch(
+        `${API_BASE}/auth/sessions/current`,
+        { method: "DELETE" },
+        true
+      );
+    } catch (error) {
+      console.warn("Logout API request failed:", error.message);
+    } finally {
+      clearSession();
+      window.location.replace("login.html?logout=1");
+    }
+  };
+
   window.ProTradeAuth = {
     API_BASE,
     TOKEN_KEY,
     USER_KEY,
+    REFRESH_TOKEN_KEY,
+    SESSION_ID_KEY,
     ready,
     getToken: () => sessionStorage.getItem(TOKEN_KEY),
+    getRefreshToken: () => sessionStorage.getItem(REFRESH_TOKEN_KEY),
+    getSessionId: () => sessionStorage.getItem(SESSION_ID_KEY),
     getUser: () => {
       try {
         return JSON.parse(sessionStorage.getItem(USER_KEY) || "null");
@@ -253,15 +427,15 @@
       }
     },
     authHeaders: () => ({
-      Authorization: `Bearer ${
-        sessionStorage.getItem(TOKEN_KEY) || ""
-      }`,
+      Authorization: `Bearer ${sessionStorage.getItem(TOKEN_KEY) || ""}`,
+      "X-Client-Timezone": getTimezone(),
     }),
     apiFetch: secureFetch,
-    logout: () => {
-      clearSession();
-      window.location.replace("login.html?logout=1");
-    },
+    saveSession: saveSessionPayload,
+    refreshSession: refreshManagedSession,
+    upgradeToken: upgradeLegacyToken,
+    clearSession,
+    logout: logoutCurrentDevice,
   };
 
   if (!isProtectedPage) {
@@ -269,22 +443,26 @@
     return;
   }
 
-  const token = sessionStorage.getItem(TOKEN_KEY);
+  const initialToken = sessionStorage.getItem(TOKEN_KEY);
+  const initialRefreshToken = sessionStorage.getItem(REFRESH_TOKEN_KEY);
 
-  if (!token) {
+  if (!initialToken && !initialRefreshToken) {
     redirectToLogin();
     return;
   }
 
   document.addEventListener("DOMContentLoaded", createAuthOverlay);
 
-  nativeFetch(`${API_BASE}/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/json",
-    },
-  })
-    .then(async (response) => {
+  (async () => {
+    try {
+      await ensureManagedSession();
+
+      let response = await performProtectedFetch(
+        `${API_BASE}/auth/me`,
+        { headers: { Accept: "application/json" } },
+        true
+      );
+
       const body = await response.json().catch(() => ({}));
 
       if (!response.ok || body.success === false) {
@@ -309,11 +487,11 @@
       } else {
         finish();
       }
-    })
-    .catch((error) => {
+    } catch (error) {
       console.error("Authentication check failed:", error);
       clearSession();
       rejectReady(error);
       redirectToLogin();
-    });
+    }
+  })();
 })();
