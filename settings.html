@@ -803,6 +803,16 @@
                   This browser is upgrading an older login. Refresh this page once to finish session management.
                 </div>
 
+                <div class="mb-5 rounded-2xl border p-4 text-sm"
+                     style="border-color:color-mix(in srgb,var(--primary) 35%,var(--line));background:color-mix(in srgb,var(--primary) 7%,transparent);color:var(--muted)">
+                  <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined" style="color:var(--primary)">mark_email_unread</span>
+                    <p class="leading-6">
+                      New-device email alerts are active. Trusted devices avoid repeated alerts, while unfamiliar devices can be revoked with <strong style="color:var(--text)">This wasn’t me</strong>.
+                    </p>
+                  </div>
+                </div>
+
                 <div id="sessionsLoading" class="panel-soft rounded-2xl p-5 text-sm font-bold" style="color:var(--muted)">
                   Loading active devices…
                 </div>
@@ -1455,9 +1465,19 @@
                 ? session.approximateLocation
                 : session.timezone || "Location unavailable";
 
+            const trustedBadge = session.isTrusted
+              ? `<span class="rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider"
+                       style="background:color-mix(in srgb,var(--green) 12%,transparent);color:var(--green)">
+                   Trusted
+                 </span>`
+              : `<span class="rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider"
+                       style="background:color-mix(in srgb,var(--amber) 12%,transparent);color:var(--amber)">
+                   Review device
+                 </span>`;
+
             return `
               <article class="panel-soft rounded-2xl p-5" data-session-card="${escapeSessionText(session.id)}">
-                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div class="flex min-w-0 items-start gap-4">
                     <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
                          style="background:color-mix(in srgb,var(--primary) 12%,var(--panel-3));color:var(--primary)">
@@ -1471,14 +1491,18 @@
                                 style="background:color-mix(in srgb,var(--green) 12%,transparent);color:var(--green)">
                             Current device
                           </span>` : ""}
+                        ${trustedBadge}
                         ${session.isNewDevice ? `
                           <span class="rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider"
                                 style="background:color-mix(in srgb,var(--amber) 12%,transparent);color:var(--amber)">
-                            New device
+                            New login
                           </span>` : ""}
                       </div>
                       <p class="mt-1 text-sm" style="color:var(--muted)">
                         ${escapeSessionText(location)} · IP ${escapeSessionText(session.ipAddress || "Unavailable")}
+                      </p>
+                      <p class="mt-1 text-xs" style="color:var(--muted)">
+                        ${escapeSessionText(session.browser || "Unknown browser")} · ${escapeSessionText(session.operatingSystem || "Unknown OS")}
                       </p>
                       <p class="mt-1 text-xs" style="color:var(--muted)">
                         Last active ${escapeSessionText(formatSessionTime(session.lastActiveAt))} · Signed in ${escapeSessionText(formatSessionTime(session.signedInAt))}
@@ -1486,19 +1510,38 @@
                     </div>
                   </div>
 
-                  ${session.isCurrent ? `
-                    <button class="secondary-btn rounded-xl px-4 py-2.5 text-sm font-extrabold" type="button" data-signout-current>
-                      Sign Out This Device
-                    </button>` : `
-                    <button class="danger-btn rounded-xl px-4 py-2.5 text-sm font-extrabold" type="button"
-                            data-revoke-session="${escapeSessionText(session.id)}">
-                      Logout Device
-                    </button>`}
+                  <div class="flex flex-wrap gap-2 lg:justify-end">
+                    <button class="secondary-btn rounded-xl px-3.5 py-2.5 text-sm font-extrabold" type="button"
+                            data-trust-session="${escapeSessionText(session.id)}"
+                            data-trusted="${session.isTrusted ? "true" : "false"}">
+                      ${session.isTrusted ? "Remove Trust" : "Trust Device"}
+                    </button>
+                    ${!session.isCurrent ? `
+                      <button class="danger-btn rounded-xl px-3.5 py-2.5 text-sm font-extrabold" type="button"
+                              data-not-mine="${escapeSessionText(session.id)}">
+                        This Wasn’t Me
+                      </button>
+                      <button class="danger-btn rounded-xl px-3.5 py-2.5 text-sm font-extrabold" type="button"
+                              data-revoke-session="${escapeSessionText(session.id)}">
+                        Logout Device
+                      </button>` : `
+                      <button class="secondary-btn rounded-xl px-3.5 py-2.5 text-sm font-extrabold" type="button" data-signout-current>
+                        Sign Out This Device
+                      </button>`}
+                  </div>
                 </div>
               </article>
             `;
           })
           .join("");
+
+        list.querySelectorAll("[data-trust-session]").forEach((button) => {
+          button.addEventListener("click", () => updateTrustedDevice(button));
+        });
+
+        list.querySelectorAll("[data-not-mine]").forEach((button) => {
+          button.addEventListener("click", () => reportDeviceNotMine(button));
+        });
 
         list.querySelectorAll("[data-revoke-session]").forEach((button) => {
           button.addEventListener("click", () => revokeDeviceSession(button));
@@ -1532,6 +1575,71 @@
         } catch (error) {
           $("sessionsLoading")?.classList.add("hidden");
           showToast("error", "Sessions unavailable", error.message);
+        }
+      }
+
+      async function updateTrustedDevice(button) {
+        const sessionId = button.dataset.trustSession;
+        const currentlyTrusted = button.dataset.trusted === "true";
+        const trusted = !currentlyTrusted;
+
+        if (!sessionId) return;
+        if (!trusted && !confirm("Remove this device from your trusted list?")) return;
+
+        button.disabled = true;
+        const oldLabel = button.textContent;
+        button.textContent = trusted ? "Trusting…" : "Updating…";
+
+        try {
+          const response = await fetch(`${SESSIONS_API}/${encodeURIComponent(sessionId)}/trust`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ trusted }),
+          });
+          const body = await response.json().catch(() => ({}));
+
+          if (!response.ok || body.success === false) {
+            throw new Error(body.message || "Device trust could not be updated.");
+          }
+
+          showToast("success", trusted ? "Device trusted" : "Trust removed", body.message);
+          await loadSessions({ silent: true });
+        } catch (error) {
+          showToast("error", "Trust update failed", error.message);
+          button.disabled = false;
+          button.textContent = oldLabel;
+        }
+      }
+
+      async function reportDeviceNotMine(button) {
+        const sessionId = button.dataset.notMine;
+        if (!sessionId) return;
+
+        const confirmed = confirm(
+          "Report this login as unrecognized and revoke this device? You should reset your password after this action."
+        );
+        if (!confirmed) return;
+
+        button.disabled = true;
+        const oldLabel = button.textContent;
+        button.textContent = "Revoking…";
+
+        try {
+          const response = await fetch(`${SESSIONS_API}/${encodeURIComponent(sessionId)}/not-me`, {
+            method: "POST",
+          });
+          const body = await response.json().catch(() => ({}));
+
+          if (!response.ok || body.success === false) {
+            throw new Error(body.message || "The unrecognized device could not be revoked.");
+          }
+
+          showToast("success", "Device secured", body.message);
+          await loadSessions({ silent: true });
+        } catch (error) {
+          showToast("error", "Security action failed", error.message);
+          button.disabled = false;
+          button.textContent = oldLabel;
         }
       }
 

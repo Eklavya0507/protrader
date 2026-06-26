@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Review Login | ProTrade</title>
+  <style>
+    :root { color-scheme: dark; --bg:#070b0d; --panel:#12181c; --line:#273138; --text:#f2f6f8; --muted:#9dacb5; --primary:#1f73e8; --danger:#ef6262; --green:#45d69f; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:radial-gradient(circle at top right,#0d2548 0,transparent 38%),radial-gradient(circle at bottom left,#0b3326 0,transparent 35%),var(--bg); color:var(--text); font-family:Inter,Arial,sans-serif; }
+    .card { width:min(560px,100%); background:rgba(18,24,28,.96); border:1px solid var(--line); border-radius:24px; padding:30px; box-shadow:0 30px 90px rgba(0,0,0,.45); }
+    .icon { width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:#2b1719;color:#ff9696;font-size:26px;font-weight:900; }
+    h1 { margin:22px 0 10px; font-size:32px; line-height:1.15; }
+    p { color:var(--muted); line-height:1.7; }
+    .notice { margin:22px 0; padding:16px; border:1px solid var(--line); border-radius:15px; background:#0d1215; }
+    button,a { width:100%; display:flex; align-items:center; justify-content:center; min-height:50px; border-radius:13px; font-weight:800; font-size:15px; text-decoration:none; cursor:pointer; }
+    button { border:0; background:var(--danger); color:#fff; }
+    button:disabled { opacity:.55; cursor:not-allowed; }
+    .secondary { margin-top:12px; border:1px solid var(--line); color:var(--text); background:#182025; }
+    .hidden { display:none; }
+    .success { color:var(--green); }
+    .error { color:#ff9696; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="icon">!</div>
+    <h1>Review this login</h1>
+    <p id="description">Only continue if the new-device login email was not caused by you.</p>
+
+    <div id="notice" class="notice">
+      Confirming will revoke the unrecognized device. Opening this page alone does not make any account change.
+    </div>
+
+    <button id="revokeBtn" type="button">This wasn’t me — revoke device</button>
+    <a class="secondary" href="login.html">This was me — return to ProTrade</a>
+
+    <div id="result" class="notice hidden"></div>
+    <a id="resetLink" class="secondary hidden" href="forgot-password.html">Reset password now</a>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const API_URL = "https://protrader-backend-n8oj.onrender.com/api/auth/sessions/revoke-alert";
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token") || "";
+      const button = document.getElementById("revokeBtn");
+      const result = document.getElementById("result");
+      const notice = document.getElementById("notice");
+      const resetLink = document.getElementById("resetLink");
+
+      // Remove the signed token from the visible browser address/history.
+      history.replaceState({}, document.title, "security-action.html");
+
+      if (!token) {
+        button.disabled = true;
+        result.className = "notice error";
+        result.textContent = "The security action link is missing or invalid.";
+        return;
+      }
+
+      button.addEventListener("click", async () => {
+        if (!confirm("Revoke the unrecognized device now?")) return;
+
+        button.disabled = true;
+        button.textContent = "Securing account…";
+
+        try {
+          const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({ token }),
+          });
+          const body = await response.json().catch(() => ({}));
+
+          if (!response.ok || body.success === false) {
+            throw new Error(body.message || "The device could not be revoked.");
+          }
+
+          notice.classList.add("hidden");
+          result.className = "notice success";
+          result.textContent = body.message || "The unrecognized device has been revoked.";
+          resetLink.classList.remove("hidden");
+          button.classList.add("hidden");
+        } catch (error) {
+          result.className = "notice error";
+          result.textContent = error.message;
+          button.disabled = false;
+          button.textContent = "Try again";
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

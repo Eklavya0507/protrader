@@ -6,6 +6,7 @@
   const USER_KEY = "protrade_auth_user";
   const REFRESH_TOKEN_KEY = "protrade_refresh_token";
   const SESSION_ID_KEY = "protrade_session_id";
+  const DEVICE_ID_KEY = "protrade_device_id";
   const nativeFetch = window.fetch.bind(window);
 
   const currentPage =
@@ -36,6 +37,21 @@
     } catch {
       return "";
     }
+  };
+
+
+  const getDeviceId = () => {
+    let value = localStorage.getItem(DEVICE_ID_KEY);
+
+    if (/^[a-zA-Z0-9._:-]{16,160}$/.test(String(value || ""))) {
+      return value;
+    }
+
+    value = window.crypto?.randomUUID?.() ||
+      `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+
+    localStorage.setItem(DEVICE_ID_KEY, value);
+    return value;
   };
 
   const clearSession = () => {
@@ -112,6 +128,11 @@
     const timezone = getTimezone();
     if (timezone && !headers.has("X-Client-Timezone")) {
       headers.set("X-Client-Timezone", timezone);
+    }
+
+    const deviceId = getDeviceId();
+    if (deviceId && !headers.has("X-Client-Device-Id")) {
+      headers.set("X-Client-Device-Id", deviceId);
     }
 
     return headers;
@@ -415,6 +436,7 @@
     USER_KEY,
     REFRESH_TOKEN_KEY,
     SESSION_ID_KEY,
+    DEVICE_ID_KEY,
     ready,
     getToken: () => sessionStorage.getItem(TOKEN_KEY),
     getRefreshToken: () => sessionStorage.getItem(REFRESH_TOKEN_KEY),
@@ -429,6 +451,7 @@
     authHeaders: () => ({
       Authorization: `Bearer ${sessionStorage.getItem(TOKEN_KEY) || ""}`,
       "X-Client-Timezone": getTimezone(),
+      "X-Client-Device-Id": getDeviceId(),
     }),
     apiFetch: secureFetch,
     saveSession: saveSessionPayload,
