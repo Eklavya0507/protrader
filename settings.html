@@ -441,6 +441,14 @@
             </span>
           </button>
 
+          <button class="tab-button flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left" data-tab="account-control">
+            <span class="material-symbols-outlined">manage_accounts</span>
+            <span>
+              <span class="block font-bold">Account Controls</span>
+              <span class="block text-xs" style="color:var(--muted)">Email, export and deletion</span>
+            </span>
+          </button>
+
           <button class="tab-button flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left" data-tab="system">
             <span class="material-symbols-outlined">dns</span>
             <span>
@@ -479,8 +487,10 @@
                   </label>
 
                   <label>
-                    <span class="label">Email Address</span>
-                    <input id="email" class="field" type="email" maxlength="150" placeholder="you@example.com"/>
+                    <span class="label">Sign-in Email</span>
+                    <input id="email" class="field" type="email" maxlength="150"
+                           placeholder="you@example.com" readonly aria-readonly="true"/>
+                    <p class="helper">Use Account Controls to change this email with verification from both addresses.</p>
                   </label>
 
                   <label>
@@ -847,6 +857,132 @@
               </section>
             </div>
 
+            <div id="panel-account-control" class="tab-panel space-y-5">
+              <section class="panel rounded-2xl p-6 lg:p-7">
+                <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h2 class="text-xl font-extrabold">Change Sign-in Email</h2>
+                    <p class="mt-1 text-sm leading-6" style="color:var(--muted)">
+                      ProTrade sends one approval link to your current email and one verification link to the new email.
+                      Both links must be opened before the address changes.
+                    </p>
+                  </div>
+                  <span class="rounded-full border px-3 py-1.5 text-xs font-extrabold"
+                        style="border-color:color-mix(in srgb,var(--primary) 35%,var(--line));background:color-mix(in srgb,var(--primary) 9%,transparent);color:var(--primary)">
+                    Two-email approval
+                  </span>
+                </div>
+
+                <div id="emailChangeStatusBox" class="mb-5 hidden rounded-2xl border p-4"
+                     style="border-color:color-mix(in srgb,var(--amber) 40%,var(--line));background:color-mix(in srgb,var(--amber) 8%,transparent)">
+                  <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined" style="color:var(--amber)">mark_email_unread</span>
+                    <div class="min-w-0 flex-1">
+                      <p class="font-extrabold">Email change pending</p>
+                      <p id="emailChangeStatusText" class="mt-1 text-sm leading-6" style="color:var(--muted)">Waiting for approvals.</p>
+                      <div class="mt-3 flex flex-wrap gap-2 text-xs font-extrabold">
+                        <span id="currentEmailApprovalBadge" class="rounded-full border px-3 py-1.5"
+                              style="border-color:var(--line);color:var(--muted)">Current email: waiting</span>
+                        <span id="newEmailApprovalBadge" class="rounded-full border px-3 py-1.5"
+                              style="border-color:var(--line);color:var(--muted)">New email: waiting</span>
+                      </div>
+                    </div>
+                    <button id="cancelEmailChangeBtn" class="secondary-btn rounded-xl px-3 py-2 text-sm font-extrabold" type="button">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+
+                <div class="grid gap-5 md:grid-cols-2">
+                  <label>
+                    <span class="label">Current Email</span>
+                    <input id="accountCurrentEmail" class="field" type="email" readonly aria-readonly="true"/>
+                  </label>
+
+                  <label>
+                    <span class="label">New Email</span>
+                    <input id="newAccountEmail" class="field" type="email" maxlength="150"
+                           autocomplete="email" placeholder="new@example.com"/>
+                  </label>
+                </div>
+
+                <label id="emailChangePasswordWrap" class="mt-5 block">
+                  <span class="label">Current Password</span>
+                  <input id="emailChangePassword" class="field" type="password"
+                         autocomplete="current-password" placeholder="Confirm with your current password"/>
+                  <p class="helper">Required for accounts that have a ProTrade password.</p>
+                </label>
+
+                <div id="googleEmailChangeNote" class="panel-soft mt-5 hidden rounded-2xl p-4 text-sm leading-6" style="color:var(--muted)">
+                  This account signs in with Google and has no ProTrade password. Approval from both email addresses is still required.
+                </div>
+
+                <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p class="text-sm leading-6" style="color:var(--muted)">
+                    When the change completes, every device is signed out. Sign in again using the new email.
+                  </p>
+                  <button id="requestEmailChangeBtn" class="primary-btn min-w-[210px] rounded-xl px-5 py-3 font-extrabold" type="button">
+                    Send Approval Emails
+                  </button>
+                </div>
+              </section>
+
+              <section class="panel rounded-2xl p-6 lg:p-7">
+                <div class="mb-5">
+                  <h2 class="text-xl font-extrabold">Download Your Data</h2>
+                  <p class="mt-1 text-sm leading-6" style="color:var(--muted)">
+                    Download a JSON copy of your profile, settings, trades, journals and safe device-session metadata.
+                    Passwords, tokens and raw IP addresses are never included.
+                  </p>
+                </div>
+
+                <button id="downloadAccountDataBtn" class="secondary-btn rounded-xl px-4 py-3 font-extrabold" type="button">
+                  <span class="material-symbols-outlined mr-2">download</span>Download All Account Data
+                </button>
+              </section>
+
+              <section class="rounded-2xl border p-6 lg:p-7"
+                       style="border-color:color-mix(in srgb,var(--red) 45%,var(--line));background:color-mix(in srgb,var(--red) 5%,var(--panel))">
+                <div class="mb-6">
+                  <p class="text-xs font-extrabold uppercase tracking-[.16em]" style="color:var(--red)">Danger Zone</p>
+                  <h2 class="mt-2 text-xl font-extrabold">Delete ProTrade Account</h2>
+                  <p class="mt-1 text-sm leading-6" style="color:var(--muted)">
+                    This permanently deletes your account, trades, journals, settings and device sessions.
+                    This action cannot be undone.
+                  </p>
+                </div>
+
+                <div class="grid gap-5">
+                  <label>
+                    <span class="label">Type Your Current Email</span>
+                    <input id="deleteEmailConfirmation" class="field" type="email"
+                           autocomplete="off" placeholder="your-current@email.com"/>
+                  </label>
+
+                  <label>
+                    <span class="label">Type DELETE</span>
+                    <input id="deleteWordConfirmation" class="field" type="text"
+                           autocomplete="off" placeholder="DELETE"/>
+                  </label>
+
+                  <label id="deletePasswordWrap">
+                    <span class="label">Current Password</span>
+                    <input id="deleteAccountPassword" class="field" type="password"
+                           autocomplete="current-password" placeholder="Enter your current password"/>
+                  </label>
+                </div>
+
+                <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p class="text-sm font-bold" style="color:var(--red)">
+                    Permanent deletion requires your exact email and the word DELETE.
+                  </p>
+                  <button id="deleteAccountBtn" class="danger-btn min-w-[190px] rounded-xl px-5 py-3 font-extrabold" type="button">
+                    Delete Account Permanently
+                  </button>
+                </div>
+              </section>
+            </div>
+
             <div id="panel-system" class="tab-panel space-y-5">
               <section class="panel rounded-2xl p-6 lg:p-7">
                 <div class="mb-6">
@@ -897,12 +1033,12 @@
               <section class="panel rounded-2xl p-6 lg:p-7">
                 <div class="mb-5">
                   <h2 class="text-xl font-extrabold">Data Management</h2>
-                  <p class="mt-1 text-sm" style="color:var(--muted)">Export or reset this workspace's settings.</p>
+                  <p class="mt-1 text-sm" style="color:var(--muted)">Download your full account data or reset workspace settings.</p>
                 </div>
 
                 <div class="flex flex-col gap-3 sm:flex-row">
                   <button id="exportBtn" class="secondary-btn rounded-xl px-4 py-3 font-bold" type="button">
-                    <span class="material-symbols-outlined mr-2">download</span>Export Settings JSON
+                    <span class="material-symbols-outlined mr-2">download</span>Download All Account Data
                   </button>
                   <button id="resetBtn" class="danger-btn rounded-xl px-4 py-3 font-bold" type="button">
                     <span class="material-symbols-outlined mr-2">restart_alt</span>Reset to Defaults
@@ -951,6 +1087,8 @@
       const HEALTH_API = `${API_BASE}/health`;
       const CHANGE_PASSWORD_API = `${API_BASE}/auth/change-password`;
       const SESSIONS_API = `${API_BASE}/auth/sessions`;
+      const ACCOUNT_API = `${API_BASE}/account`;
+      const EMAIL_CHANGE_API = `${ACCOUNT_API}/email-change`;
 
       const fieldIds = [
         "fullName", "email", "timezone", "tradingRole", "currency",
@@ -1133,6 +1271,11 @@
           setSyncStatus(false, "Loading");
           const response = await request(SETTINGS_API);
           const settings = response.data || {};
+          const authUser = window.ProTradeAuth?.getUser?.();
+
+          if (authUser?.email) {
+            settings.email = authUser.email;
+          }
 
           fillSettings(settings);
           savedSnapshot = JSON.stringify(collectSettings());
@@ -1239,17 +1382,240 @@
         }
       }
 
-      function exportSettings() {
-        const blob = new Blob([JSON.stringify(collectSettings(), null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const anchor = document.createElement("a");
-        anchor.href = url;
-        anchor.download = `protrade-settings-${new Date().toISOString().slice(0,10)}.json`;
-        anchor.click();
-        URL.revokeObjectURL(url);
-        showToast("success", "Settings exported", "Your current settings were downloaded as JSON.");
+      async function exportAccountData() {
+        const buttons = [$("exportBtn"), $("downloadAccountDataBtn")].filter(Boolean);
+
+        buttons.forEach(button => {
+          button.disabled = true;
+          button.dataset.label = button.innerHTML;
+          button.innerHTML = '<span class="material-symbols-outlined mr-2">progress_activity</span>Preparing…';
+        });
+
+        try {
+          const response = await fetch(`${ACCOUNT_API}/export`, {
+            headers: { Accept: "application/json" },
+          });
+
+          if (!response.ok) {
+            const body = await response.json().catch(() => ({}));
+            throw new Error(body.message || "Account data could not be exported.");
+          }
+
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement("a");
+          anchor.href = url;
+          anchor.download = `protrade-account-data-${new Date().toISOString().slice(0, 10)}.json`;
+          document.body.appendChild(anchor);
+          anchor.click();
+          anchor.remove();
+          URL.revokeObjectURL(url);
+
+          showToast("success", "Account data downloaded", "Your private ProTrade data export is ready.");
+        } catch (error) {
+          showToast("error", "Export failed", error.message);
+        } finally {
+          buttons.forEach(button => {
+            button.disabled = false;
+            button.innerHTML = button.dataset.label || "Download All Account Data";
+          });
+        }
       }
 
+
+      let emailChangeStatusTimer = null;
+
+      function accountUser() {
+        return window.ProTradeAuth?.getUser?.() || {};
+      }
+
+      function configureAccountControls(user = accountUser()) {
+        const email = user?.email || "";
+        const isGoogleOnly = user?.authProvider === "google";
+
+        if ($("accountCurrentEmail")) $("accountCurrentEmail").value = email;
+        if ($("deleteEmailConfirmation")) $("deleteEmailConfirmation").placeholder = email || "your-current@email.com";
+
+        $("emailChangePasswordWrap")?.classList.toggle("hidden", isGoogleOnly);
+        $("deletePasswordWrap")?.classList.toggle("hidden", isGoogleOnly);
+        $("googleEmailChangeNote")?.classList.toggle("hidden", !isGoogleOnly);
+      }
+
+      function setApprovalBadge(element, approved, label) {
+        if (!element) return;
+        element.textContent = `${label}: ${approved ? "approved" : "waiting"}`;
+        element.style.color = approved ? "var(--green)" : "var(--muted)";
+        element.style.borderColor = approved
+          ? "color-mix(in srgb,var(--green) 45%,var(--line))"
+          : "var(--line)";
+        element.style.background = approved
+          ? "color-mix(in srgb,var(--green) 8%,transparent)"
+          : "transparent";
+      }
+
+      function renderEmailChangeStatus(payload) {
+        const box = $("emailChangeStatusBox");
+        const action = payload?.data;
+        const pending = payload?.pending === true && action;
+
+        box?.classList.toggle("hidden", !pending);
+
+        if (!pending) {
+          clearTimeout(emailChangeStatusTimer);
+          emailChangeStatusTimer = null;
+          return;
+        }
+
+        setApprovalBadge(
+          $("currentEmailApprovalBadge"),
+          action.currentEmailApproved,
+          "Current email"
+        );
+        setApprovalBadge(
+          $("newEmailApprovalBadge"),
+          action.newEmailApproved,
+          "New email"
+        );
+
+        $("emailChangeStatusText").textContent =
+          `Changing ${action.currentEmail} to ${action.newEmail}. ` +
+          `Expires ${new Date(action.expiresAt).toLocaleString("en-IN")}.`;
+
+        clearTimeout(emailChangeStatusTimer);
+        emailChangeStatusTimer = setTimeout(
+          () => loadEmailChangeStatus({ silent: true }),
+          8000
+        );
+      }
+
+      async function loadEmailChangeStatus({ silent = false } = {}) {
+        try {
+          const body = await request(`${EMAIL_CHANGE_API}/status`);
+          renderEmailChangeStatus(body);
+        } catch (error) {
+          if (!silent) {
+            showToast("error", "Email status unavailable", error.message);
+          }
+        }
+      }
+
+      async function requestEmailChange() {
+        const user = accountUser();
+        const newEmail = $("newAccountEmail").value.trim().toLowerCase();
+        const currentPassword = $("emailChangePassword").value;
+        const button = $("requestEmailChangeBtn");
+
+        if (!newEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+          showToast("error", "Invalid email", "Enter a valid new email address.");
+          return;
+        }
+
+        if (newEmail === String(user.email || "").toLowerCase()) {
+          showToast("error", "Email unchanged", "Enter a different email address.");
+          return;
+        }
+
+        if (user.authProvider !== "google" && !currentPassword) {
+          showToast("error", "Password required", "Enter your current password.");
+          return;
+        }
+
+        button.disabled = true;
+        const oldLabel = button.textContent;
+        button.textContent = "Sending…";
+
+        try {
+          const body = await request(`${EMAIL_CHANGE_API}/request`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              newEmail,
+              currentPassword,
+            }),
+          });
+
+          $("emailChangePassword").value = "";
+          showToast("success", "Approval emails sent", body.message);
+          await loadEmailChangeStatus({ silent: true });
+        } catch (error) {
+          showToast("error", "Email change failed", error.message);
+        } finally {
+          button.disabled = false;
+          button.textContent = oldLabel;
+        }
+      }
+
+      async function cancelEmailChange() {
+        if (!confirm("Cancel the pending email-change request?")) return;
+
+        const button = $("cancelEmailChangeBtn");
+        button.disabled = true;
+
+        try {
+          const body = await request(`${EMAIL_CHANGE_API}/cancel`, {
+            method: "POST",
+          });
+
+          showToast("success", "Request canceled", body.message);
+          renderEmailChangeStatus({ pending: false, data: null });
+        } catch (error) {
+          showToast("error", "Cancel failed", error.message);
+        } finally {
+          button.disabled = false;
+        }
+      }
+
+      async function deleteAccountPermanently() {
+        const user = accountUser();
+        const emailConfirmation = $("deleteEmailConfirmation").value.trim().toLowerCase();
+        const confirmationText = $("deleteWordConfirmation").value.trim();
+        const currentPassword = $("deleteAccountPassword").value;
+        const button = $("deleteAccountBtn");
+
+        if (emailConfirmation !== String(user.email || "").toLowerCase()) {
+          showToast("error", "Email does not match", "Type your current account email exactly.");
+          return;
+        }
+
+        if (confirmationText !== "DELETE") {
+          showToast("error", "Confirmation required", 'Type "DELETE" exactly.');
+          return;
+        }
+
+        if (user.authProvider !== "google" && !currentPassword) {
+          showToast("error", "Password required", "Enter your current password.");
+          return;
+        }
+
+        const confirmed = confirm(
+          "Permanently delete this ProTrade account and all stored data? This cannot be undone."
+        );
+        if (!confirmed) return;
+
+        button.disabled = true;
+        const oldLabel = button.textContent;
+        button.textContent = "Deleting…";
+
+        try {
+          const body = await request(ACCOUNT_API, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              currentPassword,
+              confirmationText,
+              emailConfirmation,
+            }),
+          });
+
+          window.ProTradeAuth?.clearSession?.();
+          sessionStorage.clear();
+          window.location.replace("login.html?account=deleted");
+        } catch (error) {
+          showToast("error", "Account not deleted", error.message);
+          button.disabled = false;
+          button.textContent = oldLabel;
+        }
+      }
 
       function showPasswordError(message) {
         $("passwordErrorText").textContent = message;
@@ -1735,6 +2101,11 @@
           loadSessions();
         }
 
+        if (tabName === "account-control") {
+          configureAccountControls();
+          loadEmailChangeStatus();
+        }
+
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
@@ -1788,13 +2159,24 @@
         showToast("success", "Changes discarded", "The last saved settings were restored.");
       });
       $("resetBtn").addEventListener("click", resetSettings);
-      $("exportBtn").addEventListener("click", exportSettings);
+      $("exportBtn").addEventListener("click", exportAccountData);
+      $("downloadAccountDataBtn")?.addEventListener("click", exportAccountData);
+      $("requestEmailChangeBtn")?.addEventListener("click", requestEmailChange);
+      $("cancelEmailChangeBtn")?.addEventListener("click", cancelEmailChange);
+      $("deleteAccountBtn")?.addEventListener("click", deleteAccountPermanently);
 
       window.addEventListener("beforeunload", event => {
         if (!isDirty) return;
         event.preventDefault();
         event.returnValue = "";
       });
+
+      window.ProTradeAuth?.ready
+        ?.then((user) => {
+          configureAccountControls(user);
+          loadEmailChangeStatus({ silent: true });
+        })
+        .catch(() => {});
 
       checkSystemHealth();
       loadSettings();

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Account Security | ProTrade</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:#090d10;
+      --panel:#151b20;
+      --panel-2:#1c242b;
+      --line:#303a43;
+      --text:#edf3f7;
+      --muted:#9daab4;
+      --primary:#7ca2ff;
+      --green:#4ee0a4;
+      --red:#ff827b;
+      --amber:#ffc66d;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0;
+      min-height:100vh;
+      font-family:"DM Sans",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 15% 85%, rgba(25,126,87,.18), transparent 34%),
+        radial-gradient(circle at 85% 12%, rgba(41,105,220,.22), transparent 38%),
+        var(--bg);
+    }
+    .panel {
+      background:color-mix(in srgb,var(--panel) 94%,transparent);
+      border:1px solid var(--line);
+      box-shadow:0 28px 80px rgba(0,0,0,.34);
+      backdrop-filter:blur(14px);
+    }
+    .material-symbols-outlined {
+      font-variation-settings:"FILL" 0,"wght" 500,"GRAD" 0,"opsz" 24;
+    }
+  </style>
+</head>
+<body>
+  <main class="flex min-h-screen items-center justify-center px-5 py-10">
+    <section class="panel w-full max-w-xl rounded-[28px] p-7 sm:p-9">
+      <a href="login.html" class="inline-flex items-center gap-2 text-sm font-bold" style="color:var(--muted)">
+        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+        Back to sign in
+      </a>
+
+      <div id="iconBox" class="mt-8 flex h-16 w-16 items-center justify-center rounded-2xl"
+           style="background:color-mix(in srgb,var(--primary) 16%,transparent);color:var(--primary)">
+        <span id="statusIcon" class="material-symbols-outlined text-[34px]">shield_lock</span>
+      </div>
+
+      <p class="mt-7 text-xs font-extrabold uppercase tracking-[.18em]" style="color:var(--primary)">
+        ProTrade Account Security
+      </p>
+      <h1 id="statusTitle" class="mt-3 text-3xl font-extrabold">Checking secure link…</h1>
+      <p id="statusMessage" class="mt-4 text-sm leading-7" style="color:var(--muted)">
+        Please wait while ProTrade validates this email action.
+      </p>
+
+      <div id="waitingBox" class="mt-6 hidden rounded-2xl border p-5"
+           style="border-color:color-mix(in srgb,var(--amber) 40%,var(--line));background:color-mix(in srgb,var(--amber) 8%,transparent)">
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined" style="color:var(--amber)">mark_email_unread</span>
+          <div>
+            <p class="font-extrabold">One more approval is required</p>
+            <p class="mt-1 text-sm leading-6" style="color:var(--muted)">
+              Open the other email account and use the approval link sent there.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <a id="signInButton" href="login.html" class="mt-7 hidden w-full rounded-xl px-5 py-3.5 text-center font-extrabold text-white"
+         style="background:#2877e7">
+        Sign In to ProTrade
+      </a>
+
+      <button id="retryButton" type="button" class="mt-7 hidden w-full rounded-xl border px-5 py-3.5 font-extrabold"
+              style="border-color:var(--line);background:var(--panel-2);color:var(--text)">
+        Try Again
+      </button>
+
+      <p class="mt-6 text-xs leading-6" style="color:var(--muted)">
+        Email-change links are short-lived and single-purpose. ProTrade never asks for your password on this page.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const API_URL =
+        "https://protrader-backend-n8oj.onrender.com/api/account/email-change/confirm";
+
+      const params = new URLSearchParams(window.location.search);
+      const payload = {
+        id: params.get("id") || "",
+        side: params.get("side") || "",
+        token: params.get("token") || "",
+      };
+
+      const title = document.getElementById("statusTitle");
+      const message = document.getElementById("statusMessage");
+      const icon = document.getElementById("statusIcon");
+      const iconBox = document.getElementById("iconBox");
+      const waitingBox = document.getElementById("waitingBox");
+      const signInButton = document.getElementById("signInButton");
+      const retryButton = document.getElementById("retryButton");
+
+      const setState = ({ type, heading, body, waiting = false, signIn = false, retry = false }) => {
+        title.textContent = heading;
+        message.textContent = body;
+        waitingBox.classList.toggle("hidden", !waiting);
+        signInButton.classList.toggle("hidden", !signIn);
+        retryButton.classList.toggle("hidden", !retry);
+
+        const styles = {
+          success: {
+            icon: "verified",
+            color: "var(--green)",
+            background: "color-mix(in srgb,var(--green) 14%,transparent)",
+          },
+          waiting: {
+            icon: "mark_email_read",
+            color: "var(--amber)",
+            background: "color-mix(in srgb,var(--amber) 14%,transparent)",
+          },
+          error: {
+            icon: "error",
+            color: "var(--red)",
+            background: "color-mix(in srgb,var(--red) 14%,transparent)",
+          },
+          loading: {
+            icon: "shield_lock",
+            color: "var(--primary)",
+            background: "color-mix(in srgb,var(--primary) 14%,transparent)",
+          },
+        };
+
+        const selected = styles[type] || styles.loading;
+        icon.textContent = selected.icon;
+        iconBox.style.color = selected.color;
+        iconBox.style.background = selected.background;
+      };
+
+      const confirmAction = async () => {
+        if (!payload.id || !payload.side || !payload.token) {
+          setState({
+            type: "error",
+            heading: "Invalid security link",
+            body: "This email-change link is incomplete or invalid.",
+            signIn: true,
+          });
+          return;
+        }
+
+        setState({
+          type: "loading",
+          heading: "Checking secure link…",
+          body: "Please wait while ProTrade validates this email action.",
+        });
+
+        try {
+          const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          const body = await response.json().catch(() => ({}));
+
+          if (!response.ok || body.success === false) {
+            throw new Error(body.message || "This security action could not be completed.");
+          }
+
+          if (body.completed) {
+            setState({
+              type: "success",
+              heading: "Sign-in email changed",
+              body:
+                "Both email addresses were approved. All device sessions were signed out for security. Sign in again using your new email.",
+              signIn: true,
+            });
+            return;
+          }
+
+          setState({
+            type: "waiting",
+            heading: "Approval recorded",
+            body: body.message || "Open the approval link sent to the other email address.",
+            waiting: true,
+            signIn: true,
+          });
+        } catch (error) {
+          setState({
+            type: "error",
+            heading: "Link could not be confirmed",
+            body: error.message,
+            signIn: true,
+            retry: true,
+          });
+        }
+      };
+
+      retryButton.addEventListener("click", confirmAction);
+      confirmAction();
+    })();
+  </script>
+</body>
+</html>
