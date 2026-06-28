@@ -1,21 +1,9 @@
-ProTrade professional complete website
+PROTRADE FRONTEND SECURITY ACTIVITY
 
-Open index.html first.
-
-Website pages:
-- index.html = Professional landing website
-- dashboard.html = Dashboard app
-- trades.html = Trade Log
-- calendar.html = Trading Calendar
-- analytics.html = Analytics
-- psychology.html = Psychology
-- ai-journal.html = AI Journal
-- settings.html = Settings/Profile
-
-Verified updates:
-- One matching dark theme across all dashboard pages
-- One standardized sidebar across all dashboard pages
-- One standardized top navbar across all dashboard pages
-- One standardized mobile bottom nav across all dashboard pages
-- Active menu highlight changes based on current page
-- All sidebar links connect to the correct pages
+1. Extract this ZIP.
+2. Open PowerShell in your frontend root folder:
+   C:\Users\gauta\OneDrive\Desktop\protrader-frontend-api-integrated\protrader-main
+3. Run:
+   powershell -ExecutionPolicy Bypass -File "<EXTRACTED-FOLDER>\PREPARE_UPLOAD.ps1"
+4. Open the generated UPLOAD_TO_GITHUB folder.
+5. Upload settings.html and security-activity.js to the frontend GitHub repository main branch.
