@@ -1,0 +1,9 @@
+UPLOAD ONLY THIS FILE TO THE FRONTEND GITHUB REPOSITORY:
+
+security-alerts.js
+
+Then edit settings.html on GitHub and add this line immediately before </body>:
+
+<script src="security-alerts.js"></script>
+
+Do not upload this instruction file to the repository.
