@@ -1115,3 +1115,22 @@
     }
   })();
 })();
+
+
+(() => {
+  "use strict";
+
+  if (
+    document.querySelector(
+      'script[data-protrade-new-device-login-popup]'
+    )
+  ) {
+    return;
+  }
+
+  const script = document.createElement("script");
+  script.src = "new-device-login-popup.js";
+  script.defer = true;
+  script.dataset.protradeNewDeviceLoginPopup = "true";
+  document.head.appendChild(script);
+})();
