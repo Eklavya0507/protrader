@@ -1,49 +1,51 @@
-COUNT 05 — PROTRADE CINEMATIC LANDING + BACKEND INTEGRATION
+PROTRADE NEW DASHBOARD — BACKEND INTEGRATED
 
-READY FILES
-- index.html
-- protrader-v5.css
-- protrader-v5.js
-- assets/market-motion.mp4
+UPLOAD/REPLACE THESE FILES IN FRONTEND GITHUB REPOSITORY ROOT:
+1. dashboard.html          (replace the old dashboard.html)
+2. dashboard-v2.css        (new file)
+3. dashboard-v2.js         (new file)
 
-DO NOT DELETE OR REPLACE THESE EXISTING REPOSITORY FILES
+DO NOT DELETE OR REPLACE:
 - auth.js
+- new-device-login-popup.js
 - login.html
-- register.html
-- dashboard.html
 - trades.html
 - calendar.html
 - analytics.html
 - psychology.html
 - ai-journal.html
 - settings.html
-- new-device-login-popup.js (when already uploaded)
 
-WHAT IS CONNECTED
-- Uses existing auth.js and managed session storage.
-- Signed-out buttons open login/register.
-- Signed-in users go directly to dashboard and protected app pages.
-- Feature cards connect to dashboard, trades, calendar, analytics, psychology, AI journal and settings.
-- Landing page checks the live Render backend through /api/route-test.
-- No password, token, recovery code or environment secret is included.
+BACKEND CHANGES REQUIRED:
+- None for the current integration.
+- Existing protected APIs used:
+  GET  /api/trades
+  POST /api/trades
+  GET  /api/settings
+  PUT  /api/settings
+  GET  /api/security/alerts
+  GET  /api/security/alerts/summary
 
-GITHUB WEBSITE UPLOAD
-1. Open frontend repository Eklavya0507/protrader.
-2. Add file -> Upload files.
-3. Upload index.html, protrader-v5.css and protrader-v5.js.
-4. Upload assets/market-motion.mp4 while keeping it inside the assets folder.
-5. Commit message: Add cinematic landing page backend integration
+WORKING LIVE FEATURES:
+- Managed login/session protection through auth.js
+- User profile/settings from MongoDB
+- Live trades and dashboard calculations
+- New Trade saves to MongoDB
+- Date range filtering
+- Equity and drawdown chart from real trades
+- Calendar P&L from real trades
+- Win/loss, sessions, pairs, recent trades, risk summary
+- Security alert notification count
+- Dark/light mode with backend preference save
+- Current-device logout
+- CSV/JSON import through existing POST /api/trades (up to 100 rows)
 
-VERIFY AFTER GITHUB PAGES DEPLOYS
-- Landing design loads with video and animation.
-- Backend badge changes to Backend Online.
-- Sign In opens login.html.
-- Create Account opens register.html.
-- Signed-out Open Workspace goes to login.html?next=dashboard.html.
-- After login, returning to index.html changes main buttons to Open Dashboard.
-- Feature cards correctly open their protected pages.
+CURRENT BACKEND LIMITATIONS:
+- No Account/Broker model, so All Accounts is the only real option.
+- No broker API/live balance feed; equity is startingBalance + recorded P&L.
+- No dedicated dashboard summary endpoint; calculations run in the browser.
+- Psychology confidence/stress/mood fields are not in the Trade schema.
+- No server-side duplicate detection for imported trades.
 
-BACKEND CHANGE
-No backend source change is required for this landing integration.
-Existing live backend URL used by auth.js:
-https://protrader-backend-n8oj.onrender.com/api
+COMMIT MESSAGE:
+Replace dashboard with backend integrated dashboard
