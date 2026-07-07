@@ -1,61 +1,48 @@
-PROTRADE — DASHBOARD + TRADES BACKEND-CORRECTED PACKAGE
+PROTRADE — CALENDAR + PERFORMANCE BACKEND CORRECTED
 
-UPLOAD THESE FILES TO THE ROOT OF THE FRONTEND GITHUB REPOSITORY:
-- dashboard.html
-- trades.html
-- styles.css
-- dashboard.js
-- trades.js
-- assets/avatar.jpg
+UPLOAD TO FRONTEND REPOSITORY ROOT
+- calendar.html  (replace existing calendar.html)
+- calendar.css   (new/replace)
+- calendar.js    (new/replace)
 
-DO NOT UPLOAD OR REPLACE:
-- index.html (keep the cinematic landing page)
+DO NOT UPLOAD THIS README IF YOU DO NOT WANT IT IN THE REPOSITORY.
+DO NOT DELETE OR REPLACE:
 - auth.js
 - new-device-login-popup.js
-- login.html
-- register.html
+- dashboard.html
+- trades.html
 - settings.html
-- calendar.html
 - analytics.html
 - psychology.html
 - ai-journal.html
+- index.html
 
-BACKEND STATUS
-No backend code change is required for the core corrected version.
-It uses existing protected endpoints:
-- GET/POST /api/trades
-- GET/PUT/DELETE /api/trades/:id
-- GET/PUT /api/settings
-- GET /api/security/alerts/summary
+COMMIT MESSAGE
+Replace calendar with backend integrated performance dashboard
 
-CORRECTIONS INCLUDED
-- Existing auth.js session protection and refresh-token flow
-- Real MongoDB trades instead of demo rows
-- Real add/edit/delete/rating operations
-- Real dashboard KPIs, calendar, equity, pair/session analysis and recent trades
-- Real settings/profile/theme/currency/starting balance
-- Real security-alert unread count
-- Real CSV/JSON import and export
-- Valid backend enum mapping (Asian instead of Tokyo)
-- Removed fake broker/account filtering; current data uses All Accounts
-- No LocalStorage is used for trade data (theme bootstrap only; theme is saved to settings API)
+BACKEND ROUTES USED
+GET  /api/trades
+POST /api/trades
+GET  /api/settings
+PUT  /api/settings
+GET  /api/security/alerts/summary
 
-CURRENT BACKEND LIMITATIONS SHOWN AS “NOT TRACKED”
-These UI fields are not present in the current Trade schema:
-- confidence, stress, mood/emotion
-- ruleViolation
-- timeframe
-- MAE and MFE
-- tradingAccount / brokerAccount
-- direct screenshot file upload (current schema stores screenshotUrl only)
+NO BACKEND CHANGE IS REQUIRED FOR THE INCLUDED FEATURES.
 
-OPTIONAL FUTURE BACKEND FILES NEEDED FOR THOSE FEATURES
-- models/TradingAccount.js
-- controllers/tradingAccountController.js
-- routes/tradingAccountRoutes.js
-- server.js route mount
-- models/Trade.js additions for psychology/risk/timeframe/MAE/MFE/account reference
-- Upload controller/routes plus storage provider for direct screenshots
+IMPORTANT CURRENT BACKEND LIMITATIONS
+1. There is no TradingAccount/BrokerAccount model, so only All Accounts is real.
+2. There is no manual/imported source field on Trade, so the static trade-type filter was replaced with a real result filter.
+3. There is no direct image upload route. The trade form stores screenshotUrl only.
+4. Import has no duplicate detector. Do not import the same file twice.
+5. Risk Management and Reports do not have separate pages yet; their sidebar links open analytics.html.
+6. Journal equity is calculated as startingBalance + recorded profitLoss. It is not live broker equity.
 
-RECOMMENDED FRONTEND COMMIT MESSAGE
-Replace dashboard and trades with backend integrated framework
+LIVE TEST
+1. Open https://eklavya0507.github.io/protrader/calendar.html in a fresh private window.
+2. Signed-out users must be redirected to login.html?next=calendar.html.
+3. Login and confirm the status says "X trades synced from MongoDB".
+4. Confirm month/quarter/year views use real trades.
+5. Add a test trade and refresh. It must remain in the calendar and trades.html.
+6. Test 1W/1M/3M/6M/1Y/All performance ranges.
+7. Test theme and refresh. The selected theme should be saved through Settings API.
+8. Delete the test trade from trades.html after testing.
