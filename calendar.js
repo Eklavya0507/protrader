@@ -278,29 +278,32 @@
   };
 
   const applyTheme = (theme, animate = false, saveRemote = false) => {
-    const normalized = String(theme || "").toLowerCase() === "light" ? "light" : "dark";
-    state.theme = normalized;
-    document.documentElement.dataset.theme = normalized;
-    localStorage.setItem("protrade-theme", normalized);
-    syncThemeControls(normalized);
+    const choice = String(theme || "Dark").toLowerCase();
+    const resolved = choice === "system"
+      ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      : choice === "light" ? "light" : "dark";
+    state.theme = choice;
+    document.documentElement.dataset.theme = resolved;
+    localStorage.setItem("protrade-theme", choice);
+    syncThemeControls(resolved);
 
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute("content", normalized === "dark" ? "#02060c" : "#f3f7fb");
+      ?.setAttribute("content", resolved === "dark" ? "#06111f" : "#f5f9fc");
 
-    if (animate) runThemeAnimation();
-    window.requestAnimationFrame(drawPerformanceChart);
+    if (animate) animateThemeTransition();
 
     if (saveRemote) {
+      const remoteTheme = choice === "system" ? "System" : resolved === "dark" ? "Dark" : "Light";
       apiJson(ENDPOINTS.settings, {
         method: "PUT",
-        body: JSON.stringify({ theme: normalized === "dark" ? "Dark" : "Light" }),
+        body: JSON.stringify({ theme: remoteTheme }),
       }).catch((error) => toast("Theme not synced", error.message));
     }
   };
 
   const toggleTheme = () => {
-    const nextTheme = state.theme === "dark" ? "light" : "dark";
+    const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
     applyTheme(nextTheme, true, true);
     toast("Theme changed", `${nextTheme === "dark" ? "Dark" : "Light"} mode enabled.`);
   };

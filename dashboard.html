@@ -33,6 +33,9 @@
 <button class="nav-item" data-page="Analytics" data-route="analytics.html" type="button">
 <span class="nav-icon">⌁</span><span>Analytics</span><small class="pro-pill">Pro</small>
 </button>
+<button class="nav-item" data-page="Performance" data-route="analytics.html" type="button">
+<span class="nav-icon">▥</span><span>Performance</span>
+</button>
 <button class="nav-item" data-page="Risk Management" data-route="analytics.html" type="button">
 <span class="nav-icon">◇</span><span>Risk Management</span>
 </button>
@@ -45,6 +48,9 @@
 <button class="nav-item" data-page="Reports" data-route="analytics.html" type="button">
 <span class="nav-icon">▧</span><span>Reports</span>
 </button>
+<button class="nav-item" id="importTradesBtn" type="button">
+<span class="nav-icon">⇩</span><span>Import Trades</span>
+</button>
 <input accept=".csv,.json" hidden="" id="importTradesInput" type="file"/>
 <button class="nav-item" data-page="Settings" data-route="settings.html" type="button">
 <span class="nav-icon">⚙</span><span>Settings</span>
@@ -53,7 +59,7 @@
 <div class="sidebar-bottom">
 <div class="profile-wrap">
 <button class="profile-card" id="profileBtn" type="button">
-<img alt="Trader profile" src="assets/avatar.jpg"/>
+<span class="avatar auth-user-initials">T</span>
 <span class="profile-copy"><strong class="auth-user-name">Trader</strong><small id="profileRole">Independent Trader</small></span>
 <span>⌄</span>
 </button>
@@ -68,8 +74,8 @@
 <span>Account Balance</span>
 <button aria-label="Hide or show balance" class="ghost-icon" id="balanceVisibilityBtn" type="button">◉</button>
 </div>
-<strong id="sidebarBalance">$12,540.00</strong>
-<div class="equity-block"><span>Equity</span><b id="sidebarEquity">$13,214.75</b></div>
+<strong id="sidebarBalance">—</strong>
+<div class="equity-block"><span>Equity</span><b id="sidebarEquity">—</b></div>
 <div class="broker-block"><span>Data Source</span><strong id="dataSourceLabel">MongoDB Journal</strong><i></i></div>
 </div>
 <div class="theme-card">
@@ -89,7 +95,7 @@
 </div>
 </div>
 <div class="header-actions">
-<button class="header-control" id="dateRangeBtn" type="button"><span id="dateRangeLabel">08 Jun 2026 - 07 Jul 2026</span><span>▦</span></button>
+<button class="header-control" id="dateRangeBtn" type="button"><span id="dateRangeLabel">Last 30 Days</span><span>▦</span></button>
 <div class="dropdown-wrap">
 <button class="header-control" id="accountSelectorBtn" type="button"><span id="accountLabel">All Accounts</span><span>⌄</span></button>
 <div class="popover dropdown-popover" hidden="" id="accountPopover"><button data-account="All Accounts" type="button">All Accounts</button></div>
@@ -112,53 +118,53 @@
 <section class="dash-kpi-grid">
 <button class="dash-kpi-card" data-dash-metric="Total Balance" type="button">
 <div class="dash-kpi-top"><span class="dash-icon purple">▣</span><span>Total Balance</span></div>
-<strong id="kpiTotalBalance">$12,540.00</strong>
-<small class="positive" id="kpiTotalBalanceNote">↗ 12.54% <em>vs last month</em></small>
+<strong id="kpiTotalBalance">—</strong>
+<small class="positive" id="kpiTotalBalanceNote">Loading…</small>
 </button>
 <button class="dash-kpi-card" data-dash-metric="Today's P&amp;L" type="button">
 <div class="dash-kpi-top"><span class="dash-icon green">$</span><span>Today's P&amp;L</span></div>
-<strong class="positive" id="kpiTodayPnl">+$120.00</strong>
-<small class="positive" id="kpiTodayPnlNote">↗ 0.96%</small>
+<strong class="positive" id="kpiTodayPnl">—</strong>
+<small class="positive" id="kpiTodayPnlNote">Loading…</small>
 </button>
 <button class="dash-kpi-card" data-dash-metric="This Week P&amp;L" type="button">
 <div class="dash-kpi-top"><span class="dash-icon violet">↗</span><span>This Week P&amp;L</span></div>
-<strong class="positive" id="kpiWeekPnl">+$420.00</strong>
-<small class="positive" id="kpiWeekPnlNote">↗ 3.45%</small>
+<strong class="positive" id="kpiWeekPnl">—</strong>
+<small class="positive" id="kpiWeekPnlNote">Loading…</small>
 </button>
 <button class="dash-kpi-card" data-dash-metric="This Month P&amp;L" type="button">
 <div class="dash-kpi-top"><span class="dash-icon cyan">◉</span><span>This Month P&amp;L</span></div>
-<strong class="positive" id="kpiMonthPnl">+$1,380.00</strong>
-<small class="positive" id="kpiMonthPnlNote">↗ 12.39%</small>
+<strong class="positive" id="kpiMonthPnl">—</strong>
+<small class="positive" id="kpiMonthPnlNote">Loading…</small>
 </button>
 <button class="dash-kpi-card" data-dash-metric="Win Rate" type="button">
 <div class="dash-kpi-top"><span class="dash-icon red">◎</span><span>Win Rate</span></div>
-<strong id="kpiWinRate">63.04%</strong>
-<small id="kpiWinRateNote"><span class="positive">145W</span> / <span class="negative">73L</span></small>
+<strong id="kpiWinRate">—</strong>
+<small id="kpiWinRateNote">Loading…</small>
 </button>
 <button class="dash-kpi-card" data-dash-metric="Profit Factor" type="button">
 <div class="dash-kpi-top"><span class="dash-icon amber">◔</span><span>Profit Factor</span></div>
-<strong id="kpiProfitFactor">2.41</strong>
-<small class="positive" id="kpiProfitFactorNote">Good</small>
+<strong id="kpiProfitFactor">—</strong>
+<small class="positive" id="kpiProfitFactorNote">Loading…</small>
 </button>
 <button class="dash-kpi-card" data-dash-metric="Expectancy" type="button">
 <div class="dash-kpi-top"><span class="dash-icon violet">Σ</span><span>Expectancy</span></div>
-<strong id="kpiExpectancy">0.82R</strong>
-<small id="kpiExpectancyNote">Per Trade</small>
+<strong id="kpiExpectancy">—</strong>
+<small id="kpiExpectancyNote">Loading…</small>
 </button>
 <button class="dash-kpi-card" data-dash-metric="Avg RR" type="button">
 <div class="dash-kpi-top"><span class="dash-icon cyan">♧</span><span>Avg RR</span></div>
-<strong id="kpiAvgRR">1:2.4</strong>
-<small id="kpiAvgRRNote">Risk : Reward</small>
+<strong id="kpiAvgRR">—</strong>
+<small id="kpiAvgRRNote">Loading…</small>
 </button>
 <button class="dash-kpi-card" data-dash-metric="Win Streak" type="button">
 <div class="dash-kpi-top"><span class="dash-icon green">⌁</span><span>Win Streak</span></div>
-<strong id="kpiWinStreak">6</strong>
-<small class="positive" id="kpiWinStreakNote">Best: 9</small>
+<strong id="kpiWinStreak">—</strong>
+<small class="positive" id="kpiWinStreakNote">Loading…</small>
 </button>
 <button class="dash-kpi-card" data-dash-metric="Max Drawdown" type="button">
 <div class="dash-kpi-top"><span class="dash-icon red">↓</span><span>Max Drawdown</span></div>
-<strong id="kpiMaxDrawdown">4.80%</strong>
-<small class="negative" id="kpiMaxDrawdownNote">-$602.00</small>
+<strong id="kpiMaxDrawdown">—</strong>
+<small class="negative" id="kpiMaxDrawdownNote">Loading…</small>
 </button>
 </section>
 <section class="dash-hero-grid">
@@ -184,7 +190,7 @@
 <div class="dash-panel-head">
 <h3>Monthly Performance</h3>
 <div class="dash-calendar-nav">
-<strong id="dashCalendarTitle">May 2024</strong>
+<strong id="dashCalendarTitle">Current Month</strong>
 <button id="dashPrevMonth" type="button">‹</button>
 <button id="dashNextMonth" type="button">›</button>
 </div>
@@ -204,21 +210,16 @@
 <div class="dash-donut-layout">
 <div class="dash-donut" id="dashWinLossDonut"><div></div></div>
 <div class="dash-donut-legend">
-<p><i class="dash-dot green"></i><span>Winning Trades<small id="dashWinsLegend">145 (63.0%)</small></span></p>
-<p><i class="dash-dot red"></i><span>Losing Trades<small id="dashLossesLegend">73 (31.7%)</small></span></p>
-<p><i class="dash-dot gray"></i><span>Breakeven<small id="dashBreakevenLegend">11 (5.3%)</small></span></p>
+<p><i class="dash-dot green"></i><span>Winning Trades<small id="dashWinsLegend">0 (0.0%)</small></span></p>
+<p><i class="dash-dot red"></i><span>Losing Trades<small id="dashLossesLegend">0 (0.0%)</small></span></p>
+<p><i class="dash-dot gray"></i><span>Breakeven<small id="dashBreakevenLegend">0 (0.0%)</small></span></p>
 </div>
 </div>
-<div class="dash-panel-footer"><span>Total Trades</span><strong id="dashTotalTrades">229</strong></div>
+<div class="dash-panel-footer"><span>Total Trades</span><strong id="dashTotalTrades">0</strong></div>
 </article>
 <article class="panel dash-mini-panel">
 <h3>Session Analysis</h3>
-<div class="dash-bars" id="dashSessionBars">
-<div><span>London</span><div><i style="--w:63.5%"></i></div><strong>63.5%</strong></div>
-<div><span>New York</span><div><i style="--w:58.2%"></i></div><strong>58.2%</strong></div>
-<div><span>London + NY</span><div><i style="--w:64.8%"></i></div><strong>64.8%</strong></div>
-<div><span>Asian</span><div class="orange"><i style="--w:42.1%"></i></div><strong>42.1%</strong></div>
-</div>
+<div class="dash-bars" id="dashSessionBars"><p class="empty-row">Loading session performance…</p></div>
 </article>
 <article class="panel dash-mini-panel">
 <h3>Top Pairs</h3>
@@ -231,12 +232,7 @@
 <article class="panel dash-mini-panel">
 <h3>Time Analysis</h3>
 <div class="dash-time-layout">
-<div class="dash-time-stats" id="dashTimeStats">
-<p><span>Best Hour</span><strong class="positive">9:00 AM</strong></p>
-<p><span>Worst Hour</span><strong class="negative">3:00 PM</strong></p>
-<p><span>Best Day</span><strong class="positive">Tuesday</strong></p>
-<p><span>Worst Day</span><strong class="negative">Friday</strong></p>
-</div>
+<div class="dash-time-stats" id="dashTimeStats"><p><span>Market timing</span><strong>Loading…</strong></p></div>
 <div class="dash-heat-wrap">
 <div class="dash-heat-head"><span></span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span></div>
 <div class="dash-heat-grid" id="dashHeatGrid"></div>
@@ -248,25 +244,13 @@
 <article class="panel dash-risk-panel">
 <h3>Risk Management</h3>
 <div class="dash-risk-layout">
-<div class="dash-risk-stats" id="dashRiskStats">
-<p><span>Average Risk %</span><strong class="positive">0.83%</strong></p>
-<p><span>Highest Risk %</span><strong class="positive">2.00%</strong></p>
-<p><span>Average Lot Size</span><strong>0.42</strong></p>
-<p><span>Risk / Reward Ratio</span><strong>1:2.4</strong></p>
-<p><span>Rule Violations</span><strong class="negative">5</strong></p>
-</div>
+<div class="dash-risk-stats" id="dashRiskStats"><p><span>Risk metrics</span><strong>Loading…</strong></p></div>
 <div class="dash-risk-chart-wrap"><canvas id="dashRiskChart"></canvas></div>
 </div>
 </article>
 <article class="panel dash-psych-panel">
 <h3>Psychology Overview</h3>
-<div class="dash-psych-list" id="dashPsychList">
-<p><span>Avg Confidence</span><strong>3.4 / 10</strong></p>
-<p><span>Avg Stress</span><strong>6.1 / 10</strong></p>
-<p><span>Best Mood</span><strong class="positive">Calm</strong></p>
-<p><span>Most Common Mistake</span><strong class="orange-text">FOMO</strong></p>
-<p><span>Most Emotional Day</span><strong class="negative">Friday</strong></p>
-</div>
+<div class="dash-psych-list" id="dashPsychList"><p><span>Psychology metrics</span><strong>Loading…</strong></p></div>
 </article>
 <article class="panel dash-recent-panel">
 <h3>Recent Trades</h3>
@@ -281,23 +265,23 @@
 </section>
 <footer class="bottom-summary">
 <div class="quote"><span class="diamond">◇</span><span>Discipline is the bridge between goals and accomplishment.</span></div>
-<div class="summary-stat"><small>Total Trades</small><strong id="footerTotalTrades">229</strong></div>
-<div class="summary-stat"><small>Profitable Trades</small><strong class="positive" id="footerWins">145 <em>(63.0%)</em></strong></div>
-<div class="summary-stat"><small>Losing Trades</small><strong class="negative" id="footerLosses">73 <em>(31.7%)</em></strong></div>
-<div class="summary-stat"><small>Breakeven</small><strong id="footerBreakeven">11 <em>(5.3%)</em></strong></div>
+<div class="summary-stat"><small>Total Trades</small><strong id="footerTotalTrades">0</strong></div>
+<div class="summary-stat"><small>Profitable Trades</small><strong class="positive" id="footerWins">0</strong></div>
+<div class="summary-stat"><small>Losing Trades</small><strong class="negative" id="footerLosses">0</strong></div>
+<div class="summary-stat"><small>Breakeven</small><strong id="footerBreakeven">0</strong></div>
 </footer>
 </main>
 </div>
 <div class="modal-backdrop" hidden="" id="dateModal">
 <form class="modal" id="dateForm">
 <div class="modal-head"><div><h3>Select Date Range</h3><p>Update the reporting period.</p></div><button data-close="dateModal" type="button">×</button></div>
-<div class="form-grid"><label>Start Date<input id="startDate" required="" type="date" value="2026-06-08"/></label><label>End Date<input id="endDate" required="" type="date" value="2026-07-07"/></label></div>
+<div class="form-grid"><label>Start Date<input id="startDate" required="" type="date"/></label><label>End Date<input id="endDate" required="" type="date"/></label></div>
 <div class="modal-actions"><button class="secondary" data-close="dateModal" type="button">Cancel</button><button class="primary" type="submit">Apply</button></div>
 </form>
 </div>
 <div class="modal-backdrop" hidden="" id="tradeModal">
 <form class="modal wide-modal" id="tradeForm">
-<div class="modal-head"><div><h3>Add New Trade</h3><p>Create a new trade record.</p></div><button data-close="tradeModal" type="button">×</button></div><div class="form-grid three"><label>Trade Date<input id="tradeDate" name="tradeDate" required="" type="date"/></label><label>Symbol<input id="symbol" name="symbol" required="" type="text" value="EURUSD"/></label><label>Direction<select id="direction" name="direction"><option value="Long">Long</option><option value="Short">Short</option></select></label><label>Session<select id="session" name="session"><option value="Asian">Asian</option><option value="London">London</option><option value="New York">New York</option><option value="Other">Other</option></select></label><label>Strategy / Model<input id="model" name="model" type="text"/></label><label>Protocol<input id="protocol" name="protocol" type="text"/></label><label>Entry Time<input id="entryTime" name="entryTime" type="time"/></label><label>Exit Time<input id="exitTime" name="exitTime" type="time"/></label><label>Entry Price<input id="entryPrice" name="entryPrice" required="" step="any" type="number"/></label><label>Exit Price<input id="exitPrice" name="exitPrice" step="any" type="number"/></label><label>Stop Loss<input id="stopLoss" name="stopLoss" step="any" type="number"/></label><label>Take Profit<input id="takeProfit" name="takeProfit" step="any" type="number"/></label><label>Quantity<input id="quantity" name="quantity" step="any" type="number" value="1"/></label><label>Commission<input id="commission" name="commission" step="any" type="number" value="0"/></label><label>Net P&amp;L<input id="profitLoss" name="profitLoss" step="any" type="number" value="0"/></label><label>R Multiple<input id="rr" name="rr" step="any" type="number" value="0"/></label><label>Result<select id="result" name="result"><option value="Open">Open</option><option value="Win">Win</option><option value="Loss">Loss</option><option value="Breakeven">Breakeven</option></select></label><label>Rating<select id="rating" name="rating"><option value="">No rating</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label><label>Screenshot URL<input id="screenshotUrl" name="screenshotUrl" type="url"/></label><label class="full-span">Notes<textarea id="notes" maxlength="5000" name="notes" rows="3"></textarea></label></div>
+<div class="modal-head"><div><h3>Add New Trade</h3><p>Create a new trade record.</p></div><button data-close="tradeModal" type="button">×</button></div><div class="form-grid three"><label>Trade Date<input id="tradeDate" name="tradeDate" required="" type="date"/></label><label>Symbol<input id="symbol" name="symbol" placeholder="EURUSD" required="" type="text"/></label><label>Direction<select id="direction" name="direction"><option value="Long">Long</option><option value="Short">Short</option></select></label><label>Session<select id="session" name="session"><option value="Asian">Asian</option><option value="London">London</option><option value="New York">New York</option><option value="Other">Other</option></select></label><label>Strategy / Model<input id="model" name="model" type="text"/></label><label>Protocol<input id="protocol" name="protocol" type="text"/></label><label>Entry Time<input id="entryTime" name="entryTime" type="time"/></label><label>Exit Time<input id="exitTime" name="exitTime" type="time"/></label><label>Entry Price<input id="entryPrice" name="entryPrice" required="" step="any" type="number"/></label><label>Exit Price<input id="exitPrice" name="exitPrice" step="any" type="number"/></label><label>Stop Loss<input id="stopLoss" name="stopLoss" step="any" type="number"/></label><label>Take Profit<input id="takeProfit" name="takeProfit" step="any" type="number"/></label><label>Quantity<input id="quantity" name="quantity" step="any" type="number" value="1"/></label><label>Commission<input id="commission" name="commission" step="any" type="number" value="0"/></label><label>Net P&amp;L<input id="profitLoss" name="profitLoss" step="any" type="number" value="0"/></label><label>R Multiple<input id="rr" name="rr" step="any" type="number" value="0"/></label><label>Result<select id="result" name="result"><option value="Open">Open</option><option value="Win">Win</option><option value="Loss">Loss</option><option value="Breakeven">Breakeven</option></select></label><label>Rating<select id="rating" name="rating"><option value="">No rating</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label><label>Screenshot URL<input id="screenshotUrl" name="screenshotUrl" type="url"/></label><label class="full-span">Notes<textarea id="notes" maxlength="5000" name="notes" rows="3"></textarea></label></div>
 <div class="modal-actions"><button class="secondary" data-close="tradeModal" type="button">Cancel</button><button class="primary" type="submit">Save Trade</button></div>
 </form>
 </div>

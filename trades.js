@@ -219,18 +219,24 @@
     const name = state.settings.fullName || user.name || "Trader";
     const role = state.settings.tradingRole || "Independent Trader";
     $$(".auth-user-name").forEach((node) => { node.textContent = name; });
+    const userInitials = name.trim().split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "T";
+    $$(".auth-user-initials").forEach((node) => { node.textContent = userInitials; });
     setText("#profileRole", role);
   };
 
   const applyTheme = (theme, saveRemote = false) => {
-    const normalized = String(theme || "").toLowerCase() === "light" ? "light" : "dark";
-    document.documentElement.dataset.theme = normalized;
-    setText("#themeLabel", normalized === "dark" ? "Dark Mode" : "Light Mode");
-    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", normalized === "dark" ? "#06111f" : "#f5f9fc");
-    window.localStorage.setItem("protrade-theme", normalized);
+    const choice = String(theme || "Dark").toLowerCase();
+    const resolved = choice === "system"
+      ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      : choice === "light" ? "light" : "dark";
+    document.documentElement.dataset.theme = resolved;
+    setText("#themeLabel", choice === "system" ? `System · ${resolved === "dark" ? "Dark" : "Light"}` : resolved === "dark" ? "Dark Mode" : "Light Mode");
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", resolved === "dark" ? "#06111f" : "#f5f9fc");
+    window.localStorage.setItem("protrade-theme", choice);
     requestAnimationFrame(drawEquitySpark);
     if (saveRemote) {
-      apiJson(ENDPOINTS.settings, { method:"PUT", body:JSON.stringify({ theme: normalized === "dark" ? "Dark" : "Light" }) })
+      const remoteTheme = choice === "system" ? "System" : resolved === "dark" ? "Dark" : "Light";
+      apiJson(ENDPOINTS.settings, { method:"PUT", body:JSON.stringify({ theme: remoteTheme }) })
         .catch((error) => toast("Theme not synced", error.message));
     }
   };

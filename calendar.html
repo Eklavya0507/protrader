@@ -1,217 +1,194 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+
+<html data-theme="light" lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#02060c" />
-  <title>ProTrade — Calendar & Performance</title>
-  <link rel="stylesheet" href="calendar.css" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="#f5f9fc" name="theme-color"/>
+<title>ProTrade — Calendar &amp; Performance</title>
+<link href="calendar.css" rel="stylesheet"/>
 </head>
 <body>
-  <div class="app">
-    <aside class="sidebar" id="sidebar">
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-        <div><h1>ProTrade</h1><p>TRADING JOURNAL</p></div>
-      </div>
-
-      <nav class="nav" aria-label="Main navigation">
-        <button class="nav-item" type="button" data-route="dashboard.html"><span class="nav-icon">▣</span><span>Dashboard</span></button>
-        <button class="nav-item" type="button" data-route="trades.html"><span class="nav-icon">↻</span><span>Trades</span></button>
-        <button class="nav-item active" type="button" data-route="calendar.html"><span class="nav-icon">▦</span><span>Calendar</span><span class="nav-tail">›</span></button>
-        <button class="nav-item" type="button" data-route="analytics.html"><span class="nav-icon">⌁</span><span>Analytics</span><small class="pro-badge">Pro</small></button>
-        <button class="nav-item" type="button" data-route="analytics.html"><span class="nav-icon">◇</span><span>Risk Management</span></button>
-        <button class="nav-item" type="button" data-route="psychology.html"><span class="nav-icon">♡</span><span>Psychology</span></button>
-        <button class="nav-item" type="button" data-route="ai-journal.html"><span class="nav-icon">▤</span><span>Journal</span></button>
-        <button class="nav-item" type="button" data-route="analytics.html"><span class="nav-icon">▧</span><span>Reports</span></button>
-        <button class="nav-item" id="importBtn" type="button"><span class="nav-icon">⇩</span><span>Import Trades</span></button>
-        <input id="importFile" type="file" accept=".csv,.json,application/json,text/csv" hidden />
-        <button class="nav-item" type="button" data-route="settings.html"><span class="nav-icon">⚙</span><span>Settings</span></button>
-      </nav>
-
-      <div class="sidebar-spacer"></div>
-
-      <div class="profile-wrap">
-        <button class="profile-card" id="profileBtn" type="button">
-          <span class="avatar auth-user-initials">T</span>
-          <span class="profile-copy"><strong class="auth-user-name" id="sidebarProfileName">Trader</strong><small id="profileRole">Independent Trader</small></span>
-          <span>⌄</span>
-        </button>
-        <div class="popover profile-popover" id="profilePopover" hidden>
-          <button type="button" data-profile-action="settings">My Profile</button>
-          <button type="button" data-profile-action="settings">Account Settings</button>
-          <button type="button" data-profile-action="logout" data-auth-logout>Sign Out</button>
-        </div>
-      </div>
-
-      <div class="account-card">
-        <div class="account-title"><span>Journal Balance</span><button class="icon-btn" id="balanceBtn" type="button" aria-label="Hide or show balance">◉</button></div>
-        <strong id="balanceValue">—</strong>
-        <div class="account-equity"><span>Journal Equity</span><b id="equityValue">—</b></div>
-        <div class="account-broker"><span>Source</span><b>MongoDB Journal</b><i></i></div>
-      </div>
-
-      <div class="theme-card">
-        <div class="theme-card-copy"><strong>Appearance</strong><span id="themeLabel">Dark Mode</span></div>
-        <button class="theme-switch animated-theme-switch" id="themeSwitch" data-theme-toggle type="button" role="switch" aria-checked="true" aria-label="Switch to light mode">
-          <span class="theme-track-icon theme-sun">☀</span><span class="theme-track-icon theme-moon">☾</span>
-          <span class="theme-knob"><span class="knob-sun">☀</span><span class="knob-moon">☾</span></span>
-        </button>
-      </div>
-    </aside>
-
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <main class="main">
-      <header class="topbar">
-        <div class="welcome">
-          <button class="mobile-menu" id="mobileMenuBtn" type="button">☰</button>
-          <div><h2>Welcome back, <span class="auth-user-name">Trader</span> 👑</h2><p id="calendarStatus">Connecting securely to ProTrade…</p></div>
-        </div>
-
-        <div class="top-actions">
-          <button class="header-btn" id="dateRangeBtn" type="button"><span id="dateRangeText">Last 30 days</span><span>▦</span></button>
-          <div class="account-wrap">
-            <button class="header-btn" id="accountBtn" type="button"><span id="accountText">All Accounts</span><span>⌄</span></button>
-            <div class="popover account-popover" id="accountPopover" hidden>
-              <button type="button" data-account="All Accounts">All Accounts</button>
-              <p class="account-note">Separate broker accounts need a future backend model.</p>
-            </div>
-          </div>
-
-          <button class="header-theme-toggle animated-theme-switch" id="headerThemeSwitch" data-theme-toggle type="button" role="switch" aria-checked="true" aria-label="Switch to light mode" title="Switch Light / Dark Mode">
-            <span class="header-theme-label" id="headerThemeLabel">Dark</span>
-            <span class="theme-track"><span class="theme-track-icon theme-sun">☀</span><span class="theme-track-icon theme-moon">☾</span><span class="theme-knob"><span class="knob-sun">☀</span><span class="knob-moon">☾</span></span></span>
-          </button>
-
-          <button class="notification-btn" id="notificationBtn" type="button" aria-label="Security alerts">♧<span id="notificationBadge">0</span></button>
-          <button class="new-trade-btn" id="newTradeBtn" type="button">＋ New Trade</button>
-        </div>
-      </header>
-
-      <section class="center-content">
-        <section class="calendar-shell">
-          <div class="calendar-header">
-            <div class="calendar-title">
-              <div class="calendar-title-row"><button id="previousPeriodBtn" type="button">‹</button><h3 id="periodTitle">Calendar</h3><button id="nextPeriodBtn" type="button">›</button></div>
-              <p>Real MongoDB trades reviewed by month, quarter, or year.</p>
-            </div>
-
-            <div class="calendar-controls">
-              <select class="calendar-control" id="calendarAccountFilter" aria-label="Trading account"><option>All Accounts</option></select>
-              <select class="calendar-control" id="calendarResultFilter" aria-label="Result filter">
-                <option value="all">All Results</option><option value="win">Win</option><option value="loss">Loss</option><option value="breakeven">Breakeven</option><option value="open">Open</option>
-              </select>
-              <div class="view-switch" id="viewSwitch"><button class="active" type="button" data-view="month">M</button><button type="button" data-view="quarter">Q</button><button type="button" data-view="year">Y</button></div>
-            </div>
-          </div>
-
-          <div class="summary-chips">
-            <span class="summary-chip green">▲ Win: <b id="winChip">0</b></span>
-            <span class="summary-chip red">▼ Loss: <b id="lossChip">0</b></span>
-            <span class="summary-chip blue">Trades: <b id="tradeChip">0</b></span>
-          </div>
-
-          <div class="week-cards" id="weekCards"></div>
-          <div class="calendar-content">
-            <div class="month-view" id="monthView"><div class="weekday-row"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div><div class="calendar-grid" id="calendarGrid"></div></div>
-            <div class="quarter-view" id="quarterView"></div>
-            <div class="year-view" id="yearView"></div>
-          </div>
-        </section>
-
-        <section class="performance-dashboard" id="performanceDashboard">
-          <div class="performance-section-head">
-            <div><span class="performance-eyebrow">CALENDAR INSIGHTS</span><h3>PERFORMANCE DASHBOARD</h3><p>Profitability, consistency, strategy and symbol insights calculated from your journal.</p></div>
-            <div class="performance-range-tabs" id="performanceRangeTabs">
-              <button type="button" data-performance-range="1W">1W</button><button class="active" type="button" data-performance-range="1M">1M</button><button type="button" data-performance-range="3M">3M</button><button type="button" data-performance-range="6M">6M</button><button type="button" data-performance-range="1Y">1Y</button><button type="button" data-performance-range="ALL">All</button>
-            </div>
-          </div>
-
-          <div class="performance-metrics">
-            <button class="performance-metric-card" type="button" data-performance-metric="Total Net Profit"><small>Total Net Profit</small><strong id="performanceNetProfit">—</strong></button>
-            <button class="performance-metric-card" type="button" data-performance-metric="Total Trades"><small>Total Trades</small><strong id="performanceTotalTrades">0</strong></button>
-            <button class="performance-metric-card" type="button" data-performance-metric="Win Rate"><small>Win Rate</small><strong id="performanceWinRate">0.0%</strong></button>
-            <button class="performance-metric-card" type="button" data-performance-metric="Profit Factor"><small>Profit Factor</small><strong id="performanceProfitFactor">0.00</strong></button>
-            <button class="performance-metric-card" type="button" data-performance-metric="Average R"><small>Average R</small><strong id="performanceAverageR">0.00R</strong></button>
-            <button class="performance-metric-card performance-next-card" id="performanceNextRangeBtn" type="button" aria-label="Select next time range">›</button>
-          </div>
-
-          <div class="performance-main-grid">
-            <article class="performance-panel performance-equity-panel"><div class="performance-panel-head"><h4>Equity Curve</h4><small id="performanceRangeLabel">1 Month</small></div><div class="performance-chart-wrap"><canvas id="performanceEquityChart"></canvas></div></article>
-            <article class="performance-panel performance-heatmap-panel">
-              <div class="performance-panel-head"><h4>Performance by Day</h4><small>8 recent weeks</small></div>
-              <div class="performance-heatmap-grid" id="performanceHeatmapGrid"></div>
-              <div class="performance-heatmap-legend"><span><i class="loss"></i>Loss</span><span><i class="breakeven"></i>Breakeven</span><span><i class="win"></i>Win</span></div>
-            </article>
-          </div>
-
-          <div class="performance-bottom-grid">
-            <article class="performance-panel performance-small-panel">
-              <div class="performance-panel-head"><h4>Win / Loss Ratio</h4><small id="performanceTradeCaption">0 trades</small></div>
-              <div class="performance-donut-layout"><div class="performance-donut" id="performanceDonut"></div><div class="performance-donut-legend"><p><i class="performance-dot win"></i><span id="performanceWins">Win 0 (0.0%)</span></p><p><i class="performance-dot loss"></i><span id="performanceLosses">Loss 0 (0.0%)</span></p><p><i class="performance-dot breakeven"></i><span id="performanceBreakeven">Breakeven 0 (0.0%)</span></p></div></div>
-            </article>
-            <article class="performance-panel performance-small-panel"><div class="performance-panel-head"><h4>Top Strategies</h4><small>By net profit</small></div><div class="performance-ranking" id="topStrategies"><p class="empty-ranking">No strategy data yet.</p></div></article>
-            <article class="performance-panel performance-small-panel"><div class="performance-panel-head"><h4>Top Symbols</h4><small>By net profit</small></div><div class="performance-ranking" id="topSymbols"><p class="empty-ranking">No symbol data yet.</p></div></article>
-          </div>
-        </section>
-      </section>
-
-      <footer class="bottom-summary">
-        <div class="summary-quote"><i>◇</i><span>Discipline is the bridge between goals and accomplishment.</span></div>
-        <div class="summary-stat"><span>Total Trades</span><strong id="footerTotalTrades">0</strong></div>
-        <div class="summary-stat"><span>Profitable Trades</span><strong class="positive" id="footerWins">0 (0.0%)</strong></div>
-        <div class="summary-stat"><span>Losing Trades</span><strong class="negative" id="footerLosses">0 (0.0%)</strong></div>
-        <div class="summary-stat"><span>Breakeven</span><strong id="footerBreakeven">0 (0.0%)</strong></div>
-      </footer>
-    </main>
-  </div>
-
-  <div class="modal-backdrop" id="dateModal" hidden>
-    <form class="modal" id="dateForm">
-      <div class="modal-head"><div><h3>Select Performance Date Range</h3><p>Custom range affects the Performance Dashboard and bottom summary.</p></div><button class="modal-close" type="button" data-close="dateModal">×</button></div>
-      <div class="form-grid"><label>Start Date<input id="startDate" type="date" required /></label><label>End Date<input id="endDate" type="date" required /></label></div>
-      <div class="modal-actions"><button class="secondary-btn" type="button" data-close="dateModal">Cancel</button><button class="primary-btn" type="submit">Apply Range</button></div>
-    </form>
-  </div>
-
-  <div class="modal-backdrop" id="tradeModal" hidden>
-    <form class="modal trade-modal" id="tradeForm">
-      <div class="modal-head"><div><h3>Add Calendar Trade</h3><p>This trade will be saved to your MongoDB journal.</p></div><button class="modal-close" type="button" data-close="tradeModal">×</button></div>
-      <div class="form-grid trade-form-grid">
-        <label>Trade Date<input id="tradeDate" name="tradeDate" type="date" required /></label>
-        <label>Symbol<input name="symbol" placeholder="EURUSD" maxlength="30" required /></label>
-        <label>Direction<select name="direction" required><option value="Long">Long</option><option value="Short">Short</option></select></label>
-        <label>Session<select id="tradeSession" name="session"><option value="Asian">Asian</option><option value="London">London</option><option value="New York">New York</option><option value="Other">Other</option></select></label>
-        <label>Result<select name="result"><option value="Open">Open</option><option value="Win">Win</option><option value="Loss">Loss</option><option value="Breakeven">Breakeven</option></select></label>
-        <label>Entry Price<input name="entryPrice" type="number" step="any" required /></label>
-        <label>Exit Price<input name="exitPrice" type="number" step="any" /></label>
-        <label>Stop Loss<input name="stopLoss" type="number" step="any" /></label>
-        <label>Take Profit<input name="takeProfit" type="number" step="any" /></label>
-        <label>Quantity<input name="quantity" type="number" min="0" step="any" value="1" /></label>
-        <label>Commission<input name="commission" type="number" min="0" step="any" value="0" /></label>
-        <label>Net P&amp;L<input name="profitLoss" type="number" step="any" value="0" /></label>
-        <label>R Multiple<input name="rr" type="number" step="any" value="0" /></label>
-        <label>Strategy / Model<input name="model" maxlength="120" /></label>
-        <label>Protocol<input name="protocol" maxlength="120" /></label>
-        <label>Entry Time<input name="entryTime" type="time" /></label>
-        <label>Exit Time<input name="exitTime" type="time" /></label>
-        <label>Rating<select name="rating"><option value="">Not rated</option><option value="1">1 Star</option><option value="2">2 Stars</option><option value="3">3 Stars</option><option value="4">4 Stars</option><option value="5">5 Stars</option></select></label>
-        <label class="form-wide">Screenshot URL<input name="screenshotUrl" type="url" placeholder="https://..." /></label>
-        <label class="form-wide">Notes<textarea name="notes" rows="3" maxlength="5000" placeholder="Setup, execution and review notes"></textarea></label>
-      </div>
-      <div class="modal-actions"><button class="secondary-btn" type="button" data-close="tradeModal">Cancel</button><button class="primary-btn" id="saveTradeBtn" type="submit">Save to MongoDB</button></div>
-    </form>
-  </div>
-
-  <div class="modal-backdrop" id="dayModal" hidden>
-    <div class="modal"><div class="modal-head"><div><h3 id="dayModalTitle">Daily Performance</h3><p id="dayModalSubtitle">Selected calendar date.</p></div><button class="modal-close" type="button" data-close="dayModal">×</button></div><div class="day-detail-list" id="dayDetailList"></div><div class="modal-actions"><button class="secondary-btn" id="openTradesPageBtn" type="button">Open Trades Page</button><button class="primary-btn" type="button" data-close="dayModal">Done</button></div></div>
-  </div>
-
-  <div class="theme-transition-flash" id="themeTransitionFlash" aria-hidden="true"></div>
-  <div class="toast-stack" id="toastStack"></div>
-
-  <script src="auth.js"></script>
-  <script src="calendar.js"></script>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+<div class="brand">
+<div aria-hidden="true" class="brand-mark"><span></span><span></span><span></span><span></span></div>
+<div><h1>ProTrade</h1><p>TRADING JOURNAL</p></div>
+</div>
+<nav aria-label="Main navigation" class="nav">
+<button class="nav-item" data-route="dashboard.html" type="button"><span class="nav-icon">▣</span><span>Dashboard</span></button>
+<button class="nav-item" data-route="trades.html" type="button"><span class="nav-icon">↻</span><span>Trades</span></button>
+<button class="nav-item active" data-route="calendar.html" type="button"><span class="nav-icon">▦</span><span>Calendar</span><span class="nav-tail">›</span></button>
+<button class="nav-item" data-route="analytics.html" type="button"><span class="nav-icon">⌁</span><span>Analytics</span><small class="pro-badge">Pro</small></button>
+<button class="nav-item" data-route="analytics.html" type="button"><span class="nav-icon">◇</span><span>Risk Management</span></button>
+<button class="nav-item" data-route="psychology.html" type="button"><span class="nav-icon">♡</span><span>Psychology</span></button>
+<button class="nav-item" data-route="ai-journal.html" type="button"><span class="nav-icon">▤</span><span>Journal</span></button>
+<button class="nav-item" data-route="analytics.html" type="button"><span class="nav-icon">▧</span><span>Reports</span></button>
+<button class="nav-item" id="importBtn" type="button"><span class="nav-icon">⇩</span><span>Import Trades</span></button>
+<input accept=".csv,.json,application/json,text/csv" hidden="" id="importFile" type="file"/>
+<button class="nav-item" data-route="settings.html" type="button"><span class="nav-icon">⚙</span><span>Settings</span></button>
+</nav>
+<div class="sidebar-spacer"></div>
+<div class="profile-wrap">
+<button class="profile-card" id="profileBtn" type="button">
+<span class="avatar auth-user-initials">T</span>
+<span class="profile-copy"><strong class="auth-user-name" id="sidebarProfileName">Trader</strong><small id="profileRole">Independent Trader</small></span>
+<span>⌄</span>
+</button>
+<div class="popover profile-popover" hidden="" id="profilePopover">
+<button data-profile-action="settings" type="button">My Profile</button>
+<button data-profile-action="settings" type="button">Account Settings</button>
+<button data-auth-logout="" data-profile-action="logout" type="button">Sign Out</button>
+</div>
+</div>
+<div class="account-card">
+<div class="account-title"><span>Journal Balance</span><button aria-label="Hide or show balance" class="icon-btn" id="balanceBtn" type="button">◉</button></div>
+<strong id="balanceValue">—</strong>
+<div class="account-equity"><span>Journal Equity</span><b id="equityValue">—</b></div>
+<div class="account-broker"><span>Source</span><b>MongoDB Journal</b><i></i></div>
+</div>
+<div class="theme-card">
+<div class="theme-card-copy"><strong>Appearance</strong><span id="themeLabel">Dark Mode</span></div>
+<button aria-checked="true" aria-label="Switch to light mode" class="theme-switch animated-theme-switch" data-theme-toggle="" id="themeSwitch" role="switch" type="button">
+<span class="theme-track-icon theme-sun">☀</span><span class="theme-track-icon theme-moon">☾</span>
+<span class="theme-knob"><span class="knob-sun">☀</span><span class="knob-moon">☾</span></span>
+</button>
+</div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<main class="main">
+<header class="topbar">
+<div class="welcome">
+<button class="mobile-menu" id="mobileMenuBtn" type="button">☰</button>
+<div><h2>Welcome back, <span class="auth-user-name">Trader</span> 👑</h2><p id="calendarStatus">Connecting securely to ProTrade…</p></div>
+</div>
+<div class="top-actions">
+<button class="header-btn" id="dateRangeBtn" type="button"><span id="dateRangeText">Last 30 days</span><span>▦</span></button>
+<div class="account-wrap">
+<button class="header-btn" id="accountBtn" type="button"><span id="accountText">All Accounts</span><span>⌄</span></button>
+<div class="popover account-popover" hidden="" id="accountPopover">
+<button data-account="All Accounts" type="button">All Accounts</button>
+<p class="account-note">Separate broker accounts need a future backend model.</p>
+</div>
+</div>
+<button aria-checked="true" aria-label="Switch to light mode" class="header-theme-toggle animated-theme-switch" data-theme-toggle="" id="headerThemeSwitch" role="switch" title="Switch Light / Dark Mode" type="button">
+<span class="header-theme-label" id="headerThemeLabel">Dark</span>
+<span class="theme-track"><span class="theme-track-icon theme-sun">☀</span><span class="theme-track-icon theme-moon">☾</span><span class="theme-knob"><span class="knob-sun">☀</span><span class="knob-moon">☾</span></span></span>
+</button>
+<button aria-label="Security alerts" class="notification-btn" id="notificationBtn" type="button">♧<span id="notificationBadge">0</span></button>
+<button class="new-trade-btn" id="newTradeBtn" type="button">＋ New Trade</button>
+</div>
+</header>
+<section class="center-content">
+<section class="calendar-shell">
+<div class="calendar-header">
+<div class="calendar-title">
+<div class="calendar-title-row"><button id="previousPeriodBtn" type="button">‹</button><h3 id="periodTitle">Calendar</h3><button id="nextPeriodBtn" type="button">›</button></div>
+<p>Real MongoDB trades reviewed by month, quarter, or year.</p>
+</div>
+<div class="calendar-controls">
+<select aria-label="Trading account" class="calendar-control" id="calendarAccountFilter"><option>All Accounts</option></select>
+<select aria-label="Result filter" class="calendar-control" id="calendarResultFilter">
+<option value="all">All Results</option><option value="win">Win</option><option value="loss">Loss</option><option value="breakeven">Breakeven</option><option value="open">Open</option>
+</select>
+<div class="view-switch" id="viewSwitch"><button class="active" data-view="month" type="button">M</button><button data-view="quarter" type="button">Q</button><button data-view="year" type="button">Y</button></div>
+</div>
+</div>
+<div class="summary-chips">
+<span class="summary-chip green">▲ Win: <b id="winChip">0</b></span>
+<span class="summary-chip red">▼ Loss: <b id="lossChip">0</b></span>
+<span class="summary-chip blue">Trades: <b id="tradeChip">0</b></span>
+</div>
+<div class="week-cards" id="weekCards"></div>
+<div class="calendar-content">
+<div class="month-view" id="monthView"><div class="weekday-row"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div><div class="calendar-grid" id="calendarGrid"></div></div>
+<div class="quarter-view" id="quarterView"></div>
+<div class="year-view" id="yearView"></div>
+</div>
+</section>
+<section class="performance-dashboard" id="performanceDashboard">
+<div class="performance-section-head">
+<div><span class="performance-eyebrow">CALENDAR INSIGHTS</span><h3>PERFORMANCE DASHBOARD</h3><p>Profitability, consistency, strategy and symbol insights calculated from your journal.</p></div>
+<div class="performance-range-tabs" id="performanceRangeTabs">
+<button data-performance-range="1W" type="button">1W</button><button class="active" data-performance-range="1M" type="button">1M</button><button data-performance-range="3M" type="button">3M</button><button data-performance-range="6M" type="button">6M</button><button data-performance-range="1Y" type="button">1Y</button><button data-performance-range="ALL" type="button">All</button>
+</div>
+</div>
+<div class="performance-metrics">
+<button class="performance-metric-card" data-performance-metric="Total Net Profit" type="button"><small>Total Net Profit</small><strong id="performanceNetProfit">—</strong></button>
+<button class="performance-metric-card" data-performance-metric="Total Trades" type="button"><small>Total Trades</small><strong id="performanceTotalTrades">0</strong></button>
+<button class="performance-metric-card" data-performance-metric="Win Rate" type="button"><small>Win Rate</small><strong id="performanceWinRate">0.0%</strong></button>
+<button class="performance-metric-card" data-performance-metric="Profit Factor" type="button"><small>Profit Factor</small><strong id="performanceProfitFactor">0.00</strong></button>
+<button class="performance-metric-card" data-performance-metric="Average R" type="button"><small>Average R</small><strong id="performanceAverageR">0.00R</strong></button>
+<button aria-label="Select next time range" class="performance-metric-card performance-next-card" id="performanceNextRangeBtn" type="button">›</button>
+</div>
+<div class="performance-main-grid">
+<article class="performance-panel performance-equity-panel"><div class="performance-panel-head"><h4>Equity Curve</h4><small id="performanceRangeLabel">1 Month</small></div><div class="performance-chart-wrap"><canvas id="performanceEquityChart"></canvas></div></article>
+<article class="performance-panel performance-heatmap-panel">
+<div class="performance-panel-head"><h4>Performance by Day</h4><small>8 recent weeks</small></div>
+<div class="performance-heatmap-grid" id="performanceHeatmapGrid"></div>
+<div class="performance-heatmap-legend"><span><i class="loss"></i>Loss</span><span><i class="breakeven"></i>Breakeven</span><span><i class="win"></i>Win</span></div>
+</article>
+</div>
+<div class="performance-bottom-grid">
+<article class="performance-panel performance-small-panel">
+<div class="performance-panel-head"><h4>Win / Loss Ratio</h4><small id="performanceTradeCaption">0 trades</small></div>
+<div class="performance-donut-layout"><div class="performance-donut" id="performanceDonut"></div><div class="performance-donut-legend"><p><i class="performance-dot win"></i><span id="performanceWins">Win 0 (0.0%)</span></p><p><i class="performance-dot loss"></i><span id="performanceLosses">Loss 0 (0.0%)</span></p><p><i class="performance-dot breakeven"></i><span id="performanceBreakeven">Breakeven 0 (0.0%)</span></p></div></div>
+</article>
+<article class="performance-panel performance-small-panel"><div class="performance-panel-head"><h4>Top Strategies</h4><small>By net profit</small></div><div class="performance-ranking" id="topStrategies"><p class="empty-ranking">No strategy data yet.</p></div></article>
+<article class="performance-panel performance-small-panel"><div class="performance-panel-head"><h4>Top Symbols</h4><small>By net profit</small></div><div class="performance-ranking" id="topSymbols"><p class="empty-ranking">No symbol data yet.</p></div></article>
+</div>
+</section>
+</section>
+<footer class="bottom-summary">
+<div class="summary-quote"><i>◇</i><span>Discipline is the bridge between goals and accomplishment.</span></div>
+<div class="summary-stat"><span>Total Trades</span><strong id="footerTotalTrades">0</strong></div>
+<div class="summary-stat"><span>Profitable Trades</span><strong class="positive" id="footerWins">0 (0.0%)</strong></div>
+<div class="summary-stat"><span>Losing Trades</span><strong class="negative" id="footerLosses">0 (0.0%)</strong></div>
+<div class="summary-stat"><span>Breakeven</span><strong id="footerBreakeven">0 (0.0%)</strong></div>
+</footer>
+</main>
+</div>
+<div class="modal-backdrop" hidden="" id="dateModal">
+<form class="modal" id="dateForm">
+<div class="modal-head"><div><h3>Select Performance Date Range</h3><p>Custom range affects the Performance Dashboard and bottom summary.</p></div><button class="modal-close" data-close="dateModal" type="button">×</button></div>
+<div class="form-grid"><label>Start Date<input id="startDate" required="" type="date"/></label><label>End Date<input id="endDate" required="" type="date"/></label></div>
+<div class="modal-actions"><button class="secondary-btn" data-close="dateModal" type="button">Cancel</button><button class="primary-btn" type="submit">Apply Range</button></div>
+</form>
+</div>
+<div class="modal-backdrop" hidden="" id="tradeModal">
+<form class="modal trade-modal" id="tradeForm">
+<div class="modal-head"><div><h3>Add Calendar Trade</h3><p>This trade will be saved to your MongoDB journal.</p></div><button class="modal-close" data-close="tradeModal" type="button">×</button></div>
+<div class="form-grid trade-form-grid">
+<label>Trade Date<input id="tradeDate" name="tradeDate" required="" type="date"/></label>
+<label>Symbol<input maxlength="30" name="symbol" placeholder="EURUSD" required=""/></label>
+<label>Direction<select name="direction" required=""><option value="Long">Long</option><option value="Short">Short</option></select></label>
+<label>Session<select id="tradeSession" name="session"><option value="Asian">Asian</option><option value="London">London</option><option value="New York">New York</option><option value="Other">Other</option></select></label>
+<label>Result<select name="result"><option value="Open">Open</option><option value="Win">Win</option><option value="Loss">Loss</option><option value="Breakeven">Breakeven</option></select></label>
+<label>Entry Price<input name="entryPrice" required="" step="any" type="number"/></label>
+<label>Exit Price<input name="exitPrice" step="any" type="number"/></label>
+<label>Stop Loss<input name="stopLoss" step="any" type="number"/></label>
+<label>Take Profit<input name="takeProfit" step="any" type="number"/></label>
+<label>Quantity<input min="0" name="quantity" step="any" type="number" value="1"/></label>
+<label>Commission<input min="0" name="commission" step="any" type="number" value="0"/></label>
+<label>Net P&amp;L<input name="profitLoss" step="any" type="number" value="0"/></label>
+<label>R Multiple<input name="rr" step="any" type="number" value="0"/></label>
+<label>Strategy / Model<input maxlength="120" name="model"/></label>
+<label>Protocol<input maxlength="120" name="protocol"/></label>
+<label>Entry Time<input name="entryTime" type="time"/></label>
+<label>Exit Time<input name="exitTime" type="time"/></label>
+<label>Rating<select name="rating"><option value="">Not rated</option><option value="1">1 Star</option><option value="2">2 Stars</option><option value="3">3 Stars</option><option value="4">4 Stars</option><option value="5">5 Stars</option></select></label>
+<label class="form-wide">Screenshot URL<input name="screenshotUrl" placeholder="https://..." type="url"/></label>
+<label class="form-wide">Notes<textarea maxlength="5000" name="notes" placeholder="Setup, execution and review notes" rows="3"></textarea></label>
+</div>
+<div class="modal-actions"><button class="secondary-btn" data-close="tradeModal" type="button">Cancel</button><button class="primary-btn" id="saveTradeBtn" type="submit">Save to MongoDB</button></div>
+</form>
+</div>
+<div class="modal-backdrop" hidden="" id="dayModal">
+<div class="modal"><div class="modal-head"><div><h3 id="dayModalTitle">Daily Performance</h3><p id="dayModalSubtitle">Selected calendar date.</p></div><button class="modal-close" data-close="dayModal" type="button">×</button></div><div class="day-detail-list" id="dayDetailList"></div><div class="modal-actions"><button class="secondary-btn" id="openTradesPageBtn" type="button">Open Trades Page</button><button class="primary-btn" data-close="dayModal" type="button">Done</button></div></div>
+</div>
+<div aria-hidden="true" class="theme-transition-flash" id="themeTransitionFlash"></div>
+<div class="toast-stack" id="toastStack"></div>
+<script src="auth.js"></script>
+<script src="calendar.js"></script>
 </body>
 </html>

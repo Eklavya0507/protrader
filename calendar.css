@@ -2343,3 +2343,49 @@ button[disabled], select[disabled] { opacity: .62; cursor: not-allowed; }
 }
 
 :root { --yellow: #e7c84b; }
+
+
+/* Unified ProTrade palette — exact match with Dashboard and Trades */
+:root {
+  --sidebar-width: 246px;
+  --bg: #f5f9fc;
+  --bg-2: #edf4f9;
+  --sidebar: rgba(248,252,255,.92);
+  --panel: rgba(255,255,255,.92);
+  --panel-solid: #ffffff;
+  --panel-soft: #f5f9fc;
+  --text: #172334;
+  --muted: #617387;
+  --muted-2: #91a1b1;
+  --line: rgba(92,118,143,.14);
+  --line-strong: rgba(92,118,143,.24);
+  --green: #20ad60;
+  --green-dark: #13a978;
+  --green-soft: rgba(40,200,154,.13);
+  --red: #f05056;
+  --blue: #247cff;
+  --shadow: 0 16px 42px rgba(105,135,162,.14);
+  --shadow-soft: 0 8px 24px rgba(105,135,162,.10);
+}
+html[data-theme="dark"] {
+  --bg: #06111f;
+  --bg-2: #071a2b;
+  --sidebar: rgba(6,17,30,.95);
+  --panel: rgba(10,24,39,.92);
+  --panel-solid: #0b1928;
+  --panel-soft: #0d2033;
+  --text: #eef5fb;
+  --muted: #9badc2;
+  --muted-2: #71869d;
+  --line: rgba(148,177,210,.12);
+  --line-strong: rgba(148,177,210,.22);
+  --green-soft: rgba(40,200,154,.16);
+  --shadow: 0 20px 52px rgba(0,0,0,.30);
+  --shadow-soft: 0 10px 28px rgba(0,0,0,.24);
+}
+html, body, html[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(83,190,255,.10), transparent 25%),
+    radial-gradient(circle at 88% 94%, rgba(255,150,197,.08), transparent 25%),
+    linear-gradient(180deg, var(--bg), var(--bg-2)) !important;
+}

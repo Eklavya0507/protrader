@@ -1,2188 +1,643 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+
+<html data-theme="light" lang="en">
 <head>
-  <script src="auth.js"></script>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Settings | ProTrade</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --bg: #0d1112;
-      --sidebar: #0a0e0f;
-      --panel: #171b1d;
-      --panel-2: #1e2326;
-      --panel-3: #252b2f;
-      --line: #343b40;
-      --text: #eef1f2;
-      --muted: #9da7ad;
-      --primary: #b9c9ff;
-      --primary-strong: #7ca2ff;
-      --green: #4ee0a4;
-      --red: #ff827b;
-      --amber: #ffc66d;
-      --shadow: 0 20px 60px rgba(0,0,0,.28);
-    }
-
-    html[data-theme="light"] {
-      --bg: #f4f6f8;
-      --sidebar: #ffffff;
-      --panel: #ffffff;
-      --panel-2: #f7f9fb;
-      --panel-3: #eef2f5;
-      --line: #dbe1e5;
-      --text: #182026;
-      --muted: #66717a;
-      --primary: #315dce;
-      --primary-strong: #234eae;
-      --green: #087c56;
-      --red: #b42318;
-      --amber: #9b5d00;
-      --shadow: 0 20px 60px rgba(33,45,54,.12);
-    }
-
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: "DM Sans", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      -webkit-font-smoothing: antialiased;
-    }
-
-    .material-symbols-outlined {
-      font-variation-settings: "FILL" 0, "wght" 450, "GRAD" 0, "opsz" 24;
-      vertical-align: middle;
-    }
-
-    .sidebar {
-      background: var(--sidebar);
-      border-right: 1px solid var(--line);
-    }
-
-    .topbar {
-      background: color-mix(in srgb, var(--panel) 90%, transparent);
-      border-bottom: 1px solid var(--line);
-      backdrop-filter: blur(16px);
-    }
-
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      box-shadow: 0 1px 0 rgba(255,255,255,.02);
-    }
-
-    .panel-soft {
-      background: var(--panel-2);
-      border: 1px solid var(--line);
-    }
-
-    .field,
-    .select-field {
-      width: 100%;
-      min-height: 46px;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      background: var(--panel-2);
-      color: var(--text);
-      padding: 0 14px;
-      outline: none;
-      transition: .18s ease;
-    }
-
-    .field:focus,
-    .select-field:focus {
-      border-color: var(--primary-strong);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-strong) 22%, transparent);
-    }
-
-    .field::placeholder { color: var(--muted); }
-
-    .label {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .helper {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
-      margin-top: 7px;
-    }
-
-    .tab-button {
-      color: var(--muted);
-      border: 1px solid transparent;
-      transition: .18s ease;
-    }
-
-    .tab-button:hover {
-      color: var(--text);
-      background: var(--panel-2);
-    }
-
-    .tab-button.active {
-      color: var(--text);
-      background: var(--panel-2);
-      border-color: var(--line);
-      box-shadow: inset 3px 0 0 var(--primary-strong);
-    }
-
-    .nav-link {
-      color: var(--muted);
-      transition: .18s ease;
-    }
-
-    .nav-link:hover {
-      color: var(--text);
-      background: var(--panel-2);
-    }
-
-    .nav-link.active {
-      color: #fff;
-      background: #155fc7;
-    }
-
-    html[data-theme="light"] .nav-link.active {
-      color: #fff;
-      background: #315dce;
-    }
-
-    .primary-btn {
-      background: var(--primary);
-      color: #17213b;
-      transition: .18s ease;
-    }
-
-    html[data-theme="light"] .primary-btn { color: white; }
-
-    .primary-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
-    .primary-btn:disabled { opacity: .55; transform: none; cursor: not-allowed; }
-
-    .secondary-btn {
-      border: 1px solid var(--line);
-      background: var(--panel-2);
-      color: var(--text);
-      transition: .18s ease;
-    }
-
-    .secondary-btn:hover { background: var(--panel-3); }
-
-    .danger-btn {
-      border: 1px solid color-mix(in srgb, var(--red) 45%, transparent);
-      color: var(--red);
-      background: color-mix(in srgb, var(--red) 8%, transparent);
-    }
-
-    .status-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 999px;
-      display: inline-block;
-      background: var(--muted);
-    }
-
-    .status-dot.online {
-      background: var(--green);
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--green) 14%, transparent);
-    }
-
-    .toggle {
-      appearance: none;
-      width: 48px;
-      height: 27px;
-      border-radius: 999px;
-      background: var(--panel-3);
-      border: 1px solid var(--line);
-      position: relative;
-      cursor: pointer;
-      transition: .2s ease;
-      flex: 0 0 auto;
-    }
-
-    .toggle::after {
-      content: "";
-      position: absolute;
-      width: 21px;
-      height: 21px;
-      left: 2px;
-      top: 2px;
-      border-radius: 50%;
-      background: #dfe5e8;
-      transition: .2s ease;
-      box-shadow: 0 2px 5px rgba(0,0,0,.25);
-    }
-
-    .toggle:checked {
-      background: #236fda;
-      border-color: #236fda;
-    }
-
-    .toggle:checked::after { transform: translateX(21px); }
-
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    .progress-track {
-      height: 8px;
-      border-radius: 999px;
-      background: var(--panel-3);
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--primary-strong), var(--green));
-    }
-
-    .save-bar {
-      background: color-mix(in srgb, var(--panel) 93%, transparent);
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
-    }
-
-    .toast {
-      position: fixed;
-      right: 24px;
-      bottom: 24px;
-      z-index: 100;
-      min-width: 280px;
-      max-width: 420px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      box-shadow: var(--shadow);
-      padding: 15px 16px;
-      transform: translateY(20px);
-      opacity: 0;
-      pointer-events: none;
-      transition: .25s ease;
-    }
-
-    .toast.show { transform: translateY(0); opacity: 1; }
-    .toast.success { border-color: color-mix(in srgb, var(--green) 45%, var(--line)); }
-    .toast.error { border-color: color-mix(in srgb, var(--red) 45%, var(--line)); }
-
-    .skeleton {
-      position: relative;
-      overflow: hidden;
-      background: var(--panel-3);
-    }
-
-    .skeleton::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      transform: translateX(-100%);
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.07), transparent);
-      animation: shimmer 1.35s infinite;
-    }
-
-    @keyframes shimmer {
-      100% { transform: translateX(100%); }
-    }
-
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--panel-3); border-radius: 999px; }
-
-    @media (max-width: 1023px) {
-      .settings-layout { grid-template-columns: 1fr !important; }
-      .tabs-panel { position: static !important; }
-    }
-  </style>
-</head>
-
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="#f5f9fc" name="theme-color"/>
+<title>ProTrade — Settings</title>
+<link href="settings.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/></head>
 <body>
-  <aside class="sidebar fixed left-0 top-0 z-50 hidden h-full w-[280px] flex-col px-4 py-6 md:flex">
-    <div class="mb-10 px-2">
-      <a href="index.html">
-        <h1 class="text-3xl font-black" style="color:var(--primary)">ProTrade</h1>
-        <p class="text-xs font-bold uppercase tracking-[.18em]" style="color:var(--muted)">Institutional Grade</p>
-      </a>
-    </div>
-
-    <nav class="flex-1 space-y-1">
-      <a class="nav-link flex items-center gap-3 rounded-xl px-4 py-3" href="dashboard.html"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
-      <a class="nav-link flex items-center gap-3 rounded-xl px-4 py-3" href="trades.html"><span class="material-symbols-outlined">receipt_long</span>Trades</a>
-      <a class="nav-link flex items-center gap-3 rounded-xl px-4 py-3" href="calendar.html"><span class="material-symbols-outlined">calendar_month</span>Calendar</a>
-      <a class="nav-link flex items-center gap-3 rounded-xl px-4 py-3" href="analytics.html"><span class="material-symbols-outlined">analytics</span>Analytics</a>
-      <a class="nav-link flex items-center gap-3 rounded-xl px-4 py-3" href="psychology.html"><span class="material-symbols-outlined">psychology</span>Psychology</a>
-      <a class="nav-link flex items-center gap-3 rounded-xl px-4 py-3" href="ai-journal.html"><span class="material-symbols-outlined">auto_stories</span>AI Journal</a>
-      <a class="nav-link active flex items-center gap-3 rounded-xl px-4 py-3 font-semibold" href="settings.html"><span class="material-symbols-outlined">settings</span>Settings</a>
-    </nav>
-
-    <div class="panel-soft rounded-2xl p-4">
-      <div class="flex items-center gap-3">
-        <div id="avatarSmall" class="flex h-11 w-11 items-center justify-center rounded-xl text-sm font-black" style="background:var(--panel-3);color:var(--primary)">G</div>
-        <div class="min-w-0">
-          <p id="sidebarProfileName" class="auth-user-name truncate font-bold">Gautam</p>
-          <p class="text-xs" style="color:var(--muted)">Workspace owner</p>
-        </div>
-      </div>
-    </div>
-  
-<button data-auth-logout type="button" class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-red-400/20 bg-red-400/5 px-4 py-2.5 text-sm font-bold text-red-300 transition hover:bg-red-400/10 disabled:opacity-60">
-  <span class="material-symbols-outlined text-[20px]">logout</span>
-  Logout
+<div class="app-shell">
+<!-- Fixed ProTrade Sidebar -->
+<aside class="sidebar" id="sidebar">
+<div class="brand">
+<div aria-hidden="true" class="brand-bars">
+<span></span><span></span><span></span><span></span>
+</div>
+<div>
+<h1>ProTrade</h1>
+<p>TRADING JOURNAL</p>
+</div>
+</div>
+<nav aria-label="Main navigation" class="main-nav">
+<button class="nav-item" data-route="dashboard.html" type="button">
+<span class="nav-icon">▣</span><span>Dashboard</span>
 </button>
-
+<button class="nav-item" data-route="trades.html" type="button">
+<span class="nav-icon">↻</span><span>Trades</span>
+</button>
+<button class="nav-item" data-route="calendar.html" type="button">
+<span class="nav-icon">▦</span><span>Calendar</span>
+</button>
+<button class="nav-item" data-route="analytics.html" type="button">
+<span class="nav-icon">⌁</span><span>Analytics</span><small class="pro-badge">Pro</small>
+</button>
+<button class="nav-item" data-route="analytics.html" type="button">
+<span class="nav-icon">◇</span><span>Risk Management</span>
+</button>
+<button class="nav-item" data-route="psychology.html" type="button">
+<span class="nav-icon">♡</span><span>Psychology</span>
+</button>
+<button class="nav-item" data-route="ai-journal.html" type="button">
+<span class="nav-icon">▤</span><span>Journal</span>
+</button>
+<button class="nav-item" data-route="analytics.html" type="button">
+<span class="nav-icon">▧</span><span>Reports</span>
+</button>
+<button class="nav-item" data-route="trades.html" id="importTradesBtn" type="button">
+<span class="nav-icon">⇩</span><span>Import Trades</span>
+</button>
+<input accept=".csv,.json" hidden="" id="importTradesInput" type="file"/>
+<button class="nav-item active" data-route="settings.html" type="button">
+<span class="nav-icon">⚙</span><span>Settings</span><span class="nav-tail">›</span>
+</button>
+</nav>
+<div class="sidebar-spacer"></div>
+<div class="profile-wrap">
+<button class="profile-card" id="profileBtn" type="button">
+<span class="avatar auth-user-initials">T</span>
+<span class="profile-copy">
+<strong class="auth-user-name" id="sidebarProfileName">Trader</strong>
+<small id="profileRole">Independent Trader</small>
+</span>
+<span>⌄</span>
+</button>
+<div class="popover profile-popover" hidden="" id="profilePopover">
+<button data-profile-action="profile" type="button">My Profile</button>
+<button data-profile-action="workspace" type="button">Workspace</button>
+<button data-auth-logout="" data-profile-action="logout" type="button">Sign Out</button>
+</div>
+</div>
+<div class="account-card">
+<div class="account-card-head">
+<span>Account Balance</span>
+<button aria-label="Hide balance" class="plain-icon-btn" id="balanceVisibilityBtn" type="button">◉</button>
+</div>
+<strong id="sidebarBalance">—</strong>
+<div class="account-equity">
+<span>Equity</span>
+<b id="sidebarEquity">—</b>
+</div>
+<div class="account-broker">
+<span>Data Source</span>
+<b id="dataSourceLabel">MongoDB Journal</b>
+<i></i>
+</div>
+</div>
+<div class="sidebar-theme-card">
+<div>
+<strong>Appearance</strong>
+<span id="sidebarThemeLabel">Dark Mode</span>
+</div>
+<button aria-checked="true" aria-label="Switch to light mode" class="theme-switch" data-theme-toggle="" role="switch" type="button">
+<span class="theme-sun">☀</span>
+<span class="theme-moon">☾</span>
+<span class="theme-knob"></span>
+</button>
+</div>
 </aside>
-
-  <main class="min-h-screen md:ml-[280px]">
-    <header class="topbar sticky top-0 z-40">
-      <div class="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-5 lg:px-8">
-        <div>
-          <h1 class="text-lg font-extrabold">Settings</h1>
-          <p class="hidden text-xs sm:block" style="color:var(--muted)">Manage your account, trading rules and workspace preferences.</p>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <div id="syncState" class="hidden items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold sm:flex" style="border-color:var(--line);background:var(--panel-2);color:var(--muted)">
-            <span id="syncDot" class="status-dot"></span>
-            <span id="syncText">Checking API</span>
-          </div>
-          <button id="headerSaveBtn" class="primary-btn rounded-xl px-4 py-2.5 text-sm font-extrabold">
-            Save Changes
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <div class="mx-auto max-w-[1600px] px-5 py-6 lg:px-8 lg:py-8">
-      <section class="panel mb-6 overflow-hidden rounded-3xl">
-        <div class="grid gap-6 p-6 lg:grid-cols-[1.2fr_.8fr] lg:p-8">
-          <div class="flex items-start gap-5">
-            <div id="avatarLarge" class="flex h-20 w-20 flex-none items-center justify-center rounded-2xl text-2xl font-black" style="background:linear-gradient(135deg,#1a67db,#6f8fff);color:white)">G</div>
-            <div>
-              <p class="mb-1 text-xs font-extrabold uppercase tracking-[.15em]" style="color:var(--primary)">ProTrade Workspace</p>
-              <h2 id="heroName" class="text-2xl font-extrabold">Gautam</h2>
-              <p id="heroRole" class="mt-1" style="color:var(--muted)">Independent Trader</p>
-              <div class="mt-4 flex flex-wrap gap-2">
-                <span class="rounded-full border px-3 py-1 text-xs font-bold" style="border-color:var(--line);background:var(--panel-2);color:var(--green)">MongoDB synced</span>
-                <span class="rounded-full border px-3 py-1 text-xs font-bold" style="border-color:var(--line);background:var(--panel-2);color:var(--muted)">Single-user workspace</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div class="panel-soft rounded-2xl p-4">
-              <p class="text-xs font-extrabold uppercase tracking-wider" style="color:var(--muted)">Starting Balance</p>
-              <p id="summaryStartingBalance" class="mt-2 text-xl font-extrabold">—</p>
-            </div>
-            <div class="panel-soft rounded-2xl p-4">
-              <p class="text-xs font-extrabold uppercase tracking-wider" style="color:var(--muted)">Target Balance</p>
-              <p id="summaryTargetBalance" class="mt-2 text-xl font-extrabold">—</p>
-            </div>
-            <div class="panel-soft rounded-2xl p-4">
-              <p class="text-xs font-extrabold uppercase tracking-wider" style="color:var(--muted)">Risk / Trade</p>
-              <p id="summaryRisk" class="mt-2 text-xl font-extrabold">—</p>
-            </div>
-            <div class="panel-soft rounded-2xl p-4">
-              <p class="text-xs font-extrabold uppercase tracking-wider" style="color:var(--muted)">Daily Loss Limit</p>
-              <p id="summaryDailyLoss" class="mt-2 text-xl font-extrabold">—</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div class="settings-layout grid grid-cols-[250px_minmax(0,1fr)] gap-6">
-        <aside class="tabs-panel panel sticky top-24 h-fit rounded-2xl p-3">
-          <p class="px-3 pb-2 pt-1 text-[11px] font-extrabold uppercase tracking-[.16em]" style="color:var(--muted)">Workspace Settings</p>
-
-          <button class="tab-button active flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left" data-tab="profile">
-            <span class="material-symbols-outlined">person</span>
-            <span>
-              <span class="block font-bold">Profile</span>
-              <span class="block text-xs" style="color:var(--muted)">Identity and timezone</span>
-            </span>
-          </button>
-
-          <button class="tab-button flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left" data-tab="account">
-            <span class="material-symbols-outlined">account_balance_wallet</span>
-            <span>
-              <span class="block font-bold">Account & Goals</span>
-              <span class="block text-xs" style="color:var(--muted)">Balance and targets</span>
-            </span>
-          </button>
-
-          <button class="tab-button flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left" data-tab="risk">
-            <span class="material-symbols-outlined">shield</span>
-            <span>
-              <span class="block font-bold">Risk Rules</span>
-              <span class="block text-xs" style="color:var(--muted)">Execution guardrails</span>
-            </span>
-          </button>
-
-          <button class="tab-button flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left" data-tab="preferences">
-            <span class="material-symbols-outlined">tune</span>
-            <span>
-              <span class="block font-bold">Preferences</span>
-              <span class="block text-xs" style="color:var(--muted)">Display and reminders</span>
-            </span>
-          </button>
-
-
-          <button class="tab-button flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left" data-tab="security">
-            <span class="material-symbols-outlined">shield_lock</span>
-            <span>
-              <span class="block font-bold">Security</span>
-              <span class="block text-xs" style="color:var(--muted)">Password and sessions</span>
-            </span>
-          </button>
-
-          <button class="tab-button flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left" data-tab="account-control">
-            <span class="material-symbols-outlined">manage_accounts</span>
-            <span>
-              <span class="block font-bold">Account Controls</span>
-              <span class="block text-xs" style="color:var(--muted)">Email, export and deletion</span>
-            </span>
-          </button>
-
-          <button class="tab-button flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left" data-tab="system">
-            <span class="material-symbols-outlined">dns</span>
-            <span>
-              <span class="block font-bold">Data & System</span>
-              <span class="block text-xs" style="color:var(--muted)">API status and export</span>
-            </span>
-          </button>
-        </aside>
-
-        <section class="min-w-0">
-          <div id="loadingView" class="space-y-4">
-            <div class="panel rounded-2xl p-6">
-              <div class="skeleton h-7 w-48 rounded-lg"></div>
-              <div class="mt-3 skeleton h-4 w-80 max-w-full rounded-lg"></div>
-              <div class="mt-7 grid gap-4 md:grid-cols-2">
-                <div class="skeleton h-24 rounded-xl"></div>
-                <div class="skeleton h-24 rounded-xl"></div>
-                <div class="skeleton h-24 rounded-xl"></div>
-                <div class="skeleton h-24 rounded-xl"></div>
-              </div>
-            </div>
-          </div>
-
-          <form id="settingsForm" class="hidden">
-            <div id="panel-profile" class="tab-panel active space-y-5">
-              <section class="panel rounded-2xl p-6 lg:p-7">
-                <div class="mb-6">
-                  <h2 class="text-xl font-extrabold">Profile Information</h2>
-                  <p class="mt-1 text-sm" style="color:var(--muted)">This information appears across your ProTrade workspace.</p>
-                </div>
-
-                <div class="grid gap-5 md:grid-cols-2">
-                  <label>
-                    <span class="label">Full Name</span>
-                    <input id="fullName" class="field" type="text" maxlength="100" placeholder="Your name" required/>
-                  </label>
-
-                  <label>
-                    <span class="label">Sign-in Email</span>
-                    <input id="email" class="field" type="email" maxlength="150"
-                           placeholder="you@example.com" readonly aria-readonly="true"/>
-                    <p class="helper">Use Account Controls to change this email with verification from both addresses.</p>
-                  </label>
-
-                  <label>
-                    <span class="label">Trading Role</span>
-                    <input id="tradingRole" class="field" type="text" maxlength="100" placeholder="Independent Trader"/>
-                  </label>
-
-                  <label>
-                    <span class="label">Timezone</span>
-                    <select id="timezone" class="select-field">
-                      <option value="Asia/Kolkata">India Standard Time (GMT+05:30)</option>
-                      <option value="Europe/London">London (GMT+00:00)</option>
-                      <option value="America/New_York">New York (GMT-05:00)</option>
-                      <option value="Asia/Tokyo">Tokyo (GMT+09:00)</option>
-                      <option value="UTC">UTC</option>
-                    </select>
-                  </label>
-                </div>
-              </section>
-
-              <section class="panel rounded-2xl p-6 lg:p-7">
-                <div class="flex items-start gap-4">
-                  <span class="material-symbols-outlined mt-0.5" style="color:var(--amber)">lock</span>
-                  <div>
-                    <h3 class="font-extrabold">Authentication status</h3>
-                    <p class="mt-1 text-sm leading-6" style="color:var(--muted)">
-                      Your profile and trading workspace are private to this account. The same account data stays synchronized across your authorized devices.
-                    </p>
-                  </div>
-                </div>
-              </section>
-            </div>
-
-            <div id="panel-account" class="tab-panel space-y-5">
-              <section class="panel rounded-2xl p-6 lg:p-7">
-                <div class="mb-6">
-                  <h2 class="text-xl font-extrabold">Trading Account & Goals</h2>
-                  <p class="mt-1 text-sm" style="color:var(--muted)">These values drive Dashboard balance, equity and goal progress.</p>
-                </div>
-
-                <div class="grid gap-5 md:grid-cols-2">
-                  <label>
-                    <span class="label">Account Currency</span>
-                    <select id="currency" class="select-field">
-                      <option value="USD">USD — US Dollar</option>
-                      <option value="INR">INR — Indian Rupee</option>
-                      <option value="EUR">EUR — Euro</option>
-                      <option value="GBP">GBP — British Pound</option>
-                      <option value="JPY">JPY — Japanese Yen</option>
-                    </select>
-                  </label>
-
-                  <label>
-                    <span class="label">Preferred Session</span>
-                    <select id="preferredSession" class="select-field">
-                      <option value="London">London</option>
-                      <option value="New York">New York</option>
-                      <option value="Asia">Asia</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </label>
-
-                  <label>
-                    <span class="label">Starting Balance</span>
-                    <input id="startingBalance" class="field" type="number" min="0" step="0.01"/>
-                    <p class="helper">The baseline used to calculate account equity.</p>
-                  </label>
-
-                  <label>
-                    <span class="label">Target Balance</span>
-                    <input id="targetBalance" class="field" type="number" min="0" step="0.01"/>
-                    <p class="helper">Your account growth target shown on Dashboard.</p>
-                  </label>
-                </div>
-
-                <div class="panel-soft mt-6 rounded-2xl p-5">
-                  <div class="flex items-center justify-between gap-4">
-                    <div>
-                      <p class="font-bold">Goal progress baseline</p>
-                      <p id="goalProgressLabel" class="mt-1 text-sm" style="color:var(--muted)">—</p>
-                    </div>
-                    <p id="goalProgressPercent" class="text-lg font-extrabold" style="color:var(--green)">0%</p>
-                  </div>
-                  <div class="progress-track mt-4">
-                    <div id="goalProgressFill" class="progress-fill" style="width:0%"></div>
-                  </div>
-                </div>
-              </section>
-            </div>
-
-            <div id="panel-risk" class="tab-panel space-y-5">
-              <section class="panel rounded-2xl p-6 lg:p-7">
-                <div class="mb-6">
-                  <h2 class="text-xl font-extrabold">Risk Management Rules</h2>
-                  <p class="mt-1 text-sm" style="color:var(--muted)">Create clear limits before the market opens.</p>
-                </div>
-
-                <div class="grid gap-5 md:grid-cols-2">
-                  <label>
-                    <span class="label">Risk Per Trade (%)</span>
-                    <input id="riskPerTrade" class="field" type="number" min="0" max="100" step="0.1"/>
-                    <p class="helper">Recommended professional range: 0.25%–2%.</p>
-                  </label>
-
-                  <label>
-                    <span class="label">Max Daily Loss (%)</span>
-                    <input id="maxDailyLoss" class="field" type="number" min="0" max="100" step="0.1"/>
-                    <p class="helper">Stop trading after this daily drawdown.</p>
-                  </label>
-
-                  <label>
-                    <span class="label">Max Trades Per Day</span>
-                    <input id="maxTradesPerDay" class="field" type="number" min="1" max="100" step="1"/>
-                    <p class="helper">Prevents overtrading and revenge entries.</p>
-                  </label>
-
-                  <label>
-                    <span class="label">Default Risk-to-Reward</span>
-                    <input id="defaultRR" class="field" type="number" min="0" max="100" step="0.1"/>
-                    <p class="helper">Your minimum planned RR benchmark.</p>
-                  </label>
-                </div>
-              </section>
-
-              <section id="riskWarningCard" class="panel rounded-2xl p-6">
-                <div class="flex items-start gap-4">
-                  <span class="material-symbols-outlined mt-0.5" style="color:var(--green)">verified_user</span>
-                  <div>
-                    <h3 id="riskWarningTitle" class="font-extrabold">Risk rules look controlled</h3>
-                    <p id="riskWarningText" class="mt-1 text-sm leading-6" style="color:var(--muted)">Your selected limits are within a reasonable range.</p>
-                  </div>
-                </div>
-              </section>
-            </div>
-
-            <div id="panel-preferences" class="tab-panel space-y-5">
-              <section class="panel rounded-2xl p-6 lg:p-7">
-                <div class="mb-6">
-                  <h2 class="text-xl font-extrabold">Display Preferences</h2>
-                  <p class="mt-1 text-sm" style="color:var(--muted)">Choose how ProTrade should look and format information.</p>
-                </div>
-
-                <div class="grid gap-5 md:grid-cols-2">
-                  <label>
-                    <span class="label">Theme</span>
-                    <select id="theme" class="select-field">
-                      <option value="Dark">Dark</option>
-                      <option value="Light">Light</option>
-                      <option value="System">System</option>
-                    </select>
-                    <p class="helper">Theme preview applies immediately on this page.</p>
-                  </label>
-
-                  <label>
-                    <span class="label">Date Format</span>
-                    <select id="dateFormat" class="select-field">
-                      <option value="DD MMM YYYY">DD MMM YYYY</option>
-                      <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-                      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-                    </select>
-                  </label>
-                </div>
-              </section>
-
-              <section class="panel rounded-2xl p-6 lg:p-7">
-                <div class="mb-5">
-                  <h2 class="text-xl font-extrabold">Notifications & Reminders</h2>
-                  <p class="mt-1 text-sm" style="color:var(--muted)">Control the reminders you want to use in your workflow.</p>
-                </div>
-
-                <div class="divide-y" style="border-color:var(--line)">
-                  <label class="flex cursor-pointer items-center justify-between gap-5 py-5">
-                    <div>
-                      <p class="font-bold">Trade journal reminders</p>
-                      <p class="mt-1 text-sm" style="color:var(--muted)">Remind you to document each completed trade.</p>
-                    </div>
-                    <input id="tradeReminders" class="toggle" type="checkbox"/>
-                  </label>
-
-                  <label class="flex cursor-pointer items-center justify-between gap-5 py-5">
-                    <div>
-                      <p class="font-bold">Weekly performance summary</p>
-                      <p class="mt-1 text-sm" style="color:var(--muted)">Prepare a weekly performance and psychology review.</p>
-                    </div>
-                    <input id="weeklySummary" class="toggle" type="checkbox"/>
-                  </label>
-
-                  <label class="flex cursor-pointer items-center justify-between gap-5 py-5">
-                    <div>
-                      <p class="font-bold">Email notifications</p>
-                      <p class="mt-1 text-sm" style="color:var(--muted)">Receive account-security and workflow emails when those notifications are enabled.</p>
-                    </div>
-                    <input id="emailNotifications" class="toggle" type="checkbox"/>
-                  </label>
-                </div>
-              </section>
-            </div>
-
-
-            <div id="panel-security" class="tab-panel space-y-5">
-              <section class="panel rounded-2xl p-6 lg:p-7">
-                <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <h2 class="text-xl font-extrabold">Change Password</h2>
-                    <p class="mt-1 text-sm" style="color:var(--muted)">
-                      Replace your exposed or old password and invalidate every older login session.
-                    </p>
-                  </div>
-                  <span class="rounded-full border px-3 py-1.5 text-xs font-extrabold"
-                        style="border-color:color-mix(in srgb,var(--green) 35%,var(--line));background:color-mix(in srgb,var(--green) 10%,transparent);color:var(--green)">
-                    Secure update
-                  </span>
-                </div>
-
-                <div id="passwordErrorBox" class="mb-5 hidden items-start gap-3 rounded-2xl border p-4 text-sm"
-                     style="border-color:color-mix(in srgb,var(--red) 45%,var(--line));background:color-mix(in srgb,var(--red) 9%,transparent);color:var(--red)">
-                  <span class="material-symbols-outlined">error</span>
-                  <span id="passwordErrorText">Password could not be changed.</span>
-                </div>
-
-                <div class="grid gap-5">
-                  <label>
-                    <span class="label">Current Password</span>
-                    <div class="relative">
-                      <input id="currentPassword" class="field pr-12" type="password"
-                             autocomplete="current-password" placeholder="Enter your current password"/>
-                      <button class="password-visibility absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5"
-                              style="color:var(--muted)" type="button" data-target="currentPassword"
-                              aria-label="Show current password">
-                        <span class="material-symbols-outlined text-[21px]">visibility</span>
-                      </button>
-                    </div>
-                  </label>
-
-                  <div class="grid gap-5 md:grid-cols-2">
-                    <label>
-                      <span class="label">New Password</span>
-                      <div class="relative">
-                        <input id="newPassword" class="field pr-12" type="password"
-                               autocomplete="new-password" placeholder="Create a strong password"/>
-                        <button class="password-visibility absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5"
-                                style="color:var(--muted)" type="button" data-target="newPassword"
-                                aria-label="Show new password">
-                          <span class="material-symbols-outlined text-[21px]">visibility</span>
-                        </button>
-                      </div>
-                    </label>
-
-                    <label>
-                      <span class="label">Confirm New Password</span>
-                      <div class="relative">
-                        <input id="confirmNewPassword" class="field pr-12" type="password"
-                               autocomplete="new-password" placeholder="Repeat the new password"/>
-                        <button class="password-visibility absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5"
-                                style="color:var(--muted)" type="button" data-target="confirmNewPassword"
-                                aria-label="Show confirmed password">
-                          <span class="material-symbols-outlined text-[21px]">visibility</span>
-                        </button>
-                      </div>
-                    </label>
-                  </div>
-                </div>
-
-                <div class="panel-soft mt-6 rounded-2xl p-5">
-                  <div class="flex items-center justify-between gap-4">
-                    <p class="font-extrabold">Password strength</p>
-                    <p id="passwordStrengthLabel" class="text-xs font-extrabold" style="color:var(--muted)">Not entered</p>
-                  </div>
-
-                  <div class="mt-3 grid grid-cols-4 gap-2">
-                    <div class="security-strength-bar h-1.5 rounded-full" style="background:var(--panel-3)"></div>
-                    <div class="security-strength-bar h-1.5 rounded-full" style="background:var(--panel-3)"></div>
-                    <div class="security-strength-bar h-1.5 rounded-full" style="background:var(--panel-3)"></div>
-                    <div class="security-strength-bar h-1.5 rounded-full" style="background:var(--panel-3)"></div>
-                  </div>
-
-                  <div class="mt-5 grid gap-2 text-xs md:grid-cols-2" style="color:var(--muted)">
-                    <p id="passwordRuleLength">○ At least 8 characters</p>
-                    <p id="passwordRuleUpper">○ One uppercase letter</p>
-                    <p id="passwordRuleLower">○ One lowercase letter</p>
-                    <p id="passwordRuleNumber">○ One number</p>
-                    <p id="passwordRuleSymbol">○ One special character</p>
-                    <p id="passwordRuleMatch">○ Confirmation matches</p>
-                  </div>
-                </div>
-
-                <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div class="flex items-start gap-3 text-sm" style="color:var(--muted)">
-                    <span class="material-symbols-outlined mt-0.5" style="color:var(--amber)">devices</span>
-                    <p class="leading-6">
-                      After changing the password, older device sessions stop working.
-                      This browser receives a fresh managed session automatically.
-                    </p>
-                  </div>
-
-                  <button id="changePasswordBtn" class="primary-btn min-w-[190px] rounded-xl px-5 py-3 font-extrabold"
-                          type="button">
-                    Change Password
-                  </button>
-                </div>
-              </section>
-
-
-
-              <section class="panel rounded-2xl p-6 lg:p-7">
-                <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <h2 class="text-xl font-extrabold">Active Devices</h2>
-                    <p class="mt-1 text-sm" style="color:var(--muted)">
-                      Your trading data stays shared across devices. Only login sessions are managed separately for security.
-                    </p>
-                  </div>
-                  <button id="refreshSessionsBtn" class="secondary-btn rounded-xl px-4 py-2.5 text-sm font-extrabold" type="button">
-                    <span class="material-symbols-outlined mr-1 align-middle text-[19px]">refresh</span>Refresh
-                  </button>
-                </div>
-
-                <div id="legacySessionNotice" class="mb-5 hidden rounded-2xl border p-4 text-sm"
-                     style="border-color:color-mix(in srgb,var(--amber) 40%,var(--line));background:color-mix(in srgb,var(--amber) 8%,transparent);color:var(--amber)">
-                  This browser is upgrading an older login. Refresh this page once to finish session management.
-                </div>
-
-                <div class="mb-5 rounded-2xl border p-4 text-sm"
-                     style="border-color:color-mix(in srgb,var(--primary) 35%,var(--line));background:color-mix(in srgb,var(--primary) 7%,transparent);color:var(--muted)">
-                  <div class="flex items-start gap-3">
-                    <span class="material-symbols-outlined" style="color:var(--primary)">mark_email_unread</span>
-                    <p class="leading-6">
-                      New-device email alerts are active. Trusted devices avoid repeated alerts, while unfamiliar devices can be revoked with <strong style="color:var(--text)">This wasn’t me</strong>.
-                    </p>
-                  </div>
-                </div>
-
-                <div id="sessionsLoading" class="panel-soft rounded-2xl p-5 text-sm font-bold" style="color:var(--muted)">
-                  Loading active devices…
-                </div>
-
-                <div id="sessionsEmpty" class="panel-soft hidden rounded-2xl p-5 text-sm" style="color:var(--muted)">
-                  No managed device sessions were found. Sign out and sign in again.
-                </div>
-
-                <div id="sessionsList" class="grid gap-3"></div>
-
-                <div class="mt-6 flex flex-col gap-3 border-t pt-5 sm:flex-row" style="border-color:var(--line)">
-                  <button id="logoutOthersBtn" class="secondary-btn rounded-xl px-4 py-3 font-extrabold" type="button">
-                    Logout All Other Devices
-                  </button>
-                  <button id="logoutAllBtn" class="danger-btn rounded-xl px-4 py-3 font-extrabold" type="button">
-                    Logout All Devices
-                  </button>
-                </div>
-              </section>
-
-              <section class="panel rounded-2xl p-6 lg:p-7">
-                <div class="flex items-start gap-4">
-                  <span class="material-symbols-outlined mt-0.5" style="color:var(--primary)">verified_user</span>
-                  <div>
-                    <h3 class="font-extrabold">Session protection</h3>
-                    <p class="mt-1 text-sm leading-6" style="color:var(--muted)">
-                      Passwords are stored as bcrypt hashes. Refresh tokens are rotated and stored only as hashes on the server.
-                      Revoked devices cannot continue using protected ProTrade data.
-                    </p>
-                  </div>
-                </div>
-              </section>
-            </div>
-
-            <div id="panel-account-control" class="tab-panel space-y-5">
-              <section class="panel rounded-2xl p-6 lg:p-7">
-                <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <h2 class="text-xl font-extrabold">Change Sign-in Email</h2>
-                    <p class="mt-1 text-sm leading-6" style="color:var(--muted)">
-                      ProTrade sends one approval link to your current email and one verification link to the new email.
-                      Both links must be opened before the address changes.
-                    </p>
-                  </div>
-                  <span class="rounded-full border px-3 py-1.5 text-xs font-extrabold"
-                        style="border-color:color-mix(in srgb,var(--primary) 35%,var(--line));background:color-mix(in srgb,var(--primary) 9%,transparent);color:var(--primary)">
-                    Two-email approval
-                  </span>
-                </div>
-
-                <div id="emailChangeStatusBox" class="mb-5 hidden rounded-2xl border p-4"
-                     style="border-color:color-mix(in srgb,var(--amber) 40%,var(--line));background:color-mix(in srgb,var(--amber) 8%,transparent)">
-                  <div class="flex items-start gap-3">
-                    <span class="material-symbols-outlined" style="color:var(--amber)">mark_email_unread</span>
-                    <div class="min-w-0 flex-1">
-                      <p class="font-extrabold">Email change pending</p>
-                      <p id="emailChangeStatusText" class="mt-1 text-sm leading-6" style="color:var(--muted)">Waiting for approvals.</p>
-                      <div class="mt-3 flex flex-wrap gap-2 text-xs font-extrabold">
-                        <span id="currentEmailApprovalBadge" class="rounded-full border px-3 py-1.5"
-                              style="border-color:var(--line);color:var(--muted)">Current email: waiting</span>
-                        <span id="newEmailApprovalBadge" class="rounded-full border px-3 py-1.5"
-                              style="border-color:var(--line);color:var(--muted)">New email: waiting</span>
-                      </div>
-                    </div>
-                    <button id="cancelEmailChangeBtn" class="secondary-btn rounded-xl px-3 py-2 text-sm font-extrabold" type="button">
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-
-                <div class="grid gap-5 md:grid-cols-2">
-                  <label>
-                    <span class="label">Current Email</span>
-                    <input id="accountCurrentEmail" class="field" type="email" readonly aria-readonly="true"/>
-                  </label>
-
-                  <label>
-                    <span class="label">New Email</span>
-                    <input id="newAccountEmail" class="field" type="email" maxlength="150"
-                           autocomplete="email" placeholder="new@example.com"/>
-                  </label>
-                </div>
-
-                <label id="emailChangePasswordWrap" class="mt-5 block">
-                  <span class="label">Current Password</span>
-                  <input id="emailChangePassword" class="field" type="password"
-                         autocomplete="current-password" placeholder="Confirm with your current password"/>
-                  <p class="helper">Required for accounts that have a ProTrade password.</p>
-                </label>
-
-                <div id="googleEmailChangeNote" class="panel-soft mt-5 hidden rounded-2xl p-4 text-sm leading-6" style="color:var(--muted)">
-                  This account signs in with Google and has no ProTrade password. Approval from both email addresses is still required.
-                </div>
-
-                <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <p class="text-sm leading-6" style="color:var(--muted)">
-                    When the change completes, every device is signed out. Sign in again using the new email.
-                  </p>
-                  <button id="requestEmailChangeBtn" class="primary-btn min-w-[210px] rounded-xl px-5 py-3 font-extrabold" type="button">
-                    Send Approval Emails
-                  </button>
-                </div>
-              </section>
-
-              <section class="panel rounded-2xl p-6 lg:p-7">
-                <div class="mb-5">
-                  <h2 class="text-xl font-extrabold">Download Your Data</h2>
-                  <p class="mt-1 text-sm leading-6" style="color:var(--muted)">
-                    Download a JSON copy of your profile, settings, trades, journals and safe device-session metadata.
-                    Passwords, tokens and raw IP addresses are never included.
-                  </p>
-                </div>
-
-                <button id="downloadAccountDataBtn" class="secondary-btn rounded-xl px-4 py-3 font-extrabold" type="button">
-                  <span class="material-symbols-outlined mr-2">download</span>Download All Account Data
-                </button>
-              </section>
-
-              <section class="rounded-2xl border p-6 lg:p-7"
-                       style="border-color:color-mix(in srgb,var(--red) 45%,var(--line));background:color-mix(in srgb,var(--red) 5%,var(--panel))">
-                <div class="mb-6">
-                  <p class="text-xs font-extrabold uppercase tracking-[.16em]" style="color:var(--red)">Danger Zone</p>
-                  <h2 class="mt-2 text-xl font-extrabold">Delete ProTrade Account</h2>
-                  <p class="mt-1 text-sm leading-6" style="color:var(--muted)">
-                    This permanently deletes your account, trades, journals, settings and device sessions.
-                    This action cannot be undone.
-                  </p>
-                </div>
-
-                <div class="grid gap-5">
-                  <label>
-                    <span class="label">Type Your Current Email</span>
-                    <input id="deleteEmailConfirmation" class="field" type="email"
-                           autocomplete="off" placeholder="your-current@email.com"/>
-                  </label>
-
-                  <label>
-                    <span class="label">Type DELETE</span>
-                    <input id="deleteWordConfirmation" class="field" type="text"
-                           autocomplete="off" placeholder="DELETE"/>
-                  </label>
-
-                  <label id="deletePasswordWrap">
-                    <span class="label">Current Password</span>
-                    <input id="deleteAccountPassword" class="field" type="password"
-                           autocomplete="current-password" placeholder="Enter your current password"/>
-                  </label>
-                </div>
-
-                <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <p class="text-sm font-bold" style="color:var(--red)">
-                    Permanent deletion requires your exact email and the word DELETE.
-                  </p>
-                  <button id="deleteAccountBtn" class="danger-btn min-w-[190px] rounded-xl px-5 py-3 font-extrabold" type="button">
-                    Delete Account Permanently
-                  </button>
-                </div>
-              </section>
-            </div>
-
-            <div id="panel-system" class="tab-panel space-y-5">
-              <section class="panel rounded-2xl p-6 lg:p-7">
-                <div class="mb-6">
-                  <h2 class="text-xl font-extrabold">System Health</h2>
-                  <p class="mt-1 text-sm" style="color:var(--muted)">Live connection status for the deployed ProTrade services.</p>
-                </div>
-
-                <div class="grid gap-4 md:grid-cols-2">
-                  <div class="panel-soft rounded-2xl p-5">
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <p class="font-bold">Render Backend</p>
-                        <p class="mt-1 text-sm" style="color:var(--muted)">API server and health route</p>
-                      </div>
-                      <span id="backendBadge" class="rounded-full px-3 py-1 text-xs font-bold" style="background:var(--panel-3);color:var(--muted)">Checking</span>
-                    </div>
-                  </div>
-
-                  <div class="panel-soft rounded-2xl p-5">
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <p class="font-bold">MongoDB Settings</p>
-                        <p class="mt-1 text-sm" style="color:var(--muted)">Persistent settings document</p>
-                      </div>
-                      <span id="databaseBadge" class="rounded-full px-3 py-1 text-xs font-bold" style="background:var(--panel-3);color:var(--muted)">Checking</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="panel-soft mt-5 rounded-2xl p-5">
-                  <div class="grid gap-4 md:grid-cols-3">
-                    <div>
-                      <p class="text-xs font-extrabold uppercase tracking-wider" style="color:var(--muted)">API Base URL</p>
-                      <p class="mt-2 break-all text-sm font-bold">protrader-backend-n8oj.onrender.com</p>
-                    </div>
-                    <div>
-                      <p class="text-xs font-extrabold uppercase tracking-wider" style="color:var(--muted)">Last Loaded</p>
-                      <p id="lastLoadedText" class="mt-2 text-sm font-bold">—</p>
-                    </div>
-                    <div>
-                      <p class="text-xs font-extrabold uppercase tracking-wider" style="color:var(--muted)">Last Saved</p>
-                      <p id="lastSavedText" class="mt-2 text-sm font-bold">Not saved this session</p>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section class="panel rounded-2xl p-6 lg:p-7">
-                <div class="mb-5">
-                  <h2 class="text-xl font-extrabold">Data Management</h2>
-                  <p class="mt-1 text-sm" style="color:var(--muted)">Download your full account data or reset workspace settings.</p>
-                </div>
-
-                <div class="flex flex-col gap-3 sm:flex-row">
-                  <button id="exportBtn" class="secondary-btn rounded-xl px-4 py-3 font-bold" type="button">
-                    <span class="material-symbols-outlined mr-2">download</span>Download All Account Data
-                  </button>
-                  <button id="resetBtn" class="danger-btn rounded-xl px-4 py-3 font-bold" type="button">
-                    <span class="material-symbols-outlined mr-2">restart_alt</span>Reset to Defaults
-                  </button>
-                </div>
-              </section>
-            </div>
-          </form>
-        </section>
-      </div>
-    </div>
-
-    <div id="unsavedBar" class="pointer-events-none fixed bottom-5 left-1/2 z-50 hidden w-[calc(100%-32px)] max-w-2xl -translate-x-1/2 md:left-[calc(50%+140px)]">
-      <div class="save-bar pointer-events-auto flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-center gap-3">
-          <span class="material-symbols-outlined" style="color:var(--amber)">edit_note</span>
-          <div>
-            <p class="font-bold">You have unsaved changes</p>
-            <p class="text-xs" style="color:var(--muted)">Save now to sync them with MongoDB.</p>
-          </div>
-        </div>
-        <div class="flex gap-2">
-          <button id="discardBtn" class="secondary-btn rounded-xl px-4 py-2 text-sm font-bold" type="button">Discard</button>
-          <button id="floatingSaveBtn" class="primary-btn rounded-xl px-4 py-2 text-sm font-extrabold" type="button">Save Changes</button>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <div id="toast" class="toast">
-    <div class="flex items-start gap-3">
-      <span id="toastIcon" class="material-symbols-outlined">check_circle</span>
-      <div>
-        <p id="toastTitle" class="font-extrabold">Saved</p>
-        <p id="toastMessage" class="mt-1 text-sm" style="color:var(--muted)">Settings updated.</p>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    (() => {
-      "use strict";
-
-      const API_BASE = "https://protrader-backend-n8oj.onrender.com/api";
-      const SETTINGS_API = `${API_BASE}/settings`;
-      const HEALTH_API = `${API_BASE}/health`;
-      const CHANGE_PASSWORD_API = `${API_BASE}/auth/change-password`;
-      const SESSIONS_API = `${API_BASE}/auth/sessions`;
-      const ACCOUNT_API = `${API_BASE}/account`;
-      const EMAIL_CHANGE_API = `${ACCOUNT_API}/email-change`;
-
-      const fieldIds = [
-        "fullName", "email", "timezone", "tradingRole", "currency",
-        "startingBalance", "targetBalance", "riskPerTrade", "maxDailyLoss",
-        "maxTradesPerDay", "defaultRR", "preferredSession", "theme",
-        "dateFormat", "tradeReminders", "weeklySummary", "emailNotifications"
-      ];
-
-      const $ = (id) => document.getElementById(id);
-      let savedSnapshot = null;
-      let isDirty = false;
-      let toastTimer = null;
-
-      const currencySymbols = {
-        USD: "$",
-        INR: "₹",
-        EUR: "€",
-        GBP: "£",
-        JPY: "¥"
-      };
-
-      function formatCurrency(value, currency) {
-        return new Intl.NumberFormat("en-IN", {
-          style: "currency",
-          currency: currency || "USD",
-          maximumFractionDigits: 2
-        }).format(Number(value || 0));
-      }
-
-      function showToast(type, title, message) {
-        const toast = $("toast");
-        clearTimeout(toastTimer);
-        toast.className = `toast ${type}`;
-        $("toastIcon").textContent = type === "error" ? "error" : "check_circle";
-        $("toastIcon").style.color = type === "error" ? "var(--red)" : "var(--green)";
-        $("toastTitle").textContent = title;
-        $("toastMessage").textContent = message;
-        requestAnimationFrame(() => toast.classList.add("show"));
-        toastTimer = setTimeout(() => toast.classList.remove("show"), 4200);
-      }
-
-      async function request(url, options = {}) {
-        const response = await fetch(url, options);
-        const body = await response.json().catch(() => ({}));
-
-        if (!response.ok || body.success === false) {
-          throw new Error(body.message || `Request failed (${response.status})`);
-        }
-
-        return body;
-      }
-
-      function applyTheme(theme) {
-        let actual = theme;
-        if (theme === "System") {
-          actual = window.matchMedia("(prefers-color-scheme: light)").matches ? "Light" : "Dark";
-        }
-        document.documentElement.dataset.theme = actual.toLowerCase();
-      }
-
-      function initials(name) {
-        const parts = String(name || "G").trim().split(/\s+/).filter(Boolean);
-        return parts.slice(0, 2).map(part => part[0]).join("").toUpperCase() || "G";
-      }
-
-      function setValue(id, value) {
-        const element = $(id);
-        if (!element) return;
-
-        if (element.type === "checkbox") {
-          element.checked = Boolean(value);
-        } else if (value !== undefined && value !== null) {
-          element.value = value;
-        }
-      }
-
-      function collectSettings() {
-        return {
-          fullName: $("fullName").value.trim(),
-          email: $("email").value.trim(),
-          timezone: $("timezone").value,
-          tradingRole: $("tradingRole").value.trim(),
-          currency: $("currency").value,
-          startingBalance: Number($("startingBalance").value),
-          targetBalance: Number($("targetBalance").value),
-          riskPerTrade: Number($("riskPerTrade").value),
-          maxDailyLoss: Number($("maxDailyLoss").value),
-          maxTradesPerDay: Number($("maxTradesPerDay").value),
-          defaultRR: Number($("defaultRR").value),
-          preferredSession: $("preferredSession").value,
-          theme: $("theme").value,
-          dateFormat: $("dateFormat").value,
-          tradeReminders: $("tradeReminders").checked,
-          weeklySummary: $("weeklySummary").checked,
-          emailNotifications: $("emailNotifications").checked
-        };
-      }
-
-      function fillSettings(data) {
-        fieldIds.forEach(id => setValue(id, data[id]));
-        applyTheme(data.theme || "Dark");
-        updateLivePreview();
-      }
-
-      function updateLivePreview() {
-        const data = collectSettings();
-        const name = data.fullName || "Gautam";
-        const role = data.tradingRole || "Independent Trader";
-        const avatarText = initials(name);
-
-        $("sidebarProfileName").textContent = name;
-        $("heroName").textContent = name;
-        $("heroRole").textContent = role;
-        $("avatarSmall").textContent = avatarText;
-        $("avatarLarge").textContent = avatarText;
-
-        $("summaryStartingBalance").textContent = formatCurrency(data.startingBalance, data.currency);
-        $("summaryTargetBalance").textContent = formatCurrency(data.targetBalance, data.currency);
-        $("summaryRisk").textContent = `${Number(data.riskPerTrade || 0).toFixed(1)}%`;
-        $("summaryDailyLoss").textContent = `${Number(data.maxDailyLoss || 0).toFixed(1)}%`;
-
-        const starting = Number(data.startingBalance || 0);
-        const target = Number(data.targetBalance || 0);
-        const progress = target > 0 ? Math.max(0, Math.min(100, (starting / target) * 100)) : 0;
-        $("goalProgressFill").style.width = `${progress}%`;
-        $("goalProgressPercent").textContent = `${progress.toFixed(1)}%`;
-        $("goalProgressLabel").textContent = `${formatCurrency(starting, data.currency)} of ${formatCurrency(target, data.currency)}`;
-
-        const risk = Number(data.riskPerTrade || 0);
-        const dailyLoss = Number(data.maxDailyLoss || 0);
-        const card = $("riskWarningCard");
-        const icon = card.querySelector(".material-symbols-outlined");
-
-        if (risk > 2 || dailyLoss > 5) {
-          $("riskWarningTitle").textContent = "Review your risk limits";
-          $("riskWarningText").textContent = "Your current limits are aggressive. Consider reducing risk per trade or the maximum daily loss.";
-          icon.textContent = "warning";
-          icon.style.color = "var(--amber)";
-        } else {
-          $("riskWarningTitle").textContent = "Risk rules look controlled";
-          $("riskWarningText").textContent = "Your selected limits are within a reasonable professional range.";
-          icon.textContent = "verified_user";
-          icon.style.color = "var(--green)";
-        }
-      }
-
-      function setDirty(value) {
-        isDirty = value;
-        $("unsavedBar").classList.toggle("hidden", !value);
-      }
-
-      function compareWithSnapshot() {
-        const current = JSON.stringify(collectSettings());
-        setDirty(savedSnapshot !== null && current !== savedSnapshot);
-      }
-
-      function setSyncStatus(online, text) {
-        $("syncDot").classList.toggle("online", online);
-        $("syncText").textContent = text;
-        $("syncText").style.color = online ? "var(--green)" : "var(--muted)";
-      }
-
-      async function checkSystemHealth() {
-        try {
-          await request(HEALTH_API);
-          setSyncStatus(true, "API Online");
-          $("backendBadge").textContent = "Online";
-          $("backendBadge").style.background = "color-mix(in srgb, var(--green) 14%, transparent)";
-          $("backendBadge").style.color = "var(--green)";
-        } catch (error) {
-          setSyncStatus(false, "API Offline");
-          $("backendBadge").textContent = "Offline";
-          $("backendBadge").style.background = "color-mix(in srgb, var(--red) 12%, transparent)";
-          $("backendBadge").style.color = "var(--red)";
-        }
-      }
-
-      async function loadSettings() {
-        try {
-          setSyncStatus(false, "Loading");
-          const response = await request(SETTINGS_API);
-          const settings = response.data || {};
-          const authUser = window.ProTradeAuth?.getUser?.();
-
-          if (authUser?.email) {
-            settings.email = authUser.email;
-          }
-
-          fillSettings(settings);
-          savedSnapshot = JSON.stringify(collectSettings());
-          setDirty(false);
-
-          $("loadingView").classList.add("hidden");
-          $("settingsForm").classList.remove("hidden");
-          $("lastLoadedText").textContent = new Date().toLocaleString("en-IN");
-          $("databaseBadge").textContent = "Connected";
-          $("databaseBadge").style.background = "color-mix(in srgb, var(--green) 14%, transparent)";
-          $("databaseBadge").style.color = "var(--green)";
-          setSyncStatus(true, "Synced");
-        } catch (error) {
-          $("loadingView").innerHTML = `
-            <div class="panel rounded-2xl p-8 text-center">
-              <span class="material-symbols-outlined text-5xl" style="color:var(--red)">cloud_off</span>
-              <h2 class="mt-4 text-xl font-extrabold">Could not load settings</h2>
-              <p class="mt-2 text-sm" style="color:var(--muted)">${escapeHtml(error.message)}</p>
-              <button id="retryBtn" class="primary-btn mt-5 rounded-xl px-5 py-3 font-extrabold">Try Again</button>
-            </div>`;
-          $("retryBtn").addEventListener("click", () => location.reload());
-          setSyncStatus(false, "Load Failed");
-          $("databaseBadge").textContent = "Unavailable";
-          $("databaseBadge").style.color = "var(--red)";
-          showToast("error", "Settings unavailable", error.message);
-        }
-      }
-
-      function escapeHtml(value) {
-        return String(value || "")
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#039;");
-      }
-
-      function validateSettings(data) {
-        if (!data.fullName) return "Full name is required.";
-        if (data.startingBalance < 0 || data.targetBalance < 0) return "Balance values cannot be negative.";
-        if (data.targetBalance && data.targetBalance < data.startingBalance) return "Target balance should be greater than or equal to starting balance.";
-        if (data.riskPerTrade < 0 || data.riskPerTrade > 100) return "Risk per trade must be between 0 and 100.";
-        if (data.maxDailyLoss < 0 || data.maxDailyLoss > 100) return "Maximum daily loss must be between 0 and 100.";
-        if (data.maxTradesPerDay < 1) return "Maximum trades per day must be at least 1.";
-        return null;
-      }
-
-      async function saveSettings() {
-        const payload = collectSettings();
-        const validationError = validateSettings(payload);
-
-        if (validationError) {
-          showToast("error", "Check your settings", validationError);
-          return;
-        }
-
-        const saveButtons = [$("headerSaveBtn"), $("floatingSaveBtn")];
-        saveButtons.forEach(button => {
-          button.disabled = true;
-          button.dataset.label = button.textContent;
-          button.textContent = "Saving…";
-        });
-
-        try {
-          setSyncStatus(false, "Saving");
-          const response = await request(SETTINGS_API, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-
-          fillSettings(response.data || payload);
-          savedSnapshot = JSON.stringify(collectSettings());
-          setDirty(false);
-          $("lastSavedText").textContent = new Date().toLocaleString("en-IN");
-          setSyncStatus(true, "Synced");
-          showToast("success", "Settings saved", "Your profile, trading rules and Dashboard values are now synced.");
-        } catch (error) {
-          setSyncStatus(false, "Save Failed");
-          showToast("error", "Could not save settings", error.message);
-        } finally {
-          saveButtons.forEach(button => {
-            button.disabled = false;
-            button.textContent = button.dataset.label || "Save Changes";
-          });
-        }
-      }
-
-      async function resetSettings() {
-        if (!confirm("Reset all settings to default values? This cannot be undone.")) return;
-
-        try {
-          setSyncStatus(false, "Resetting");
-          const response = await request(`${SETTINGS_API}/reset`, { method: "POST" });
-          fillSettings(response.data || {});
-          savedSnapshot = JSON.stringify(collectSettings());
-          setDirty(false);
-          $("lastSavedText").textContent = new Date().toLocaleString("en-IN");
-          setSyncStatus(true, "Synced");
-          showToast("success", "Settings reset", "Default workspace settings have been restored.");
-        } catch (error) {
-          setSyncStatus(false, "Reset Failed");
-          showToast("error", "Reset failed", error.message);
-        }
-      }
-
-      async function exportAccountData() {
-        const buttons = [$("exportBtn"), $("downloadAccountDataBtn")].filter(Boolean);
-
-        buttons.forEach(button => {
-          button.disabled = true;
-          button.dataset.label = button.innerHTML;
-          button.innerHTML = '<span class="material-symbols-outlined mr-2">progress_activity</span>Preparing…';
-        });
-
-        try {
-          const response = await fetch(`${ACCOUNT_API}/export`, {
-            headers: { Accept: "application/json" },
-          });
-
-          if (!response.ok) {
-            const body = await response.json().catch(() => ({}));
-            throw new Error(body.message || "Account data could not be exported.");
-          }
-
-          const blob = await response.blob();
-          const url = URL.createObjectURL(blob);
-          const anchor = document.createElement("a");
-          anchor.href = url;
-          anchor.download = `protrade-account-data-${new Date().toISOString().slice(0, 10)}.json`;
-          document.body.appendChild(anchor);
-          anchor.click();
-          anchor.remove();
-          URL.revokeObjectURL(url);
-
-          showToast("success", "Account data downloaded", "Your private ProTrade data export is ready.");
-        } catch (error) {
-          showToast("error", "Export failed", error.message);
-        } finally {
-          buttons.forEach(button => {
-            button.disabled = false;
-            button.innerHTML = button.dataset.label || "Download All Account Data";
-          });
-        }
-      }
-
-
-      let emailChangeStatusTimer = null;
-
-      function accountUser() {
-        return window.ProTradeAuth?.getUser?.() || {};
-      }
-
-      function configureAccountControls(user = accountUser()) {
-        const email = user?.email || "";
-        const isGoogleOnly = user?.authProvider === "google";
-
-        if ($("accountCurrentEmail")) $("accountCurrentEmail").value = email;
-        if ($("deleteEmailConfirmation")) $("deleteEmailConfirmation").placeholder = email || "your-current@email.com";
-
-        $("emailChangePasswordWrap")?.classList.toggle("hidden", isGoogleOnly);
-        $("deletePasswordWrap")?.classList.toggle("hidden", isGoogleOnly);
-        $("googleEmailChangeNote")?.classList.toggle("hidden", !isGoogleOnly);
-      }
-
-      function setApprovalBadge(element, approved, label) {
-        if (!element) return;
-        element.textContent = `${label}: ${approved ? "approved" : "waiting"}`;
-        element.style.color = approved ? "var(--green)" : "var(--muted)";
-        element.style.borderColor = approved
-          ? "color-mix(in srgb,var(--green) 45%,var(--line))"
-          : "var(--line)";
-        element.style.background = approved
-          ? "color-mix(in srgb,var(--green) 8%,transparent)"
-          : "transparent";
-      }
-
-      function renderEmailChangeStatus(payload) {
-        const box = $("emailChangeStatusBox");
-        const action = payload?.data;
-        const pending = payload?.pending === true && action;
-
-        box?.classList.toggle("hidden", !pending);
-
-        if (!pending) {
-          clearTimeout(emailChangeStatusTimer);
-          emailChangeStatusTimer = null;
-          return;
-        }
-
-        setApprovalBadge(
-          $("currentEmailApprovalBadge"),
-          action.currentEmailApproved,
-          "Current email"
-        );
-        setApprovalBadge(
-          $("newEmailApprovalBadge"),
-          action.newEmailApproved,
-          "New email"
-        );
-
-        $("emailChangeStatusText").textContent =
-          `Changing ${action.currentEmail} to ${action.newEmail}. ` +
-          `Expires ${new Date(action.expiresAt).toLocaleString("en-IN")}.`;
-
-        clearTimeout(emailChangeStatusTimer);
-        emailChangeStatusTimer = setTimeout(
-          () => loadEmailChangeStatus({ silent: true }),
-          8000
-        );
-      }
-
-      async function loadEmailChangeStatus({ silent = false } = {}) {
-        try {
-          const body = await request(`${EMAIL_CHANGE_API}/status`);
-          renderEmailChangeStatus(body);
-        } catch (error) {
-          if (!silent) {
-            showToast("error", "Email status unavailable", error.message);
-          }
-        }
-      }
-
-      async function requestEmailChange() {
-        const user = accountUser();
-        const newEmail = $("newAccountEmail").value.trim().toLowerCase();
-        const currentPassword = $("emailChangePassword").value;
-        const button = $("requestEmailChangeBtn");
-
-        if (!newEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
-          showToast("error", "Invalid email", "Enter a valid new email address.");
-          return;
-        }
-
-        if (newEmail === String(user.email || "").toLowerCase()) {
-          showToast("error", "Email unchanged", "Enter a different email address.");
-          return;
-        }
-
-        if (user.authProvider !== "google" && !currentPassword) {
-          showToast("error", "Password required", "Enter your current password.");
-          return;
-        }
-
-        button.disabled = true;
-        const oldLabel = button.textContent;
-        button.textContent = "Sending…";
-
-        try {
-          const body = await request(`${EMAIL_CHANGE_API}/request`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              newEmail,
-              currentPassword,
-            }),
-          });
-
-          $("emailChangePassword").value = "";
-          showToast("success", "Approval emails sent", body.message);
-          await loadEmailChangeStatus({ silent: true });
-        } catch (error) {
-          showToast("error", "Email change failed", error.message);
-        } finally {
-          button.disabled = false;
-          button.textContent = oldLabel;
-        }
-      }
-
-      async function cancelEmailChange() {
-        if (!confirm("Cancel the pending email-change request?")) return;
-
-        const button = $("cancelEmailChangeBtn");
-        button.disabled = true;
-
-        try {
-          const body = await request(`${EMAIL_CHANGE_API}/cancel`, {
-            method: "POST",
-          });
-
-          showToast("success", "Request canceled", body.message);
-          renderEmailChangeStatus({ pending: false, data: null });
-        } catch (error) {
-          showToast("error", "Cancel failed", error.message);
-        } finally {
-          button.disabled = false;
-        }
-      }
-
-      async function deleteAccountPermanently() {
-        const user = accountUser();
-        const emailConfirmation = $("deleteEmailConfirmation").value.trim().toLowerCase();
-        const confirmationText = $("deleteWordConfirmation").value.trim();
-        const currentPassword = $("deleteAccountPassword").value;
-        const button = $("deleteAccountBtn");
-
-        if (emailConfirmation !== String(user.email || "").toLowerCase()) {
-          showToast("error", "Email does not match", "Type your current account email exactly.");
-          return;
-        }
-
-        if (confirmationText !== "DELETE") {
-          showToast("error", "Confirmation required", 'Type "DELETE" exactly.');
-          return;
-        }
-
-        if (user.authProvider !== "google" && !currentPassword) {
-          showToast("error", "Password required", "Enter your current password.");
-          return;
-        }
-
-        const confirmed = confirm(
-          "Permanently delete this ProTrade account and all stored data? This cannot be undone."
-        );
-        if (!confirmed) return;
-
-        button.disabled = true;
-        const oldLabel = button.textContent;
-        button.textContent = "Deleting…";
-
-        try {
-          const body = await request(ACCOUNT_API, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              currentPassword,
-              confirmationText,
-              emailConfirmation,
-            }),
-          });
-
-          window.ProTradeAuth?.clearSession?.();
-          sessionStorage.clear();
-          window.location.replace("login.html?account=deleted");
-        } catch (error) {
-          showToast("error", "Account not deleted", error.message);
-          button.disabled = false;
-          button.textContent = oldLabel;
-        }
-      }
-
-      function showPasswordError(message) {
-        $("passwordErrorText").textContent = message;
-        $("passwordErrorBox").classList.remove("hidden");
-        $("passwordErrorBox").classList.add("flex");
-      }
-
-      function clearPasswordError() {
-        $("passwordErrorBox").classList.add("hidden");
-        $("passwordErrorBox").classList.remove("flex");
-      }
-
-      function passwordChecks() {
-        const password = $("newPassword").value;
-        const confirmation = $("confirmNewPassword").value;
-
-        return [
-          { id: "passwordRuleLength", pass: password.length >= 8 },
-          { id: "passwordRuleUpper", pass: /[A-Z]/.test(password) },
-          { id: "passwordRuleLower", pass: /[a-z]/.test(password) },
-          { id: "passwordRuleNumber", pass: /\d/.test(password) },
-          { id: "passwordRuleSymbol", pass: /[^A-Za-z0-9]/.test(password) },
-          {
-            id: "passwordRuleMatch",
-            pass: Boolean(password) && password === confirmation,
-          },
-        ];
-      }
-
-      function updatePasswordStrength() {
-        const password = $("newPassword").value;
-        const checks = passwordChecks();
-        const strengthChecks = checks.slice(0, 5);
-        const score = strengthChecks.filter((item) => item.pass).length;
-
-        const label =
-          !password ? "Not entered" :
-          score <= 2 ? "Weak" :
-          score === 3 ? "Fair" :
-          score === 4 ? "Good" : "Strong";
-
-        const strengthColor =
-          !password ? "var(--muted)" :
-          score <= 2 ? "var(--red)" :
-          score === 3 ? "var(--amber)" :
-          score === 4 ? "var(--primary)" : "var(--green)";
-
-        $("passwordStrengthLabel").textContent = label;
-        $("passwordStrengthLabel").style.color = strengthColor;
-
-        document.querySelectorAll(".security-strength-bar").forEach(
-          (bar, index) => {
-            bar.style.background =
-              index < Math.min(score, 4)
-                ? strengthColor
-                : "var(--panel-3)";
-          }
-        );
-
-        checks.forEach((check) => {
-          const element = $(check.id);
-          element.textContent =
-            `${check.pass ? "✓" : "○"} ` +
-            element.textContent.replace(/^[✓○]\s*/, "");
-          element.style.color = check.pass
-            ? "var(--green)"
-            : "var(--muted)";
-        });
-      }
-
-      async function changePassword() {
-        clearPasswordError();
-
-        const currentPassword = $("currentPassword").value;
-        const newPassword = $("newPassword").value;
-        const confirmPassword = $("confirmNewPassword").value;
-        const checks = passwordChecks();
-
-        if (!currentPassword || !newPassword || !confirmPassword) {
-          showPasswordError("Complete all three password fields.");
-          return;
-        }
-
-        if (checks.slice(0, 5).some((item) => !item.pass)) {
-          showPasswordError(
-            "The new password must satisfy every strength requirement."
-          );
-          return;
-        }
-
-        if (newPassword !== confirmPassword) {
-          showPasswordError("New password and confirmation do not match.");
-          return;
-        }
-
-        const button = $("changePasswordBtn");
-        button.disabled = true;
-        button.dataset.label = button.textContent;
-        button.textContent = "Changing…";
-
-        try {
-          const response = await fetch(CHANGE_PASSWORD_API, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-              Authorization: `Bearer ${
-                window.ProTradeAuth?.getToken?.() ||
-                sessionStorage.getItem("protrade_auth_token") ||
-                ""
-              }`,
-            },
-            body: JSON.stringify({
-              currentPassword,
-              newPassword,
-              confirmPassword,
-            }),
-          });
-
-          const body = await response.json().catch(() => ({}));
-
-          if (!response.ok || body.success === false) {
-            throw new Error(body.message || "Password change failed.");
-          }
-
-          if (!body.token) {
-            throw new Error("The server did not return a new session token.");
-          }
-
-          try {
-            await window.ProTradeAuth?.upgradeToken?.(body.token, body.data);
-          } catch (sessionError) {
-            console.warn("Fresh managed session will be completed after reload:", sessionError);
-            sessionStorage.setItem(
-              window.ProTradeAuth?.TOKEN_KEY || "protrade_auth_token",
-              body.token
-            );
-
-            if (body.data) {
-              sessionStorage.setItem(
-                window.ProTradeAuth?.USER_KEY || "protrade_auth_user",
-                JSON.stringify(body.data)
-              );
-            }
-          }
-
-          $("currentPassword").value = "";
-          $("newPassword").value = "";
-          $("confirmNewPassword").value = "";
-          updatePasswordStrength();
-
-          showToast(
-            "success",
-            "Password changed",
-            "Your new password is active and older login sessions are now invalid."
-          );
-        } catch (error) {
-          showPasswordError(error.message);
-        } finally {
-          button.disabled = false;
-          button.textContent =
-            button.dataset.label || "Change Password";
-        }
-      }
-
-
-
-      const escapeSessionText = (value) =>
-        String(value ?? "")
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#039;");
-
-      const formatSessionTime = (value) => {
-        const date = new Date(value);
-        if (Number.isNaN(date.getTime())) return "Unknown";
-
-        const seconds = Math.max(0, Math.round((Date.now() - date.getTime()) / 1000));
-        if (seconds < 60) return "Just now";
-        if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
-        if (seconds < 86400) return `${Math.floor(seconds / 3600)} hr ago`;
-        if (seconds < 604800) return `${Math.floor(seconds / 86400)} day(s) ago`;
-
-        return date.toLocaleString();
-      };
-
-      const sessionIcon = (deviceType) =>
-        deviceType === "mobile"
-          ? "smartphone"
-          : deviceType === "tablet"
-            ? "tablet_mac"
-            : "laptop_windows";
-
-      function renderSessions(payload) {
-        const sessions = Array.isArray(payload?.data) ? payload.data : [];
-        $("sessionsLoading")?.classList.add("hidden");
-        $("legacySessionNotice")?.classList.toggle(
-          "hidden",
-          payload?.legacySession !== true
-        );
-        $("sessionsEmpty")?.classList.toggle("hidden", sessions.length > 0);
-
-        const list = $("sessionsList");
-        if (!list) return;
-
-        list.innerHTML = sessions
-          .map((session) => {
-            const location =
-              session.approximateLocation &&
-              session.approximateLocation !== "Location unavailable"
-                ? session.approximateLocation
-                : session.timezone || "Location unavailable";
-
-            const trustedBadge = session.isTrusted
-              ? `<span class="rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider"
-                       style="background:color-mix(in srgb,var(--green) 12%,transparent);color:var(--green)">
-                   Trusted
-                 </span>`
-              : `<span class="rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider"
-                       style="background:color-mix(in srgb,var(--amber) 12%,transparent);color:var(--amber)">
-                   Review device
-                 </span>`;
-
-            return `
-              <article class="panel-soft rounded-2xl p-5" data-session-card="${escapeSessionText(session.id)}">
-                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                  <div class="flex min-w-0 items-start gap-4">
-                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-                         style="background:color-mix(in srgb,var(--primary) 12%,var(--panel-3));color:var(--primary)">
-                      <span class="material-symbols-outlined">${sessionIcon(session.deviceType)}</span>
-                    </div>
-                    <div class="min-w-0">
-                      <div class="flex flex-wrap items-center gap-2">
-                        <p class="font-extrabold">${escapeSessionText(session.deviceName || "Unknown device")}</p>
-                        ${session.isCurrent ? `
-                          <span class="rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider"
-                                style="background:color-mix(in srgb,var(--green) 12%,transparent);color:var(--green)">
-                            Current device
-                          </span>` : ""}
-                        ${trustedBadge}
-                        ${session.isNewDevice ? `
-                          <span class="rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider"
-                                style="background:color-mix(in srgb,var(--amber) 12%,transparent);color:var(--amber)">
-                            New login
-                          </span>` : ""}
-                      </div>
-                      <p class="mt-1 text-sm" style="color:var(--muted)">
-                        ${escapeSessionText(location)} · IP ${escapeSessionText(session.ipAddress || "Unavailable")}
-                      </p>
-                      <p class="mt-1 text-xs" style="color:var(--muted)">
-                        ${escapeSessionText(session.browser || "Unknown browser")} · ${escapeSessionText(session.operatingSystem || "Unknown OS")}
-                      </p>
-                      <p class="mt-1 text-xs" style="color:var(--muted)">
-                        Last active ${escapeSessionText(formatSessionTime(session.lastActiveAt))} · Signed in ${escapeSessionText(formatSessionTime(session.signedInAt))}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div class="flex flex-wrap gap-2 lg:justify-end">
-                    <button class="secondary-btn rounded-xl px-3.5 py-2.5 text-sm font-extrabold" type="button"
-                            data-trust-session="${escapeSessionText(session.id)}"
-                            data-trusted="${session.isTrusted ? "true" : "false"}">
-                      ${session.isTrusted ? "Remove Trust" : "Trust Device"}
-                    </button>
-                    ${!session.isCurrent ? `
-                      <button class="danger-btn rounded-xl px-3.5 py-2.5 text-sm font-extrabold" type="button"
-                              data-not-mine="${escapeSessionText(session.id)}">
-                        This Wasn’t Me
-                      </button>
-                      <button class="danger-btn rounded-xl px-3.5 py-2.5 text-sm font-extrabold" type="button"
-                              data-revoke-session="${escapeSessionText(session.id)}">
-                        Logout Device
-                      </button>` : `
-                      <button class="secondary-btn rounded-xl px-3.5 py-2.5 text-sm font-extrabold" type="button" data-signout-current>
-                        Sign Out This Device
-                      </button>`}
-                  </div>
-                </div>
-              </article>
-            `;
-          })
-          .join("");
-
-        list.querySelectorAll("[data-trust-session]").forEach((button) => {
-          button.addEventListener("click", () => updateTrustedDevice(button));
-        });
-
-        list.querySelectorAll("[data-not-mine]").forEach((button) => {
-          button.addEventListener("click", () => reportDeviceNotMine(button));
-        });
-
-        list.querySelectorAll("[data-revoke-session]").forEach((button) => {
-          button.addEventListener("click", () => revokeDeviceSession(button));
-        });
-
-        list.querySelectorAll("[data-signout-current]").forEach((button) => {
-          button.addEventListener("click", () => {
-            if (confirm("Sign out this browser now?")) {
-              window.ProTradeAuth?.logout?.();
-            }
-          });
-        });
-      }
-
-      async function loadSessions({ silent = false } = {}) {
-        if (!silent) {
-          $("sessionsLoading")?.classList.remove("hidden");
-        }
-
-        try {
-          const response = await fetch(SESSIONS_API, {
-            headers: { Accept: "application/json" },
-          });
-          const body = await response.json().catch(() => ({}));
-
-          if (!response.ok || body.success === false) {
-            throw new Error(body.message || "Active devices could not be loaded.");
-          }
-
-          renderSessions(body);
-        } catch (error) {
-          $("sessionsLoading")?.classList.add("hidden");
-          showToast("error", "Sessions unavailable", error.message);
-        }
-      }
-
-      async function updateTrustedDevice(button) {
-        const sessionId = button.dataset.trustSession;
-        const currentlyTrusted = button.dataset.trusted === "true";
-        const trusted = !currentlyTrusted;
-
-        if (!sessionId) return;
-        if (!trusted && !confirm("Remove this device from your trusted list?")) return;
-
-        button.disabled = true;
-        const oldLabel = button.textContent;
-        button.textContent = trusted ? "Trusting…" : "Updating…";
-
-        try {
-          const response = await fetch(`${SESSIONS_API}/${encodeURIComponent(sessionId)}/trust`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ trusted }),
-          });
-          const body = await response.json().catch(() => ({}));
-
-          if (!response.ok || body.success === false) {
-            throw new Error(body.message || "Device trust could not be updated.");
-          }
-
-          showToast("success", trusted ? "Device trusted" : "Trust removed", body.message);
-          await loadSessions({ silent: true });
-        } catch (error) {
-          showToast("error", "Trust update failed", error.message);
-          button.disabled = false;
-          button.textContent = oldLabel;
-        }
-      }
-
-      async function reportDeviceNotMine(button) {
-        const sessionId = button.dataset.notMine;
-        if (!sessionId) return;
-
-        const confirmed = confirm(
-          "Report this login as unrecognized and revoke this device? You should reset your password after this action."
-        );
-        if (!confirmed) return;
-
-        button.disabled = true;
-        const oldLabel = button.textContent;
-        button.textContent = "Revoking…";
-
-        try {
-          const response = await fetch(`${SESSIONS_API}/${encodeURIComponent(sessionId)}/not-me`, {
-            method: "POST",
-          });
-          const body = await response.json().catch(() => ({}));
-
-          if (!response.ok || body.success === false) {
-            throw new Error(body.message || "The unrecognized device could not be revoked.");
-          }
-
-          showToast("success", "Device secured", body.message);
-          await loadSessions({ silent: true });
-        } catch (error) {
-          showToast("error", "Security action failed", error.message);
-          button.disabled = false;
-          button.textContent = oldLabel;
-        }
-      }
-
-      async function revokeDeviceSession(button) {
-        const sessionId = button.dataset.revokeSession;
-        if (!sessionId || !confirm("Logout this device from ProTrade?")) return;
-
-        button.disabled = true;
-        const oldLabel = button.textContent;
-        button.textContent = "Logging out…";
-
-        try {
-          const response = await fetch(`${SESSIONS_API}/${encodeURIComponent(sessionId)}`, {
-            method: "DELETE",
-          });
-          const body = await response.json().catch(() => ({}));
-
-          if (!response.ok || body.success === false) {
-            throw new Error(body.message || "Device could not be logged out.");
-          }
-
-          showToast("success", "Device logged out", body.message);
-          await loadSessions({ silent: true });
-        } catch (error) {
-          showToast("error", "Logout failed", error.message);
-        } finally {
-          button.disabled = false;
-          button.textContent = oldLabel;
-        }
-      }
-
-      async function logoutOtherDevices() {
-        if (!confirm("Logout every other phone and computer? This browser will stay signed in.")) return;
-
-        const button = $("logoutOthersBtn");
-        button.disabled = true;
-
-        try {
-          const response = await fetch(`${SESSIONS_API}/logout-others`, {
-            method: "POST",
-          });
-          const body = await response.json().catch(() => ({}));
-
-          if (!response.ok || body.success === false) {
-            throw new Error(body.message || "Other devices could not be logged out.");
-          }
-
-          showToast("success", "Other devices logged out", body.message);
-          await loadSessions({ silent: true });
-        } catch (error) {
-          showToast("error", "Logout failed", error.message);
-        } finally {
-          button.disabled = false;
-        }
-      }
-
-      async function logoutAllDevices() {
-        if (!confirm("Logout all devices, including this browser? You will need to sign in again.")) return;
-
-        const button = $("logoutAllBtn");
-        button.disabled = true;
-
-        try {
-          const response = await fetch(`${SESSIONS_API}/logout-all`, {
-            method: "POST",
-          });
-          const body = await response.json().catch(() => ({}));
-
-          if (!response.ok || body.success === false) {
-            throw new Error(body.message || "All devices could not be logged out.");
-          }
-        } catch (error) {
-          showToast("error", "Logout failed", error.message);
-          button.disabled = false;
-          return;
-        }
-
-        window.ProTradeAuth?.clearSession?.();
-        window.location.replace("login.html?logout=all");
-      }
-
-
-      function switchTab(tabName) {
-        document.querySelectorAll(".tab-button").forEach(button => {
-          button.classList.toggle("active", button.dataset.tab === tabName);
-        });
-
-        document.querySelectorAll(".tab-panel").forEach(panel => {
-          panel.classList.toggle("active", panel.id === `panel-${tabName}`);
-        });
-
-        if (tabName === "security") {
-          loadSessions();
-        }
-
-        if (tabName === "account-control") {
-          configureAccountControls();
-          loadEmailChangeStatus();
-        }
-
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      document.querySelectorAll(".tab-button").forEach(button => {
-        button.addEventListener("click", () => switchTab(button.dataset.tab));
-      });
-
-
-      $("refreshSessionsBtn")?.addEventListener("click", () => loadSessions());
-      $("logoutOthersBtn")?.addEventListener("click", logoutOtherDevices);
-      $("logoutAllBtn")?.addEventListener("click", logoutAllDevices);
-
-      fieldIds.forEach(id => {
-        const element = $(id);
-        const eventName = element?.type === "checkbox" || element?.tagName === "SELECT" ? "change" : "input";
-
-        element?.addEventListener(eventName, () => {
-          if (id === "theme") applyTheme(element.value);
-          updateLivePreview();
-          compareWithSnapshot();
-        });
-      });
-
-
-      document.querySelectorAll(".password-visibility").forEach((button) => {
-        button.addEventListener("click", () => {
-          const input = $(button.dataset.target);
-          const isVisible = input.type === "text";
-          input.type = isVisible ? "password" : "text";
-          button.querySelector("span").textContent =
-            isVisible ? "visibility" : "visibility_off";
-        });
-      });
-
-      $("newPassword")?.addEventListener("input", updatePasswordStrength);
-      $("confirmNewPassword")?.addEventListener(
-        "input",
-        updatePasswordStrength
-      );
-      $("changePasswordBtn")?.addEventListener(
-        "click",
-        changePassword
-      );
-
-      $("headerSaveBtn").addEventListener("click", saveSettings);
-      $("floatingSaveBtn").addEventListener("click", saveSettings);
-      $("discardBtn").addEventListener("click", () => {
-        if (!savedSnapshot) return;
-        fillSettings(JSON.parse(savedSnapshot));
-        setDirty(false);
-        showToast("success", "Changes discarded", "The last saved settings were restored.");
-      });
-      $("resetBtn").addEventListener("click", resetSettings);
-      $("exportBtn").addEventListener("click", exportAccountData);
-      $("downloadAccountDataBtn")?.addEventListener("click", exportAccountData);
-      $("requestEmailChangeBtn")?.addEventListener("click", requestEmailChange);
-      $("cancelEmailChangeBtn")?.addEventListener("click", cancelEmailChange);
-      $("deleteAccountBtn")?.addEventListener("click", deleteAccountPermanently);
-
-      window.addEventListener("beforeunload", event => {
-        if (!isDirty) return;
-        event.preventDefault();
-        event.returnValue = "";
-      });
-
-      window.ProTradeAuth?.ready
-        ?.then((user) => {
-          configureAccountControls(user);
-          loadEmailChangeStatus({ silent: true });
-        })
-        .catch(() => {});
-
-      checkSystemHealth();
-      loadSettings();
-    })();
-  </script>
-  <script src="security-activity.js"></script>
-  <script src="security-alerts.js"></script>
-</body>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<main class="main-content">
+<!-- Fixed ProTrade Top Header -->
+<header class="topbar">
+<div class="welcome-block">
+<button aria-label="Open sidebar" class="mobile-menu-btn" id="mobileMenuBtn" type="button">☰</button>
+<div>
+<h2>Welcome back, <span class="auth-user-name" id="welcomeName">Trader</span> 👑</h2>
+<p>Discipline today, freedom tomorrow.</p>
+</div>
+</div>
+<div class="topbar-actions">
+<button class="header-control" id="dateRangeBtn" type="button">
+<span id="dateRangeLabel">Last 30 Days</span>
+<span>▦</span>
+</button>
+<div class="account-selector-wrap">
+<button class="header-control" id="accountSelectorBtn" type="button">
+<span id="accountSelectorLabel">All Accounts</span><span>⌄</span>
+</button>
+<div class="popover account-selector-popover" hidden="" id="accountSelectorPopover">
+<button data-account="All Accounts" type="button">All Accounts</button>
+</div>
+</div>
+<button class="header-theme-control" data-theme-toggle="" type="button">
+<b id="headerThemeLabel">Dark</b>
+<span class="theme-switch compact">
+<span class="theme-sun">☀</span>
+<span class="theme-moon">☾</span>
+<span class="theme-knob"></span>
+</span>
+</button>
+<button aria-label="Notifications" class="notification-btn" id="notificationBtn" type="button">
+            ♧<span id="notificationBadge">0</span>
+</button>
+<button class="new-trade-btn" id="newTradeBtn" type="button">＋ New Trade</button>
+</div>
+</header>
+<!-- Settings Context Area -->
+<section class="settings-page">
+<div class="settings-page-head">
+<div>
+<span class="page-eyebrow">WORKSPACE CONTROL CENTER</span>
+<h3>Settings</h3>
+<p>Manage your ProTrade profile, preferences, trading setup and account security.</p>
+</div>
+<label class="settings-search">
+<span>⌕</span>
+<input autocomplete="off" id="settingsSearchInput" placeholder="Search settings..." type="search"/>
+<kbd>Ctrl K</kbd>
+</label>
+</div>
+<div class="settings-layout">
+<!-- Notion-inspired local settings navigation -->
+<aside class="settings-nav-panel">
+<div class="settings-user-mini">
+<span class="avatar small auth-user-initials">T</span>
+<div>
+<strong class="auth-user-name">Trader</strong>
+<small id="settingsMiniEmail">Signed-in account</small>
+</div>
+</div>
+<div class="settings-nav-group">
+<span class="settings-nav-label">Account</span>
+<button class="settings-nav-item active" data-settings-view="account" type="button">
+<span>◎</span><b>My profile</b>
+</button>
+<button class="settings-nav-item" data-settings-view="preferences" type="button">
+<span>⌘</span><b>Preferences</b>
+</button>
+<button class="settings-nav-item" data-settings-view="appearance" type="button">
+<span>◐</span><b>Appearance</b>
+</button>
+<button class="settings-nav-item" data-settings-view="notifications" type="button">
+<span>♧</span><b>Notifications</b>
+</button>
+</div>
+<div class="settings-nav-group">
+<span class="settings-nav-label">Trading workspace</span>
+<button class="settings-nav-item" data-settings-view="trading" type="button">
+<span>⇄</span><b>Trading defaults</b>
+</button>
+<button class="settings-nav-item" data-settings-view="connections" type="button">
+<span>⛓</span><b>Connections</b>
+</button>
+<button class="settings-nav-item" data-settings-view="subscription" type="button">
+<span>◇</span><b>Subscription &amp; billing</b>
+</button>
+</div>
+<div class="settings-nav-group">
+<span class="settings-nav-label">Security &amp; data</span>
+<button class="settings-nav-item" data-settings-view="security" type="button">
+<span>⌾</span><b>Security</b>
+</button>
+<button class="settings-nav-item" data-settings-view="data" type="button">
+<span>▧</span><b>Data &amp; privacy</b>
+</button>
+</div>
+</aside>
+<!-- Settings content -->
+<section class="settings-content-panel">
+<!-- Account -->
+<div class="settings-view active" data-view="account">
+<div class="view-head">
+<div>
+<h4>My profile</h4>
+<p>Update the information displayed across your ProTrade workspace.</p>
+</div>
+<span class="status-pill success">Account active</span>
+</div>
+<div class="profile-editor-card">
+<div class="profile-photo-block">
+<span class="avatar large" id="profileAvatarPreview">AT</span>
+<div>
+<strong>Profile photo</strong>
+<p>Current backend has no direct avatar-upload endpoint. Google avatar or initials are displayed.</p>
+<div class="inline-actions">
+<button class="secondary-btn" disabled="" id="uploadAvatarBtn" title="Backend avatar upload is not available yet." type="button">Upload photo</button>
+<button class="text-btn danger-text" disabled="" id="removeAvatarBtn" title="Backend avatar upload is not available yet." type="button">Remove</button>
+</div>
+</div>
+<input accept="image/png,image/jpeg,image/webp" hidden="" id="avatarInput" type="file"/>
+</div>
+</div>
+<form class="settings-form" id="profileForm">
+<div class="form-grid two">
+<label><span>Display name</span><input id="fullNameInput" maxlength="100" name="fullName" required="" type="text"/></label>
+<label><span>Email address</span><input id="emailInput" name="email" readonly="" type="email"/><small>Use the secure email-change form below.</small></label>
+<label><span>Trading timezone</span><select id="timezoneSelect" name="timezone">
+<option value="Asia/Kolkata">UTC +05:30 — India Standard Time</option>
+<option value="Europe/London">UTC +00:00 — London</option>
+<option value="America/New_York">UTC -05:00 — New York</option>
+<option value="Asia/Tokyo">UTC +09:00 — Tokyo</option>
+<option value="UTC">UTC</option>
+</select></label>
+<label><span>Trading role</span><input id="tradingRoleInput" maxlength="100" name="tradingRole" placeholder="Independent Trader" type="text"/></label>
+</div>
+<div class="form-actions"><span class="save-state" id="profileSaveState">Loading profile…</span><button class="primary-btn" type="submit">Save profile</button></div>
+</form>
+<div class="settings-section" id="emailChangeSection">
+<div class="section-title"><div><h5>Secure email change</h5><p>Approval links are sent to both the current and new email address.</p></div><span class="status-pill" id="emailChangeStatus">Checking…</span></div>
+<form class="password-form" id="emailChangeForm">
+<label><span>New email</span><input name="newEmail" required="" type="email"/></label>
+<label><span>Current password</span><input autocomplete="current-password" name="currentPassword" placeholder="Required for password accounts" type="password"/></label>
+<button class="secondary-btn" type="submit">Request email change</button>
+<button class="text-btn danger-text" hidden="" id="cancelEmailChangeBtn" type="button">Cancel pending request</button>
+</form>
+</div>
+</div>
+<!-- Preferences -->
+<div class="settings-view" data-view="preferences">
+<div class="view-head">
+<div>
+<h4>Preferences</h4>
+<p>Choose how data, dates and journal information behave.</p>
+</div>
+</div>
+<div class="settings-section">
+<div class="section-title">
+<div><h5>Language and region</h5><p>Control formatting used throughout ProTrade.</p></div>
+</div>
+<div class="preference-list">
+<div class="preference-row">
+<div><strong>Language</strong><p>Interface language for your account.</p></div>
+<select disabled="" id="languageSelect" title="Language is not stored by the current backend.">
+<option selected="">English (India)</option>
+</select>
+</div>
+<div class="preference-row">
+<div><strong>Date format</strong><p>Used in calendars, trade tables and reports.</p></div>
+<select id="dateFormatSelect"><option value="DD MMM YYYY">DD MMM YYYY</option><option value="MM/DD/YYYY">MM/DD/YYYY</option><option value="YYYY-MM-DD">YYYY-MM-DD</option></select>
+</div>
+<div class="preference-row">
+<div><strong>Base currency</strong><p>Default currency for balances and P&amp;L.</p></div>
+<select id="currencySelect"><option value="USD">USD — US Dollar</option><option value="INR">INR — Indian Rupee</option><option value="EUR">EUR — Euro</option><option value="GBP">GBP — Pound Sterling</option><option value="JPY">JPY — Japanese Yen</option></select>
+</div>
+</div>
+</div>
+<div class="settings-section">
+<div class="section-title">
+<div><h5>Workspace behavior</h5><p>Fine tune the trading journal experience.</p></div>
+</div>
+<div class="toggle-list">
+<label class="toggle-row">
+<div><strong>Open last visited page</strong><p>Return to the page you used most recently.</p></div>
+<input checked="" class="native-toggle" type="checkbox"/>
+<span class="toggle-ui"></span>
+</label>
+<label class="toggle-row">
+<div><strong>Compact tables</strong><p>Display more trades and rows on screen.</p></div>
+<input class="native-toggle" id="compactModeToggle" type="checkbox"/>
+<span class="toggle-ui"></span>
+</label>
+<label class="toggle-row">
+<div><strong>Confirm before deleting</strong><p>Ask for confirmation before permanent actions.</p></div>
+<input checked="" class="native-toggle" type="checkbox"/>
+<span class="toggle-ui"></span>
+</label>
+</div>
+</div>
+<div class="form-actions">
+<span class="save-state" id="preferencesSaveState">Preferences are synced</span>
+<button class="primary-btn" id="savePreferencesBtn" type="button">Save preferences</button>
+</div>
+</div>
+<!-- Appearance -->
+<div class="settings-view" data-view="appearance">
+<div class="view-head">
+<div>
+<h4>Appearance</h4>
+<p>Customize theme, accent color and workspace density.</p>
+</div>
+</div>
+<div class="settings-section">
+<div class="section-title">
+<div><h5>Theme</h5><p>Select how ProTrade should look on this device.</p></div>
+</div>
+<div class="theme-choice-grid" id="themeChoiceGrid">
+<button class="theme-choice" data-theme-choice="light" type="button">
+<span class="theme-preview light-preview">
+<i></i><b></b><em></em>
+</span>
+<strong>Light</strong>
+<small>Clean and bright</small>
+</button>
+<button class="theme-choice selected" data-theme-choice="dark" type="button">
+<span class="theme-preview dark-preview">
+<i></i><b></b><em></em>
+</span>
+<strong>Dark</strong>
+<small>Deep black workspace</small>
+</button>
+<button class="theme-choice" data-theme-choice="system" type="button">
+<span class="theme-preview system-preview">
+<i></i><b></b><em></em>
+</span>
+<strong>System</strong>
+<small>Follow device theme</small>
+</button>
+</div>
+</div>
+<div class="settings-section">
+<div class="section-title">
+<div><h5>Accent color</h5><p>Used for selected controls, charts and highlights.</p></div>
+</div>
+<div class="accent-options" id="accentOptions">
+<button aria-label="Green accent" class="accent-button selected" data-accent="green" type="button"><span class="green-accent"></span></button>
+<button aria-label="Blue accent" class="accent-button" data-accent="blue" type="button"><span class="blue-accent"></span></button>
+<button aria-label="Purple accent" class="accent-button" data-accent="purple" type="button"><span class="purple-accent"></span></button>
+<button aria-label="Orange accent" class="accent-button" data-accent="orange" type="button"><span class="orange-accent"></span></button>
+</div>
+</div>
+<div class="settings-section">
+<div class="section-title">
+<div><h5>Interface density</h5><p>Adjust spacing used in cards and tables.</p></div>
+</div>
+<div class="segmented-control" id="densityControl">
+<button data-density="comfortable" type="button">Comfortable</button>
+<button class="active" data-density="balanced" type="button">Balanced</button>
+<button data-density="compact" type="button">Compact</button>
+</div>
+</div>
+<div class="appearance-demo">
+<div class="appearance-demo-head"><span>Live preview</span><b>ProTrade card</b></div>
+<div class="appearance-demo-body">
+<span class="demo-icon">↗</span>
+<div><small>Net Profit</small><strong class="positive">Live data</strong></div>
+<span class="demo-badge">Preview</span>
+</div>
+</div>
+</div>
+<!-- Notifications -->
+<div class="settings-view" data-view="notifications">
+<div class="view-head">
+<div>
+<h4>Notifications</h4>
+<p>Decide which events should reach you and where.</p>
+</div>
+</div>
+<div class="notification-table">
+<div class="notification-table-head"><span>Backend preference</span><span>Enabled</span><span>Storage</span></div>
+<div class="notification-setting-row"><div><strong>Trade reminders</strong><p>Remind you about pending trade reviews.</p></div><label class="mini-toggle"><input id="tradeRemindersToggle" type="checkbox"/><span></span></label><small>MongoDB</small></div>
+<div class="notification-setting-row"><div><strong>Weekly performance summary</strong><p>Keep the weekly summary preference enabled.</p></div><label class="mini-toggle"><input id="weeklySummaryToggle" type="checkbox"/><span></span></label><small>MongoDB</small></div>
+<div class="notification-setting-row"><div><strong>Email notifications</strong><p>Allow supported ProTrade email notifications.</p></div><label class="mini-toggle"><input id="emailNotificationsToggle" type="checkbox"/><span></span></label><small>MongoDB</small></div>
+</div>
+<div class="form-actions">
+<span class="save-state">Changes save automatically</span>
+<button class="secondary-btn" id="testNotificationBtn" type="button">Send test notification</button>
+</div>
+</div>
+<!-- Trading defaults -->
+<div class="settings-view" data-view="trading">
+<div class="view-head">
+<div>
+<h4>Trading defaults</h4>
+<p>Set the values automatically used when creating new trades.</p>
+</div>
+</div>
+<form class="settings-form" id="tradingDefaultsForm">
+<div class="form-grid two">
+<label><span>Starting balance</span><input min="0" name="startingBalance" required="" step="0.01" type="number"/></label>
+<label><span>Target balance</span><input min="0" name="targetBalance" required="" step="0.01" type="number"/></label>
+<label><span>Risk per trade (%)</span><input max="100" min="0" name="riskPerTrade" required="" step="0.1" type="number"/></label>
+<label><span>Maximum daily loss (%)</span><input max="100" min="0" name="maxDailyLoss" required="" step="0.1" type="number"/></label>
+<label><span>Maximum trades per day</span><input max="100" min="1" name="maxTradesPerDay" required="" step="1" type="number"/></label>
+<label><span>Default R multiple</span><input max="100" min="0" name="defaultRR" required="" step="0.1" type="number"/></label>
+<label><span>Preferred session</span><select name="preferredSession"><option value="London">London</option><option value="New York">New York</option><option value="Asia">Asia</option><option value="Other">Other</option></select></label>
+</div>
+<div class="backend-note"><strong>Connected to Settings API</strong><p>These values are used by Dashboard, Trades and Calendar calculations/defaults.</p></div>
+<div class="form-actions"><span class="save-state" id="tradingSaveState">Loading defaults…</span><button class="primary-btn" type="submit">Save trading defaults</button></div>
+</form>
+</div>
+<!-- Connections -->
+<div class="settings-view" data-view="connections">
+<div class="view-head">
+<div>
+<h4>Connections</h4>
+<p>Connect brokers and external tools to your trading journal.</p>
+</div>
+<button class="primary-btn" disabled="" id="addConnectionBtn" title="Broker connection backend is not implemented." type="button">＋ Add connection</button>
+</div>
+<div class="connection-grid" id="connectionGrid">
+<article class="connection-card" data-connection="Broker API">
+<div class="connection-logo green-logo">API</div>
+<div class="connection-copy">
+<strong>Broker API</strong>
+<p>Direct broker trade synchronization</p>
+<small>Backend integration required</small>
+</div>
+<button class="connection-menu-btn" disabled="" title="Broker connection backend is not implemented." type="button">⋯</button>
+</article>
+<article class="connection-card" data-connection="MetaTrader 5">
+<div class="connection-logo blue-logo">M5</div>
+<div class="connection-copy">
+<strong>MetaTrader 5</strong>
+<p>Automatic trade import</p>
+<small>Backend integration required</small>
+</div>
+<button class="connect-btn" disabled="" title="Broker connection backend is not implemented." type="button">Connect</button>
+</article>
+<article class="connection-card" data-connection="TradingView">
+<div class="connection-logo purple-logo">TV</div>
+<div class="connection-copy">
+<strong>TradingView</strong>
+<p>Chart screenshots and ideas</p>
+<small>Backend integration required</small>
+</div>
+<button class="connect-btn" disabled="" title="Broker connection backend is not implemented." type="button">Connect</button>
+</article>
+<article class="connection-card" data-connection="Google Drive">
+<div class="connection-logo orange-logo">GD</div>
+<div class="connection-copy">
+<strong>Google Drive</strong>
+<p>Backup reports and screenshots</p>
+<small>Backend integration required</small>
+</div>
+<button class="connect-btn" disabled="" title="Broker connection backend is not implemented." type="button">Connect</button>
+</article>
+</div>
+<div class="connection-note">
+<span>⌾</span>
+<div><strong>Your credentials stay private.</strong><p>The current backend has no broker OAuth/sync routes. These controls are intentionally disabled.</p></div>
+</div>
+</div>
+<!-- Subscription -->
+<div class="settings-view" data-view="subscription">
+<div class="view-head"><div><h4>Subscription &amp; billing</h4><p>No subscription or payment routes exist in the current backend.</p></div><span class="status-pill warning">Not connected</span></div>
+<div class="settings-section"><div class="section-title"><div><h5>Backend required</h5><p>Plans, invoices and payment methods will remain disabled until a billing provider and subscription model are added.</p></div></div><div class="backend-note"><strong>No fake billing data</strong><p>This corrected page does not display demo invoices, card numbers or active paid plans.</p></div></div>
+</div>
+<!-- Security -->
+<div class="settings-view" data-view="security" id="panel-security">
+<div class="view-head">
+<div>
+<h4>Security</h4>
+<p>Protect your account and review active sessions.</p>
+</div>
+<span class="status-pill warning">2FA recommended</span>
+</div>
+<div class="settings-section">
+<div class="section-title">
+<div><h5>Password</h5><p>Use a strong password you do not use elsewhere.</p></div>
+</div>
+<form class="password-form" id="passwordForm">
+<label><span>Current password</span><input name="currentPassword" required="" type="password"/></label>
+<label><span>New password</span><input minlength="8" name="newPassword" required="" type="password"/></label>
+<label><span>Confirm new password</span><input minlength="8" name="confirmPassword" required="" type="password"/></label>
+<button class="secondary-btn" type="submit">Change password</button>
+</form>
+</div>
+<div class="settings-section">
+<div class="section-title">
+<div><h5>Active sessions</h5><p>Devices currently signed in to your ProTrade account.</p></div>
+<button class="text-btn danger-text" id="revokeAllBtn" type="button">Revoke all others</button>
+</div>
+<div class="session-list" id="sessionList"><div class="session-row"><span class="device-icon">▣</span><div><strong>Loading active sessions…</strong><p>Protected session API</p></div></div></div>
+</div>
+</div>
+<!-- Data -->
+<div class="settings-view" data-view="data">
+<div class="view-head">
+<div>
+<h4>Data &amp; privacy</h4>
+<p>Export, import or permanently remove your ProTrade data.</p>
+</div>
+</div>
+<div class="data-action-list">
+<article class="data-action-card">
+<span class="data-icon green-data">⇩</span>
+<div><strong>Export workspace data</strong><p>Download trades, notes and analytics as a JSON archive.</p></div>
+<button class="secondary-btn" id="exportDataBtn" type="button">Export</button>
+</article>
+<article class="data-action-card">
+<span class="data-icon blue-data">⇧</span>
+<div><strong>Import trades</strong><p>Import up to 100 CSV or JSON trade records into MongoDB.</p></div>
+<button class="secondary-btn" id="importDataBtn" type="button">Import</button>
+<input accept=".csv,.json" hidden="" id="importDataInput" type="file"/>
+</article>
+<article class="data-action-card">
+<span class="data-icon purple-data">▧</span>
+<div><strong>Server database backup</strong><p>Backups are controlled by the backend admin scripts, not by a browser toggle.</p></div>
+<label class="mini-toggle large"><input disabled="" id="backupToggle" type="checkbox"/><span></span></label>
+</article>
+<article class="data-action-card"><span class="data-icon orange-data">↺</span><div><strong>Reset workspace settings</strong><p>Restore your Settings document to backend defaults. Trades are not deleted.</p></div><button class="secondary-btn" id="resetSettingsBtn" type="button">Reset</button></article></div>
+<div class="danger-zone">
+<div>
+<h5>Danger zone</h5>
+<p>Deleting the account permanently removes all trades, screenshots, reports and settings.</p>
+</div>
+<button class="danger-btn" id="deleteAccountBtn" type="button">Delete account</button>
+</div>
+</div>
+<!-- Empty search results -->
+<div class="settings-empty" hidden="" id="settingsEmpty">
+<span>⌕</span>
+<h4>No settings found</h4>
+<p>Try searching for profile, theme, notification, broker or security.</p>
+<button class="secondary-btn" id="clearSearchBtn" type="button">Clear search</button>
+</div>
+</section>
+</div>
+</section>
+<!-- Fixed ProTrade Bottom Summary -->
+<footer class="bottom-summary">
+<div class="summary-quote"><i>◇</i><span>Discipline is the bridge between goals and accomplishment.</span></div>
+<div class="summary-stat"><span>Total Trades</span><strong id="footerTotalTrades">—</strong></div>
+<div class="summary-stat"><span>Profitable Trades</span><strong class="positive" id="footerWins">—</strong></div>
+<div class="summary-stat"><span>Losing Trades</span><strong class="negative" id="footerLosses">—</strong></div>
+<div class="summary-stat"><span>Breakeven</span><strong id="footerBreakeven">—</strong></div>
+</footer>
+</main>
+</div>
+<!-- Date range modal -->
+<div class="modal-backdrop" hidden="" id="dateModal">
+<form class="modal-card" id="dateForm">
+<div class="modal-head">
+<div><h3>Select date range</h3><p>Update the fixed ProTrade header period.</p></div>
+<button class="modal-close-btn" data-close-modal="dateModal" type="button">×</button>
+</div>
+<div class="modal-form-grid">
+<label><span>Start date</span><input id="startDate" required="" type="date"/></label>
+<label><span>End date</span><input id="endDate" required="" type="date"/></label>
+</div>
+<div class="modal-actions">
+<button class="secondary-btn" data-close-modal="dateModal" type="button">Cancel</button>
+<button class="primary-btn" type="submit">Apply range</button>
+</div>
+</form>
+</div>
+<!-- New trade modal -->
+<div class="modal-backdrop" hidden="" id="tradeModal">
+<form class="modal-card" id="tradeForm">
+<div class="modal-head"><div><h3>Add trade</h3><p>Save directly to your MongoDB journal.</p></div><button data-close-modal="tradeModal" type="button">×</button></div>
+<div class="form-grid two">
+<label><span>Trade date</span><input name="tradeDate" required="" type="date"/></label>
+<label><span>Symbol</span><input maxlength="30" name="symbol" placeholder="EURUSD" required="" type="text"/></label>
+<label><span>Direction</span><select name="direction"><option value="Long">Long</option><option value="Short">Short</option></select></label>
+<label><span>Session</span><select name="session"><option value="Asian">Asian</option><option value="London">London</option><option value="New York">New York</option><option value="Other">Other</option></select></label>
+<label><span>Entry price</span><input name="entryPrice" required="" step="any" type="number"/></label>
+<label><span>Exit price</span><input name="exitPrice" step="any" type="number"/></label>
+<label><span>Net P&amp;L</span><input name="profitLoss" step="any" type="number" value="0"/></label>
+<label><span>R multiple</span><input name="rr" step="any" type="number" value="0"/></label>
+<label><span>Result</span><select name="result"><option value="Open">Open</option><option value="Win">Win</option><option value="Loss">Loss</option><option value="Breakeven">Breakeven</option></select></label>
+<label><span>Quantity</span><input min="0" name="quantity" step="any" type="number" value="1"/></label>
+<label><span>Strategy / model</span><input maxlength="120" name="model"/></label>
+<label><span>Protocol</span><input maxlength="120" name="protocol"/></label>
+<label class="form-wide"><span>Notes</span><textarea maxlength="5000" name="notes" rows="3"></textarea></label>
+</div>
+<div class="modal-actions"><button class="secondary-btn" data-close-modal="tradeModal" type="button">Cancel</button><button class="primary-btn" type="submit">Save to MongoDB</button></div>
+</form>
+</div>
+<!-- Connection modal -->
+<div class="modal-backdrop" hidden="" id="connectionModal">
+<form class="modal-card" id="connectionForm">
+<div class="modal-head">
+<div><h3>Add connection</h3><p>Connect a broker or external trading service.</p></div>
+<button class="modal-close-btn" data-close-modal="connectionModal" type="button">×</button>
+</div>
+<div class="modal-form-grid one">
+<label>
+<span>Provider</span>
+<select name="provider">
+<option>MetaTrader 5</option>
+<option>TradingView</option>
+<option>Google Drive</option>
+<option>cTrader</option>
+</select>
+</label>
+<label><span>Connection name</span><input name="connectionName" required="" value="Primary Connection"/></label>
+</div>
+<div class="connection-auth-note">You will be redirected to the provider's secure authorization screen.</div>
+<div class="modal-actions">
+<button class="secondary-btn" data-close-modal="connectionModal" type="button">Cancel</button>
+<button class="primary-btn" type="submit">Continue securely</button>
+</div>
+</form>
+</div>
+<!-- Delete account modal -->
+<div class="modal-backdrop" hidden="" id="deleteModal">
+<form class="modal-card compact-modal" id="deleteForm">
+<div class="modal-head"><div><h3>Delete account permanently</h3><p>This removes the account, trades, journals, settings and sessions.</p></div><button data-close-modal="deleteModal" type="button">×</button></div>
+<label><span>Current account email</span><input id="deleteEmailInput" required="" type="email"/></label>
+<label><span>Current password</span><input autocomplete="current-password" id="deletePasswordInput" placeholder="Required for password accounts" type="password"/></label>
+<label><span>Type DELETE</span><input autocomplete="off" id="deleteConfirmInput" required="" type="text"/></label>
+<div class="modal-actions"><button class="secondary-btn" data-close-modal="deleteModal" type="button">Cancel</button><button class="danger-btn" disabled="" id="confirmDeleteBtn" type="submit">Delete permanently</button></div>
+</form>
+</div>
+<!-- Information modal -->
+<div class="modal-backdrop" hidden="" id="infoModal">
+<div class="modal-card compact-modal">
+<div class="modal-head">
+<div><h3 id="infoModalTitle">Information</h3><p id="infoModalSubtitle">ProTrade settings</p></div>
+<button class="modal-close-btn" data-close-modal="infoModal" type="button">×</button>
+</div>
+<div class="info-modal-body" id="infoModalBody"></div>
+<div class="modal-actions">
+<button class="primary-btn" data-close-modal="infoModal" type="button">Done</button>
+</div>
+</div>
+</div>
+<div class="theme-transition-flash" id="themeTransitionFlash"></div>
+<div class="toast-stack" id="toastStack"></div>
+<script src="auth.js"></script><script src="settings.js"></script><script src="security-activity.js"></script><script src="security-alerts.js"></script></body>
 </html>

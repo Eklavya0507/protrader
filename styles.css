@@ -675,3 +675,12 @@ button[disabled] { opacity: .58; cursor: wait !important; }
   .trade-search { width: 100%; }
   .content-actions { width: 100%; }
 }
+
+
+/* Unified signed-in user avatar */
+.profile-card .avatar {
+  width:40px; height:40px; display:grid; place-items:center; border-radius:50%;
+  color:var(--text); background:linear-gradient(145deg,var(--panel-solid),var(--bg-alt));
+  border:2px solid color-mix(in srgb,var(--text) 45%,transparent);
+  font-size:12px; font-weight:900; letter-spacing:.02em;
+}
