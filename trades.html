@@ -1,296 +1,233 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+
+<html data-theme="light" lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f5f9fc" />
-  <title>ProTrade — Trades</title>
-  <link rel="stylesheet" href="trades.css" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="#f5f9fc" name="theme-color"/>
+<title>ProTrade — Trades</title>
+<link href="styles.css" rel="stylesheet"/>
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar" id="sidebar">
-      <div class="brand-row">
-        <div class="brand-mark" aria-hidden="true">
-          <span></span><span></span><span></span><span></span>
-        </div>
-        <div class="brand-copy">
-          <h1>ProTrade</h1>
-          <p>TRADING JOURNAL</p>
-        </div>
-      </div>
-
-      <nav class="sidebar-nav" id="sidebarNav" aria-label="Primary navigation">
-        <button class="nav-item" type="button" data-page="Dashboard" data-route="index.html">
-          <span class="nav-icon">▣</span><span>Dashboard</span>
-        </button>
-        <button class="nav-item active" type="button" data-page="Trades">
-          <span class="nav-icon">↻</span><span>Trades</span><span class="nav-tail">›</span>
-        </button>
-        <button class="nav-item" type="button" data-page="Calendar">
-          <span class="nav-icon">▦</span><span>Calendar</span>
-        </button>
-        <button class="nav-item" type="button" data-page="Analytics">
-          <span class="nav-icon">⌁</span><span>Analytics</span><small class="pro-pill">Pro</small>
-        </button>
-        <button class="nav-item" type="button" data-page="Performance">
-          <span class="nav-icon">▥</span><span>Performance</span>
-        </button>
-        <button class="nav-item" type="button" data-page="Risk Management">
-          <span class="nav-icon">◇</span><span>Risk Management</span>
-        </button>
-        <button class="nav-item" type="button" data-page="Psychology">
-          <span class="nav-icon">♡</span><span>Psychology</span>
-        </button>
-        <button class="nav-item" type="button" data-page="Journal">
-          <span class="nav-icon">▤</span><span>Journal</span>
-        </button>
-        <button class="nav-item" type="button" data-page="Reports">
-          <span class="nav-icon">▧</span><span>Reports</span>
-        </button>
-        <button class="nav-item" type="button" id="importTradesBtn">
-          <span class="nav-icon">⇩</span><span>Import Trades</span>
-        </button>
-        <input id="importTradesInput" type="file" accept=".csv,.json" hidden />
-        <button class="nav-item" type="button" data-page="Settings">
-          <span class="nav-icon">⚙</span><span>Settings</span>
-        </button>
-      </nav>
-
-      <div class="sidebar-bottom">
-        <div class="profile-wrap">
-          <button class="profile-card" id="profileBtn" type="button">
-            <img src="assets/avatar.jpg" alt="Trader profile" />
-            <span class="profile-copy"><strong>Arjun Trader</strong><small>Elite Trader</small></span>
-            <span>⌄</span>
-          </button>
-          <div class="popover profile-popover" id="profilePopover" hidden>
-            <button type="button" data-profile-action="profile">My Profile</button>
-            <button type="button" data-profile-action="account">Account Settings</button>
-            <button type="button" data-profile-action="logout">Sign Out</button>
-          </div>
-        </div>
-
-        <div class="account-card">
-          <div class="account-head">
-            <span>Account Balance</span>
-            <button id="balanceVisibilityBtn" class="ghost-icon" type="button" aria-label="Hide or show balance">◉</button>
-          </div>
-          <strong id="sidebarBalance">$12,540.00</strong>
-          <div class="equity-block"><span>Equity</span><b id="sidebarEquity">$13,214.75</b></div>
-          <div class="broker-block"><span>Broker</span><strong>IC Markets</strong><i></i></div>
-        </div>
-
-        <div class="theme-card">
-          <span id="themeLabel">Light Mode</span>
-          <button class="theme-switch" id="themeSwitch" type="button" aria-label="Switch light and dark mode"><span></span></button>
-        </div>
-      </div>
-    </aside>
-
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <main class="main">
-      <header class="top-header">
-        <div class="welcome-area">
-          <button id="mobileMenuBtn" class="mobile-menu" type="button" aria-label="Open menu">☰</button>
-          <div>
-            <h2>Welcome back, Trader <span>♛</span></h2>
-            <p>Discipline today, freedom tomorrow.</p>
-          </div>
-        </div>
-
-        <div class="header-actions">
-          <button class="header-control" id="dateRangeBtn" type="button"><span id="dateRangeLabel">01 May 2024 - 31 May 2024</span><span>▦</span></button>
-
-          <div class="dropdown-wrap">
-            <button class="header-control" id="accountSelectorBtn" type="button"><span id="accountLabel">All Accounts</span><span>⌄</span></button>
-            <div class="popover dropdown-popover" id="accountPopover" hidden>
-              <button type="button" data-account="All Accounts">All Accounts</button>
-              <button type="button" data-account="IC Markets">IC Markets</button>
-              <button type="button" data-account="Prop Firm - 1">Prop Firm - 1</button>
-              <button type="button" data-account="Demo Account">Demo Account</button>
-            </div>
-          </div>
-
-          <button class="notification-btn" id="notificationBtn" type="button" aria-label="Notifications">♧<span>3</span></button>
-          <button class="new-trade-btn" id="newTradeBtn" type="button">＋ New Trade</button>
-        </div>
-      </header>
-
-      <section class="center-content">
-        <div class="content-heading">
-          <h2>All Trades</h2>
-          <div class="content-actions">
-            <button id="filterBtn" type="button">▽ Filter</button>
-            <button id="groupBtn" type="button">◎ Group</button>
-            <button id="sortBtn" type="button">⇅ Sort</button>
-            <button id="moreBtn" class="icon-action" type="button">⋯</button>
-          </div>
-        </div>
-
-        <section class="trade-section panel">
-          <div class="trade-tabs" id="tradeTabs">
-            <button class="active" type="button" data-tab="all">All Trades</button>
-            <button type="button" data-tab="open">Open Trades</button>
-            <button type="button" data-tab="closed">Closed Trades</button>
-            <button type="button" data-tab="unreviewed">Unreviewed</button>
-          </div>
-
-          <div class="table-scroll">
-            <table class="trades-table">
-              <thead>
-                <tr>
-                  <th>Trade ID</th>
-                  <th><button id="dateSortBtn" class="table-sort" type="button">Date ⌄</button></th>
-                  <th>Symbol</th>
-                  <th>Direction</th>
-                  <th>Strategy</th>
-                  <th>Session</th>
-                  <th>Entry</th>
-                  <th>Exit</th>
-                  <th>Net P&amp;L</th>
-                  <th>R Multiple</th>
-                  <th>Result</th>
-                  <th>Review / Screenshot</th>
-                </tr>
-              </thead>
-              <tbody id="tradeBody">
-                <tr class="selected" data-status="closed" data-reviewed="true">
-                  <td>TRD-2026-000145</td><td>06 Jul 2026</td><td><span class="tag symbol eur">EURUSD</span></td><td><span class="tag long">Long</span></td><td>London Breakout</td><td>London</td><td>1.08234</td><td>1.08672</td><td class="positive">+$119.00</td><td class="positive">2.38R</td><td class="positive">Win</td>
-                  <td><div class="row-tools"><button data-row-tool="image">▧</button><button data-row-tool="camera">▣</button><button data-row-tool="link">⌁</button><button data-row-tool="comment">○</button></div></td>
-                </tr>
-                <tr data-status="closed" data-reviewed="true">
-                  <td>TRD-2026-000144</td><td>06 Jul 2026</td><td><span class="tag symbol xau">XAUUSD</span></td><td><span class="tag short">Short</span></td><td>Supply Reversal</td><td>New York</td><td>2334.50</td><td>2326.40</td><td class="positive">+$202.50</td><td class="positive">2.02R</td><td class="positive">Win</td>
-                  <td><div class="row-tools"><button data-row-tool="image">▧</button><button data-row-tool="camera">▣</button><button data-row-tool="link">⌁</button><button data-row-tool="comment">○</button></div></td>
-                </tr>
-                <tr data-status="closed" data-reviewed="false">
-                  <td>TRD-2026-000143</td><td>05 Jul 2026</td><td><span class="tag symbol gbp">GBPUSD</span></td><td><span class="tag long">Long</span></td><td>Trend Continuation</td><td>London</td><td>1.27410</td><td>1.27200</td><td class="negative">-$84.20</td><td class="negative">-0.84R</td><td class="negative">Loss</td>
-                  <td><div class="stars" data-rating="3"><button>★</button><button>★</button><button>★</button><button>☆</button><button>☆</button></div></td>
-                </tr>
-                <tr data-status="open" data-reviewed="false">
-                  <td>TRD-2026-000142</td><td>05 Jul 2026</td><td><span class="tag symbol nas">NAS100</span></td><td><span class="tag long">Long</span></td><td>Breakout</td><td>New York</td><td>18450.5</td><td>18580.0</td><td class="positive">+$129.50</td><td class="positive">1.29R</td><td class="positive">Win</td>
-                  <td><div class="stars" data-rating="2"><button>★</button><button>★</button><button>☆</button><button>☆</button><button>☆</button></div></td>
-                </tr>
-                <tr data-status="closed" data-reviewed="false">
-                  <td>TRD-2026-000141</td><td>04 Jul 2026</td><td><span class="tag symbol jpy">USDJPY</span></td><td><span class="tag short">Short</span></td><td>Liquidity Sweep</td><td>Tokyo</td><td>156.230</td><td>156.780</td><td class="negative">-$55.00</td><td class="negative">-0.55R</td><td class="negative">Loss</td>
-                  <td><div class="stars" data-rating="1"><button>★</button><button>☆</button><button>☆</button><button>☆</button><button>☆</button></div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="table-footer">
-            <p>Showing <span id="visibleFrom">1</span> to <span id="visibleTo">5</span> of <strong id="totalTradeCount">229</strong> trades</p>
-            <div class="pagination" id="pagination">
-              <button type="button" data-page="prev">‹</button><button class="active" type="button" data-page="1">1</button><button type="button" data-page="2">2</button><button type="button" data-page="3">3</button><button type="button" data-page="4">4</button><button type="button" data-page="5">5</button><span>…</span><button type="button" data-page="46">46</button><button type="button" data-page="next">›</button>
-            </div>
-            <select id="pageSizeSelect"><option value="5">5 / page</option><option value="10">10 / page</option><option value="25">25 / page</option></select>
-          </div>
-        </section>
-
-        <section class="metrics-grid">
-          <button class="metric-card" type="button" data-metric="Total Trades"><span class="metric-icon green">⌁</span><span><small>Total Trades</small><strong id="metricTotalTrades">229</strong></span></button>
-          <button class="metric-card" type="button" data-metric="Win Rate"><span class="metric-icon blue">◎</span><span><small>Win Rate</small><strong>63.0%</strong></span></button>
-          <button class="metric-card" type="button" data-metric="Total Net Profit"><span class="metric-icon green">$</span><span><small>Total Net Profit</small><strong class="positive" id="metricNetProfit">+$12,914.75</strong></span></button>
-          <button class="metric-card" type="button" data-metric="Profit Factor"><span class="metric-icon purple">▥</span><span><small>Profit Factor</small><strong>2.41</strong></span></button>
-          <button class="metric-card" type="button" data-metric="Avg R Multiple"><span class="metric-icon gold">R</span><span><small>Avg R Multiple</small><strong>1.32R</strong></span></button>
-          <button class="metric-card chart-metric" type="button" data-metric="Equity Curve"><span class="chart-label">Equity Curve</span><canvas id="equitySpark"></canvas></button>
-        </section>
-
-        <section class="detail-shell panel">
-          <div class="detail-topline">
-            <button id="backToTradesBtn" class="back-link" type="button">‹ Back to Trades</button>
-            <h3>2. TRADE DETAIL VIEW</h3>
-            <div class="detail-buttons"><button id="editTradeBtn" type="button">✎ Edit</button><button id="exportTradeBtn" type="button">⇪</button><button id="shareTradeBtn" type="button">♧ Share</button></div>
-          </div>
-
-          <div class="detail-grid">
-            <article class="detail-card">
-              <h4>ⓘ Trade Information</h4>
-              <dl><dt>Symbol</dt><dd>EURUSD</dd><dt>Direction</dt><dd>Long</dd><dt>Date</dt><dd>06 Jul 2026</dd><dt>Session</dt><dd>London</dd><dt>Strategy</dt><dd>London Breakout</dd><dt>Status</dt><dd><span class="status-badge">Closed</span></dd><dt>Time</dt><dd>10:30 AM – 11:45 AM</dd><dt>Timeframe</dt><dd>15m</dd><dt>Account</dt><dd>Prop Firm – 1</dd><dt>Broker</dt><dd>IC Markets</dd></dl>
-            </article>
-
-            <article class="detail-card">
-              <h4>⇄ Entry &amp; Exit Summary</h4>
-              <div class="entry-exit"><strong>Entries</strong><p><span>• 1.08234 (0.50)</span><b>10:30 AM</b></p><p><span>• 1.08190 (0.25)</span><b>10:42 AM</b></p><strong>Exits</strong><p><span>• 1.08600 (0.40)</span><b>11:20 AM</b></p><p><span>• 1.08720 (0.35)</span><b>11:45 AM</b></p></div>
-            </article>
-
-            <article class="detail-card">
-              <h4>◫ Result</h4>
-              <div class="result-grid"><div><span>Net P&amp;L</span><strong class="positive">+$119.00</strong></div><div><span>R Multiple</span><strong class="positive">2.38R</strong></div><div><span>P&amp;L %</span><strong class="positive">2.38%</strong></div><div><span>Holding Time</span><strong>75 Min</strong></div><div><span>MAE</span><strong class="negative">-$18.00</strong></div><div><span>MFE</span><strong class="positive">+$142.00</strong></div></div>
-            </article>
-
-            <article class="detail-card">
-              <h4>◇ Risk Management</h4>
-              <dl><dt>Stop Loss</dt><dd>1.08000</dd><dt>Take Profit</dt><dd>1.08700</dd><dt>Risk %</dt><dd>1.0%</dd><dt>Risk Amount</dt><dd>$50.00</dd><dt>Lot Size</dt><dd>0.75</dd><dt>Rule Violation</dt><dd><span class="no-badge">No</span></dd></dl>
-            </article>
-          </div>
-
-          <div class="screenshots-card">
-            <h4>▧ Screenshots &amp; Notes</h4>
-            <div class="screenshot-grid">
-              <button class="screenshot" type="button" data-shot="1"><img src="assets/chart-1.jpg" alt="Trade screenshot 1" /></button>
-              <button class="screenshot" type="button" data-shot="2"><img src="assets/chart-2.jpg" alt="Trade screenshot 2" /></button>
-              <button class="screenshot" type="button" data-shot="3"><img src="assets/chart-3.jpg" alt="Trade screenshot 3" /></button>
-              <button id="addScreenshotBtn" class="add-screenshot" type="button">＋ Add Screenshot</button>
-              <input id="screenshotInput" type="file" accept="image/*" hidden />
-            </div>
-          </div>
-        </section>
-      </section>
-
-      <footer class="bottom-summary">
-        <div class="quote"><span class="diamond">◇</span><span>Discipline is the bridge between goals and accomplishment.</span></div>
-        <div class="summary-stat"><small>Total Trades</small><strong id="footerTotalTrades">229</strong></div>
-        <div class="summary-stat"><small>Profitable Trades</small><strong class="positive">145 <em>(63.0%)</em></strong></div>
-        <div class="summary-stat"><small>Losing Trades</small><strong class="negative">73 <em>(31.7%)</em></strong></div>
-        <div class="summary-stat"><small>Breakeven</small><strong>11 <em>(5.3%)</em></strong></div>
-      </footer>
-    </main>
-  </div>
-
-  <div class="modal-backdrop" id="dateModal" hidden>
-    <form class="modal" id="dateForm">
-      <div class="modal-head"><div><h3>Select Date Range</h3><p>Update the reporting period.</p></div><button type="button" data-close="dateModal">×</button></div>
-      <div class="form-grid"><label>Start Date<input id="startDate" type="date" value="2024-05-01" required /></label><label>End Date<input id="endDate" type="date" value="2024-05-31" required /></label></div>
-      <div class="modal-actions"><button class="secondary" type="button" data-close="dateModal">Cancel</button><button class="primary" type="submit">Apply</button></div>
-    </form>
-  </div>
-
-  <div class="modal-backdrop" id="tradeModal" hidden>
-    <form class="modal wide-modal" id="tradeForm">
-      <div class="modal-head"><div><h3>Add New Trade</h3><p>Create a new trade record.</p></div><button type="button" data-close="tradeModal">×</button></div>
-      <div class="form-grid three"><label>Trade ID<input name="tradeId" value="TRD-2026-000146" required /></label><label>Date<input name="date" type="date" value="2026-07-06" required /></label><label>Symbol<input name="symbol" value="EURUSD" required /></label><label>Direction<select name="direction"><option>Long</option><option>Short</option></select></label><label>Strategy<input name="strategy" value="Continuation" required /></label><label>Session<select name="session"><option>London</option><option>New York</option><option>Tokyo</option></select></label><label>Entry<input name="entry" type="number" step="any" value="1.08320" required /></label><label>Exit<input name="exit" type="number" step="any" value="1.08610" required /></label><label>Net P&amp;L<input name="pnl" type="number" step="0.01" value="85.50" required /></label><label>R Multiple<input name="rMultiple" value="1.70R" required /></label></div>
-      <div class="modal-actions"><button class="secondary" type="button" data-close="tradeModal">Cancel</button><button class="primary" type="submit">Save Trade</button></div>
-    </form>
-  </div>
-
-  <div class="modal-backdrop" id="filterModal" hidden>
-    <form class="modal" id="filterForm">
-      <div class="modal-head"><div><h3>Filter Trades</h3><p>Filter the visible trades.</p></div><button type="button" data-close="filterModal">×</button></div>
-      <div class="form-grid"><label>Symbol<select id="filterSymbol"><option value="all">All Symbols</option><option>EURUSD</option><option>XAUUSD</option><option>GBPUSD</option><option>NAS100</option><option>USDJPY</option></select></label><label>Result<select id="filterResult"><option value="all">All Results</option><option value="Win">Win</option><option value="Loss">Loss</option></select></label></div>
-      <div class="modal-actions"><button class="secondary" id="clearFilterBtn" type="button">Clear</button><button class="primary" type="submit">Apply Filter</button></div>
-    </form>
-  </div>
-
-  <div class="modal-backdrop" id="editModal" hidden>
-    <form class="modal" id="editForm">
-      <div class="modal-head"><div><h3>Edit Selected Trade</h3><p>Update the selected trade details.</p></div><button type="button" data-close="editModal">×</button></div>
-      <div class="form-grid"><label>Strategy<input id="editStrategy" value="London Breakout" /></label><label>Session<select id="editSession"><option>London</option><option>New York</option><option>Tokyo</option></select></label><label>Status<select id="editStatus"><option>Closed</option><option>Open</option></select></label><label>Notes<input id="editNotes" value="Followed the plan." /></label></div>
-      <div class="modal-actions"><button class="secondary" type="button" data-close="editModal">Cancel</button><button class="primary" type="submit">Save Changes</button></div>
-    </form>
-  </div>
-
-  <div class="modal-backdrop" id="infoModal" hidden>
-    <div class="modal">
-      <div class="modal-head"><div><h3 id="infoTitle">Information</h3><p id="infoSubtitle">Action details</p></div><button type="button" data-close="infoModal">×</button></div>
-      <div id="infoBody" class="info-body"></div>
-      <div class="modal-actions"><button class="primary" type="button" data-close="infoModal">Done</button></div>
-    </div>
-  </div>
-
-  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
-  <script src="trades.js"></script>
+<div class="app-shell">
+<aside class="sidebar" id="sidebar">
+<div class="brand-row">
+<div aria-hidden="true" class="brand-mark">
+<span></span><span></span><span></span><span></span>
+</div>
+<div class="brand-copy">
+<h1>ProTrade</h1>
+<p>TRADING JOURNAL</p>
+</div>
+</div>
+<nav aria-label="Primary navigation" class="sidebar-nav" id="sidebarNav">
+<button class="nav-item" data-page="Dashboard" data-route="dashboard.html" type="button">
+<span class="nav-icon">▣</span><span>Dashboard</span><span class="nav-tail">›</span>
+</button>
+<button class="nav-item active" data-page="Trades" data-route="trades.html" type="button">
+<span class="nav-icon">↻</span><span>Trades</span><span class="nav-tail">›</span>
+</button>
+<button class="nav-item" data-page="Calendar" data-route="calendar.html" type="button">
+<span class="nav-icon">▦</span><span>Calendar</span>
+</button>
+<button class="nav-item" data-page="Analytics" data-route="analytics.html" type="button">
+<span class="nav-icon">⌁</span><span>Analytics</span><small class="pro-pill">Pro</small>
+</button>
+<button class="nav-item" data-page="Performance" data-route="analytics.html" type="button">
+<span class="nav-icon">▥</span><span>Performance</span>
+</button>
+<button class="nav-item" data-page="Risk Management" data-route="analytics.html" type="button">
+<span class="nav-icon">◇</span><span>Risk Management</span>
+</button>
+<button class="nav-item" data-page="Psychology" data-route="psychology.html" type="button">
+<span class="nav-icon">♡</span><span>Psychology</span>
+</button>
+<button class="nav-item" data-page="Journal" data-route="ai-journal.html" type="button">
+<span class="nav-icon">▤</span><span>Journal</span>
+</button>
+<button class="nav-item" data-page="Reports" data-route="analytics.html" type="button">
+<span class="nav-icon">▧</span><span>Reports</span>
+</button>
+<button class="nav-item" id="importTradesBtn" type="button">
+<span class="nav-icon">⇩</span><span>Import Trades</span>
+</button>
+<input accept=".csv,.json" hidden="" id="importTradesInput" type="file"/>
+<button class="nav-item" data-page="Settings" data-route="settings.html" type="button">
+<span class="nav-icon">⚙</span><span>Settings</span>
+</button>
+</nav>
+<div class="sidebar-bottom">
+<div class="profile-wrap">
+<button class="profile-card" id="profileBtn" type="button">
+<img alt="Trader profile" src="assets/avatar.jpg"/>
+<span class="profile-copy"><strong class="auth-user-name">Trader</strong><small id="profileRole">Independent Trader</small></span>
+<span>⌄</span>
+</button>
+<div class="popover profile-popover" hidden="" id="profilePopover">
+<button data-profile-action="profile" type="button">My Profile</button>
+<button data-profile-action="account" type="button">Account Settings</button>
+<button data-profile-action="logout" type="button">Sign Out</button>
+</div>
+</div>
+<div class="account-card">
+<div class="account-head">
+<span>Account Balance</span>
+<button aria-label="Hide or show balance" class="ghost-icon" id="balanceVisibilityBtn" type="button">◉</button>
+</div>
+<strong id="sidebarBalance">$12,540.00</strong>
+<div class="equity-block"><span>Equity</span><b id="sidebarEquity">$13,214.75</b></div>
+<div class="broker-block"><span>Data Source</span><strong id="dataSourceLabel">MongoDB Journal</strong><i></i></div>
+</div>
+<div class="theme-card">
+<span id="themeLabel">Light Mode</span>
+<button aria-label="Switch light and dark mode" class="theme-switch" id="themeSwitch" type="button"><span></span></button>
+</div>
+</div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<main class="main">
+<header class="top-header">
+<div class="welcome-area">
+<button aria-label="Open menu" class="mobile-menu" id="mobileMenuBtn" type="button">☰</button>
+<div>
+<h2>Welcome back, <span class="auth-user-name" id="welcomeName">Trader</span><span> ♛</span></h2>
+<p>Discipline today, freedom tomorrow.</p>
+</div>
+</div>
+<div class="header-actions">
+<button class="header-control" id="dateRangeBtn" type="button"><span id="dateRangeLabel">08 Jun 2026 - 07 Jul 2026</span><span>▦</span></button>
+<div class="dropdown-wrap">
+<button class="header-control" id="accountSelectorBtn" type="button"><span id="accountLabel">All Accounts</span><span>⌄</span></button>
+<div class="popover dropdown-popover" hidden="" id="accountPopover"><button data-account="All Accounts" type="button">All Accounts</button></div>
+</div>
+<button aria-label="Notifications" class="notification-btn" id="notificationBtn" type="button">♧<span id="notificationCount">0</span></button>
+<button class="new-trade-btn" id="newTradeBtn" type="button">＋ New Trade</button>
+</div>
+</header>
+<section class="center-content">
+<div class="content-heading">
+<div><h2>All Trades</h2><p class="api-status" id="tradesStatus">Connecting to ProTrade backend…</p></div>
+<div class="content-actions"><input class="trade-search" id="tradeSearch" placeholder="Search trades…" type="search"/>
+<button id="filterBtn" type="button">▽ Filter</button>
+<button id="groupBtn" type="button">◎ Group</button>
+<button id="sortBtn" type="button">⇅ Sort</button>
+<button class="icon-action" id="moreBtn" type="button">⋯</button>
+</div>
+</div>
+<section class="trade-section panel">
+<div class="trade-tabs" id="tradeTabs">
+<button class="active" data-tab="all" type="button">All Trades</button>
+<button data-tab="open" type="button">Open Trades</button>
+<button data-tab="closed" type="button">Closed Trades</button>
+<button data-tab="unreviewed" type="button">Unreviewed</button>
+</div>
+<div class="table-scroll">
+<table class="trades-table">
+<thead>
+<tr>
+<th>Trade ID</th>
+<th><button class="table-sort" id="dateSortBtn" type="button">Date ⌄</button></th>
+<th>Symbol</th>
+<th>Direction</th>
+<th>Strategy</th>
+<th>Session</th>
+<th>Entry</th>
+<th>Exit</th>
+<th>Net P&amp;L</th>
+<th>R Multiple</th>
+<th>Result</th>
+<th>Review / Screenshot</th>
+</tr>
+</thead>
+<tbody id="tradeBody"><tr><td class="empty-row" colspan="12">Loading trades…</td></tr></tbody>
+</table>
+</div>
+<div class="table-footer">
+<p>Showing <span id="visibleFrom">1</span> to <span id="visibleTo">5</span> of <strong id="totalTradeCount">229</strong> trades</p>
+<div class="pagination" id="pagination"></div>
+<select id="pageSizeSelect"><option value="5">5 / page</option><option selected="" value="10">10 / page</option><option value="25">25 / page</option></select>
+</div>
+</section>
+<section class="metrics-grid">
+<button class="metric-card" data-metric="Total Trades" type="button"><span class="metric-icon green">⌁</span><span><small>Total Trades</small><strong id="metricTotalTrades">229</strong></span></button>
+<button class="metric-card" data-metric="Win Rate" type="button"><span class="metric-icon blue">◎</span><span><small>Win Rate</small><strong id="metricWinRate">63.0%</strong></span></button>
+<button class="metric-card" data-metric="Total Net Profit" type="button"><span class="metric-icon green">$</span><span><small>Total Net Profit</small><strong class="positive" id="metricNetProfit">+$12,914.75</strong></span></button>
+<button class="metric-card" data-metric="Profit Factor" type="button"><span class="metric-icon purple">▥</span><span><small>Profit Factor</small><strong id="metricProfitFactor">2.41</strong></span></button>
+<button class="metric-card" data-metric="Avg R Multiple" type="button"><span class="metric-icon gold">R</span><span><small>Avg R Multiple</small><strong id="metricAvgRR">1.32R</strong></span></button>
+<button class="metric-card chart-metric" data-metric="Equity Curve" type="button"><span class="chart-label">Equity Curve</span><canvas id="equitySpark"></canvas></button>
+</section>
+<section class="detail-shell panel">
+<div class="detail-topline">
+<button class="back-link" id="backToTradesBtn" type="button">‹ Back to Trades</button>
+<h3>2. TRADE DETAIL VIEW</h3>
+<div class="detail-buttons"><button id="editTradeBtn" type="button">✎ Edit</button><button id="exportTradeBtn" type="button">⇪</button><button id="shareTradeBtn" type="button">♧ Share</button><button id="deleteTradeBtn" type="button">🗑 Delete</button></div>
+</div>
+<div class="detail-grid">
+<article class="detail-card">
+<h4>ⓘ Trade Information</h4>
+<dl id="tradeInfoList"><dt>Symbol</dt><dd>EURUSD</dd><dt>Direction</dt><dd>Long</dd><dt>Date</dt><dd>06 Jul 2026</dd><dt>Session</dt><dd>London</dd><dt>Strategy</dt><dd>London Breakout</dd><dt>Status</dt><dd><span class="status-badge">Closed</span></dd><dt>Time</dt><dd>10:30 AM – 11:45 AM</dd><dt>Timeframe</dt><dd>15m</dd><dt>Account</dt><dd>Prop Firm – 1</dd><dt>Broker</dt><dd>IC Markets</dd></dl>
+</article>
+<article class="detail-card">
+<h4>⇄ Entry &amp; Exit Summary</h4>
+<div class="entry-exit" id="tradeEntryExit"><strong>Entries</strong><p><span>• 1.08234 (0.50)</span><b>10:30 AM</b></p><p><span>• 1.08190 (0.25)</span><b>10:42 AM</b></p><strong>Exits</strong><p><span>• 1.08600 (0.40)</span><b>11:20 AM</b></p><p><span>• 1.08720 (0.35)</span><b>11:45 AM</b></p></div>
+</article>
+<article class="detail-card">
+<h4>◫ Result</h4>
+<div class="result-grid" id="tradeResultGrid"><div><span>Net P&amp;L</span><strong class="positive">+$119.00</strong></div><div><span>R Multiple</span><strong class="positive">2.38R</strong></div><div><span>P&amp;L %</span><strong class="positive">2.38%</strong></div><div><span>Holding Time</span><strong>75 Min</strong></div><div><span>MAE</span><strong class="negative">-$18.00</strong></div><div><span>MFE</span><strong class="positive">+$142.00</strong></div></div>
+</article>
+<article class="detail-card">
+<h4>◇ Risk Management</h4>
+<dl id="tradeRiskList"><dt>Stop Loss</dt><dd>1.08000</dd><dt>Take Profit</dt><dd>1.08700</dd><dt>Risk %</dt><dd>1.0%</dd><dt>Risk Amount</dt><dd>$50.00</dd><dt>Lot Size</dt><dd>0.75</dd><dt>Rule Violation</dt><dd><span class="no-badge">No</span></dd></dl>
+</article>
+</div>
+<div class="screenshots-card">
+<h4>▧ Screenshots &amp; Notes</h4>
+<div class="screenshot-grid" id="tradeScreenshotGrid"><button class="add-screenshot" id="addScreenshotBtn" type="button">＋ Add Screenshot URL</button></div>
+</div>
+</section>
+</section>
+<footer class="bottom-summary">
+<div class="quote"><span class="diamond">◇</span><span>Discipline is the bridge between goals and accomplishment.</span></div>
+<div class="summary-stat"><small>Total Trades</small><strong id="footerTotalTrades">229</strong></div>
+<div class="summary-stat"><small>Profitable Trades</small><strong class="positive" id="footerWins">145 <em>(63.0%)</em></strong></div>
+<div class="summary-stat"><small>Losing Trades</small><strong class="negative" id="footerLosses">73 <em>(31.7%)</em></strong></div>
+<div class="summary-stat"><small>Breakeven</small><strong id="footerBreakeven">11 <em>(5.3%)</em></strong></div>
+</footer>
+</main>
+</div>
+<div class="modal-backdrop" hidden="" id="dateModal">
+<form class="modal" id="dateForm">
+<div class="modal-head"><div><h3>Select Date Range</h3><p>Update the reporting period.</p></div><button data-close="dateModal" type="button">×</button></div>
+<div class="form-grid"><label>Start Date<input id="startDate" required="" type="date" value="2026-06-08"/></label><label>End Date<input id="endDate" required="" type="date" value="2026-07-07"/></label></div>
+<div class="modal-actions"><button class="secondary" data-close="dateModal" type="button">Cancel</button><button class="primary" type="submit">Apply</button></div>
+</form>
+</div>
+<div class="modal-backdrop" hidden="" id="tradeModal">
+<form class="modal wide-modal" id="tradeForm">
+<div class="modal-head"><div><h3>Add New Trade</h3><p>Create a new trade record.</p></div><button data-close="tradeModal" type="button">×</button></div><div class="form-grid three"><label>Trade Date<input id="tradeDate" name="tradeDate" required="" type="date"/></label><label>Symbol<input id="symbol" name="symbol" required="" type="text" value="EURUSD"/></label><label>Direction<select id="direction" name="direction"><option value="Long">Long</option><option value="Short">Short</option></select></label><label>Session<select id="session" name="session"><option value="Asian">Asian</option><option value="London">London</option><option value="New York">New York</option><option value="Other">Other</option></select></label><label>Strategy / Model<input id="model" name="model" type="text"/></label><label>Protocol<input id="protocol" name="protocol" type="text"/></label><label>Entry Time<input id="entryTime" name="entryTime" type="time"/></label><label>Exit Time<input id="exitTime" name="exitTime" type="time"/></label><label>Entry Price<input id="entryPrice" name="entryPrice" required="" step="any" type="number"/></label><label>Exit Price<input id="exitPrice" name="exitPrice" step="any" type="number"/></label><label>Stop Loss<input id="stopLoss" name="stopLoss" step="any" type="number"/></label><label>Take Profit<input id="takeProfit" name="takeProfit" step="any" type="number"/></label><label>Quantity<input id="quantity" name="quantity" step="any" type="number" value="1"/></label><label>Commission<input id="commission" name="commission" step="any" type="number" value="0"/></label><label>Net P&amp;L<input id="profitLoss" name="profitLoss" step="any" type="number" value="0"/></label><label>R Multiple<input id="rr" name="rr" step="any" type="number" value="0"/></label><label>Result<select id="result" name="result"><option value="Open">Open</option><option value="Win">Win</option><option value="Loss">Loss</option><option value="Breakeven">Breakeven</option></select></label><label>Rating<select id="rating" name="rating"><option value="">No rating</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label><label>Screenshot URL<input id="screenshotUrl" name="screenshotUrl" type="url"/></label><label class="full-span">Notes<textarea id="notes" maxlength="5000" name="notes" rows="3"></textarea></label></div>
+<div class="modal-actions"><button class="secondary" data-close="tradeModal" type="button">Cancel</button><button class="primary" type="submit">Save Trade</button></div>
+</form>
+</div>
+<div class="modal-backdrop" hidden="" id="filterModal">
+<form class="modal" id="filterForm">
+<div class="modal-head"><div><h3>Filter Trades</h3><p>Filter the visible trades.</p></div><button data-close="filterModal" type="button">×</button></div><div class="form-grid three"><label>Symbol<input id="filterSymbol" type="text"/></label><label>Session<select id="filterSession"><option value="">All</option><option value="Asian">Asian</option><option value="London">London</option><option value="New York">New York</option><option value="Other">Other</option></select></label><label>Result<select id="filterResult"><option value="">All</option><option value="Open">Open</option><option value="Win">Win</option><option value="Loss">Loss</option><option value="Breakeven">Breakeven</option></select></label><label>Direction<select id="filterDirection"><option value="">All</option><option value="Long">Long</option><option value="Short">Short</option></select></label><label>From Date<input id="filterDateFrom" type="date"/></label><label>To Date<input id="filterDateTo" type="date"/></label><label>Minimum P&amp;L<input id="filterMinPnl" step="any" type="number"/></label><label>Maximum P&amp;L<input id="filterMaxPnl" step="any" type="number"/></label></div>
+<div class="modal-actions"><button class="secondary" id="clearFilterBtn" type="button">Clear</button><button class="primary" type="submit">Apply Filter</button></div>
+</form>
+</div>
+<div class="modal-backdrop" hidden="" id="editModal">
+<form class="modal" id="editForm">
+<div class="modal-head"><div><h3>Edit Selected Trade</h3><p>Update the selected trade details.</p></div><button data-close="editModal" type="button">×</button></div><div class="form-grid three"><label>Trade Date<input id="edit-tradeDate" name="tradeDate" required="" type="date"/></label><label>Symbol<input id="edit-symbol" name="symbol" required="" type="text" value="EURUSD"/></label><label>Direction<select id="edit-direction" name="direction"><option value="Long">Long</option><option value="Short">Short</option></select></label><label>Session<select id="edit-session" name="session"><option value="Asian">Asian</option><option value="London">London</option><option value="New York">New York</option><option value="Other">Other</option></select></label><label>Strategy / Model<input id="edit-model" name="model" type="text"/></label><label>Protocol<input id="edit-protocol" name="protocol" type="text"/></label><label>Entry Time<input id="edit-entryTime" name="entryTime" type="time"/></label><label>Exit Time<input id="edit-exitTime" name="exitTime" type="time"/></label><label>Entry Price<input id="edit-entryPrice" name="entryPrice" required="" step="any" type="number"/></label><label>Exit Price<input id="edit-exitPrice" name="exitPrice" step="any" type="number"/></label><label>Stop Loss<input id="edit-stopLoss" name="stopLoss" step="any" type="number"/></label><label>Take Profit<input id="edit-takeProfit" name="takeProfit" step="any" type="number"/></label><label>Quantity<input id="edit-quantity" name="quantity" step="any" type="number" value="1"/></label><label>Commission<input id="edit-commission" name="commission" step="any" type="number" value="0"/></label><label>Net P&amp;L<input id="edit-profitLoss" name="profitLoss" step="any" type="number" value="0"/></label><label>R Multiple<input id="edit-rr" name="rr" step="any" type="number" value="0"/></label><label>Result<select id="edit-result" name="result"><option value="Open">Open</option><option value="Win">Win</option><option value="Loss">Loss</option><option value="Breakeven">Breakeven</option></select></label><label>Rating<select id="edit-rating" name="rating"><option value="">No rating</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label><label>Screenshot URL<input id="edit-screenshotUrl" name="screenshotUrl" type="url"/></label><label class="full-span">Notes<textarea id="edit-notes" maxlength="5000" name="notes" rows="3"></textarea></label></div>
+<div class="modal-actions"><button class="secondary" data-close="editModal" type="button">Cancel</button><button class="primary" type="submit">Update Trade</button></div>
+</form>
+</div>
+<div class="modal-backdrop" hidden="" id="infoModal">
+<div class="modal">
+<div class="modal-head"><div><h3 id="infoTitle">Information</h3><p id="infoSubtitle">Action details</p></div><button data-close="infoModal" type="button">×</button></div>
+<div class="info-body" id="infoBody"></div>
+<div class="modal-actions"><button class="primary" data-close="infoModal" type="button">Done</button></div>
+</div>
+</div>
+<div aria-live="polite" class="toast-stack" id="toastStack"></div>
+<script src="auth.js"></script><script src="trades.js"></script>
 </body>
 </html>

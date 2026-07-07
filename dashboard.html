@@ -1,279 +1,320 @@
 <!DOCTYPE html>
 
-<html data-theme="dark" lang="en">
-<head><script src="auth.js?v=6"></script>
+<html data-theme="light" lang="en">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="#07111f" name="theme-color"/>
-<title>ProTrade — Trading Dashboard</title>
-<link href="dashboard-v2.css" rel="stylesheet"/>
+<meta content="#f5f9fc" name="theme-color"/>
+<title>ProTrade — Dashboard</title>
+<link href="styles.css" rel="stylesheet"/>
 </head>
 <body>
-<div class="ambient ambient-a"></div>
-<div class="ambient ambient-b"></div>
-<div class="ambient ambient-c"></div>
 <div class="app-shell">
 <aside class="sidebar" id="sidebar">
-<div class="brand-wrap">
-<button aria-label="Close sidebar" class="mobile-close" id="closeSidebar">×</button>
+<div class="brand-row">
 <div aria-hidden="true" class="brand-mark">
-<span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span>
 </div>
-<div>
-<div class="brand-name">Pro<span>Trade</span></div>
-<div class="brand-sub">TRADING JOURNAL</div>
+<div class="brand-copy">
+<h1>ProTrade</h1>
+<p>TRADING JOURNAL</p>
 </div>
 </div>
-<nav aria-label="Main navigation" class="nav-list">
-<a class="nav-item active" data-page="Dashboard" href="dashboard.html"><span class="nav-icon">▦</span><span>Dashboard</span></a>
-<a class="nav-item" data-page="Trades" href="trades.html"><span class="nav-icon">p-t</span><span>Trades</span></a>
-<a class="nav-item" data-page="Trades" href="trades.html"><span class="nav-icon">↔</span><span>Trades</span></a>
-<a class="nav-item" data-page="Calendar" href="calendar.html"><span class="nav-icon">□</span><span>Calendar</span></a>
-<a class="nav-item" data-page="Analytics" href="analytics.html"><span class="nav-icon">⌁</span><span>Analytics</span></a>
-<a class="nav-item" data-page="Performance" href="analytics.html"><span class="nav-icon">▥</span><span>Performance</span></a>
-<a class="nav-item" data-page="Risk Management" href="settings.html"><span class="nav-icon">◇</span><span>Risk Management</span></a>
-<a class="nav-item" data-page="Psychology" href="psychology.html"><span class="nav-icon">♡</span><span>Psychology</span></a>
-<a class="nav-item" data-page="Journal" href="ai-journal.html"><span class="nav-icon">▤</span><span>Journal</span></a>
-<a class="nav-item" data-page="Reports" href="analytics.html"><span class="nav-icon">▧</span><span>Reports</span></a>
-<button class="nav-item nav-button" id="importTradesButton" type="button"><span class="nav-icon">⇩</span><span>Import Trades</span></button><input accept=".csv,.json" hidden="" id="importFile" type="file"/>
-<a class="nav-item" data-page="Settings" href="settings.html"><span class="nav-icon">⚙</span><span>Settings</span></a>
+<nav aria-label="Primary navigation" class="sidebar-nav" id="sidebarNav">
+<button class="nav-item active" data-page="Dashboard" data-route="dashboard.html" type="button">
+<span class="nav-icon">▣</span><span>Dashboard</span><span class="nav-tail">›</span>
+</button>
+<button class="nav-item" data-page="Trades" data-route="trades.html" type="button">
+<span class="nav-icon">↻</span><span>Trades</span>
+</button>
+<button class="nav-item" data-page="Calendar" data-route="calendar.html" type="button">
+<span class="nav-icon">▦</span><span>Calendar</span>
+</button>
+<button class="nav-item" data-page="Analytics" data-route="analytics.html" type="button">
+<span class="nav-icon">⌁</span><span>Analytics</span><small class="pro-pill">Pro</small>
+</button>
+<button class="nav-item" data-page="Performance" data-route="analytics.html" type="button">
+<span class="nav-icon">▥</span><span>Performance</span>
+</button>
+<button class="nav-item" data-page="Risk Management" data-route="analytics.html" type="button">
+<span class="nav-icon">◇</span><span>Risk Management</span>
+</button>
+<button class="nav-item" data-page="Psychology" data-route="psychology.html" type="button">
+<span class="nav-icon">♡</span><span>Psychology</span>
+</button>
+<button class="nav-item" data-page="Journal" data-route="ai-journal.html" type="button">
+<span class="nav-icon">▤</span><span>Journal</span>
+</button>
+<button class="nav-item" data-page="Reports" data-route="analytics.html" type="button">
+<span class="nav-icon">▧</span><span>Reports</span>
+</button>
+<button class="nav-item" id="importTradesBtn" type="button">
+<span class="nav-icon">⇩</span><span>Import Trades</span>
+</button>
+<input accept=".csv,.json" hidden="" id="importTradesInput" type="file"/>
+<button class="nav-item" data-page="Settings" data-route="settings.html" type="button">
+<span class="nav-icon">⚙</span><span>Settings</span>
+</button>
 </nav>
 <div class="sidebar-bottom">
-<div class="profile-card">
-<div class="avatar auth-user-initials">T</div>
-<div class="profile-copy">
-<strong class="auth-user-name" id="sidebarProfileName">Trader</strong>
-<span id="sidebarProfileRole">Independent Trader</span>
+<div class="profile-wrap">
+<button class="profile-card" id="profileBtn" type="button">
+<img alt="Trader profile" src="assets/avatar.jpg"/>
+<span class="profile-copy"><strong class="auth-user-name">Trader</strong><small id="profileRole">Independent Trader</small></span>
+<span>⌄</span>
+</button>
+<div class="popover profile-popover" hidden="" id="profilePopover">
+<button data-profile-action="profile" type="button">My Profile</button>
+<button data-profile-action="account" type="button">Account Settings</button>
+<button data-profile-action="logout" type="button">Sign Out</button>
 </div>
-<button aria-label="Profile menu" class="mini-btn" id="profileMenuButton">⌄</button>
 </div>
-<div class="profile-dropdown" hidden="" id="profileDropdown"><button data-profile-action="profile" type="button">My Profile</button><button data-profile-action="settings" type="button">Account Settings</button><button data-auth-logout="" data-profile-action="logout" type="button">Sign Out</button></div>
 <div class="account-card">
-<div class="account-row muted"><span>Account Balance</span><button class="eye-btn" id="balanceToggle">◉</button></div>
-<strong class="account-balance" id="sidebarBalance">—</strong>
-<div class="divider"></div>
-<div class="account-row"><span>Equity</span><b class="profit" id="sidebarEquity">—</b></div>
-<div class="account-row"><span>Broker</span><b id="sidebarBroker">Not configured <i class="live-dot"></i></b></div>
+<div class="account-head">
+<span>Account Balance</span>
+<button aria-label="Hide or show balance" class="ghost-icon" id="balanceVisibilityBtn" type="button">◉</button>
 </div>
-<label class="theme-row">
-<span id="themeModeLabel">Dark Mode</span>
-<input checked="" id="themeToggle" type="checkbox"/>
-<span class="switch"></span>
-</label>
+<strong id="sidebarBalance">$12,540.00</strong>
+<div class="equity-block"><span>Equity</span><b id="sidebarEquity">$13,214.75</b></div>
+<div class="broker-block"><span>Data Source</span><strong id="dataSourceLabel">MongoDB Journal</strong><i></i></div>
+</div>
+<div class="theme-card">
+<span id="themeLabel">Light Mode</span>
+<button aria-label="Switch light and dark mode" class="theme-switch" id="themeSwitch" type="button"><span></span></button>
+</div>
 </div>
 </aside>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
-<main class="main-content" id="dashboard">
-<header class="topbar">
-<div class="heading-wrap">
-<button aria-label="Open sidebar" class="menu-btn" id="openSidebar">☰</button>
+<main class="main">
+<header class="top-header">
+<div class="welcome-area">
+<button aria-label="Open menu" class="mobile-menu" id="mobileMenuBtn" type="button">☰</button>
 <div>
-<h1>Dashboard</h1>
-<p>Track. Analyze. Improve. Repeat.</p>
+<h2>Welcome back, <span class="auth-user-name" id="welcomeName">Trader</span><span> ♛</span></h2>
+<p>Discipline today, freedom tomorrow.</p>
 </div>
 </div>
-<div class="top-actions">
-<button class="filter-button" id="dateFilterButton"><span id="dateRangeText">01 May 2024 – 31 May 2024</span><span>▣</span></button>
-<div class="account-filter-wrap"><button class="filter-button" id="accountFilterButton"><span id="accountFilterText">All Accounts</span><span>⌄</span></button><div class="account-dropdown" hidden="" id="accountDropdown"><button type="button">All Accounts</button></div></div>
-<button class="notification-button" id="notificationButton" type="button">♧<b id="notificationCount">0</b></button><button class="primary-button" id="openTradeModal"><span>＋</span> New Trade</button>
+<div class="header-actions">
+<button class="header-control" id="dateRangeBtn" type="button"><span id="dateRangeLabel">08 Jun 2026 - 07 Jul 2026</span><span>▦</span></button>
+<div class="dropdown-wrap">
+<button class="header-control" id="accountSelectorBtn" type="button"><span id="accountLabel">All Accounts</span><span>⌄</span></button>
+<div class="popover dropdown-popover" hidden="" id="accountPopover"><button data-account="All Accounts" type="button">All Accounts</button></div>
+</div>
+<button aria-label="Notifications" class="notification-btn" id="notificationBtn" type="button">♧<span id="notificationCount">0</span></button>
+<button class="new-trade-btn" id="newTradeBtn" type="button">＋ New Trade</button>
 </div>
 </header>
-<section aria-label="Trading metrics" class="kpi-grid">
-<article class="kpi-card tilt green-card">
-<div class="kpi-top"><span class="kpi-icon">▣</span><span>Total Balance</span></div>
-<strong id="totalBalance">—</strong>
-<p class="profit">↗ 12.54% <small>vs last month</small></p>
-<svg class="sparkline" preserveaspectratio="none" viewbox="0 0 180 34"><path d="M2 28 L10 25 L18 27 L26 20 L34 22 L42 18 L50 20 L58 14 L66 16 L74 12 L82 18 L90 13 L98 15 L106 10 L114 14 L122 8 L130 11 L138 6 L146 9 L154 5 L162 7 L178 2"></path></svg>
-</article>
-<article class="kpi-card tilt green-card">
-<div class="kpi-top"><span class="kpi-icon">$</span><span>Net Profit</span></div>
-<strong id="netProfit">—</strong>
-<p class="profit">↗ 12.39%</p>
-<svg class="sparkline" preserveaspectratio="none" viewbox="0 0 180 34"><path d="M2 29 L11 26 L20 27 L29 23 L38 25 L47 20 L56 22 L65 18 L74 21 L83 15 L92 16 L101 12 L110 17 L119 11 L128 13 L137 8 L146 10 L155 6 L164 8 L178 3"></path></svg>
-</article>
-<article class="kpi-card tilt green-card">
-<div class="kpi-top"><span class="kpi-icon">$</span><span>Today’s P&amp;L</span></div>
-<strong id="todayPnl">—</strong>
-<p class="profit">↗ 0.96%</p>
-<svg class="sparkline" preserveaspectratio="none" viewbox="0 0 180 34"><path d="M2 26 L10 28 L18 22 L26 25 L34 18 L42 21 L50 15 L58 18 L66 12 L74 17 L82 10 L90 14 L98 8 L106 12 L114 7 L122 10 L130 5 L138 9 L146 4 L154 7 L164 3 L178 6"></path></svg>
-</article>
-<article class="kpi-card tilt orange-card">
-<div class="kpi-top"><span class="kpi-icon">◎</span><span>Win Rate</span></div>
-<strong id="winRate">—</strong>
-<p><span class="profit">145W</span> / <span class="loss">73L</span></p>
-<svg class="sparkline orange" preserveaspectratio="none" viewbox="0 0 180 34"><path d="M2 26 L10 25 L18 24 L26 22 L34 23 L42 20 L50 19 L58 21 L66 17 L74 16 L82 18 L90 14 L98 15 L106 12 L114 13 L122 10 L130 11 L138 8 L146 9 L154 6 L164 8 L178 5"></path></svg>
-</article>
-<article class="kpi-card tilt green-card">
-<div class="kpi-top"><span class="kpi-icon">⚖</span><span>Profit Factor</span></div>
-<strong id="profitFactor">—</strong>
-<p class="profit" id="profitFactorLabel">No data</p>
-<svg class="sparkline" preserveaspectratio="none" viewbox="0 0 180 34"><path d="M2 29 L10 27 L18 26 L26 24 L34 25 L42 20 L50 22 L58 17 L66 19 L74 14 L82 17 L90 12 L98 14 L106 10 L114 13 L122 8 L130 11 L138 7 L146 8 L154 5 L164 7 L178 2"></path></svg>
-</article>
-<article class="kpi-card tilt teal-card">
-<div class="kpi-top"><span class="kpi-icon">Σ</span><span>Expectancy</span></div>
-<strong id="expectancy">—</strong>
-<p><small>Per Trade</small></p>
-<svg class="sparkline" preserveaspectratio="none" viewbox="0 0 180 34"><path d="M2 28 L12 24 L22 26 L32 20 L42 22 L52 18 L62 19 L72 15 L82 17 L92 12 L102 14 L112 9 L122 12 L132 7 L142 10 L152 5 L162 7 L178 3"></path></svg>
-</article>
-<article class="kpi-card tilt red-card">
-<div class="kpi-top"><span class="kpi-icon">↓</span><span>Max Drawdown</span></div>
-<strong id="maxDrawdownPercent">—</strong>
-<p class="loss" id="maxDrawdownAmount">—</p>
-<svg class="sparkline red" preserveaspectratio="none" viewbox="0 0 180 34"><path d="M2 7 L12 10 L22 8 L32 13 L42 11 L52 18 L62 14 L72 20 L82 16 L92 23 L102 19 L112 25 L122 20 L132 27 L142 22 L152 28 L162 24 L178 29"></path></svg>
-</article>
-</section>
-<section class="hero-grid">
-<article class="panel equity-panel tilt" id="equity">
-<div class="panel-head">
+<section class="center-content dashboard-view">
+<div class="content-heading dashboard-heading">
 <div>
-<h2>Equity Curve</h2>
-<div class="legend"><span><i class="dot green"></i>Equity</span><span><i class="dot red"></i>Drawdown</span></div>
-</div>
-<div class="range-tabs" id="rangeTabs">
-<button data-range="1W">1W</button>
-<button class="active" data-range="1M">1M</button>
-<button data-range="3M">3M</button>
-<button data-range="6M">6M</button>
-<button data-range="1Y">1Y</button>
-<button data-range="ALL">All</button>
+<h2>Dashboard</h2>
+<p>Overview of your trading performance</p>
+<p class="api-status" id="dashboardStatus">Connecting to ProTrade backend…</p></div>
+<div class="dashboard-quick-actions">
+<button id="dashRefreshBtn" type="button">↻ Refresh</button>
+<button id="dashExportBtn" type="button">⇪ Export</button>
 </div>
 </div>
-<div class="chart-wrap">
-<canvas aria-label="Equity and drawdown chart" id="equityChart"></canvas>
+<section class="dash-kpi-grid">
+<button class="dash-kpi-card" data-dash-metric="Total Balance" type="button">
+<div class="dash-kpi-top"><span class="dash-icon purple">▣</span><span>Total Balance</span></div>
+<strong id="kpiTotalBalance">$12,540.00</strong>
+<small class="positive" id="kpiTotalBalanceNote">↗ 12.54% <em>vs last month</em></small>
+</button>
+<button class="dash-kpi-card" data-dash-metric="Today's P&amp;L" type="button">
+<div class="dash-kpi-top"><span class="dash-icon green">$</span><span>Today's P&amp;L</span></div>
+<strong class="positive" id="kpiTodayPnl">+$120.00</strong>
+<small class="positive" id="kpiTodayPnlNote">↗ 0.96%</small>
+</button>
+<button class="dash-kpi-card" data-dash-metric="This Week P&amp;L" type="button">
+<div class="dash-kpi-top"><span class="dash-icon violet">↗</span><span>This Week P&amp;L</span></div>
+<strong class="positive" id="kpiWeekPnl">+$420.00</strong>
+<small class="positive" id="kpiWeekPnlNote">↗ 3.45%</small>
+</button>
+<button class="dash-kpi-card" data-dash-metric="This Month P&amp;L" type="button">
+<div class="dash-kpi-top"><span class="dash-icon cyan">◉</span><span>This Month P&amp;L</span></div>
+<strong class="positive" id="kpiMonthPnl">+$1,380.00</strong>
+<small class="positive" id="kpiMonthPnlNote">↗ 12.39%</small>
+</button>
+<button class="dash-kpi-card" data-dash-metric="Win Rate" type="button">
+<div class="dash-kpi-top"><span class="dash-icon red">◎</span><span>Win Rate</span></div>
+<strong id="kpiWinRate">63.04%</strong>
+<small id="kpiWinRateNote"><span class="positive">145W</span> / <span class="negative">73L</span></small>
+</button>
+<button class="dash-kpi-card" data-dash-metric="Profit Factor" type="button">
+<div class="dash-kpi-top"><span class="dash-icon amber">◔</span><span>Profit Factor</span></div>
+<strong id="kpiProfitFactor">2.41</strong>
+<small class="positive" id="kpiProfitFactorNote">Good</small>
+</button>
+<button class="dash-kpi-card" data-dash-metric="Expectancy" type="button">
+<div class="dash-kpi-top"><span class="dash-icon violet">Σ</span><span>Expectancy</span></div>
+<strong id="kpiExpectancy">0.82R</strong>
+<small id="kpiExpectancyNote">Per Trade</small>
+</button>
+<button class="dash-kpi-card" data-dash-metric="Avg RR" type="button">
+<div class="dash-kpi-top"><span class="dash-icon cyan">♧</span><span>Avg RR</span></div>
+<strong id="kpiAvgRR">1:2.4</strong>
+<small id="kpiAvgRRNote">Risk : Reward</small>
+</button>
+<button class="dash-kpi-card" data-dash-metric="Win Streak" type="button">
+<div class="dash-kpi-top"><span class="dash-icon green">⌁</span><span>Win Streak</span></div>
+<strong id="kpiWinStreak">6</strong>
+<small class="positive" id="kpiWinStreakNote">Best: 9</small>
+</button>
+<button class="dash-kpi-card" data-dash-metric="Max Drawdown" type="button">
+<div class="dash-kpi-top"><span class="dash-icon red">↓</span><span>Max Drawdown</span></div>
+<strong id="kpiMaxDrawdown">4.80%</strong>
+<small class="negative" id="kpiMaxDrawdownNote">-$602.00</small>
+</button>
+</section>
+<section class="dash-hero-grid">
+<article class="panel dash-equity-panel">
+<div class="dash-panel-head">
+<h3>Equity Curve</h3>
+<div class="dash-range-tabs" id="dashRangeTabs">
+<button data-range="1W" type="button">1W</button>
+<button class="active" data-range="1M" type="button">1M</button>
+<button data-range="3M" type="button">3M</button>
+<button data-range="6M" type="button">6M</button>
+<button data-range="1Y" type="button">1Y</button>
+<button data-range="ALL" type="button">All</button>
 </div>
+</div>
+<div class="dash-chart-legend">
+<span><i class="dash-line green"></i>Equity</span>
+<span><i class="dash-line red"></i>Drawdown</span>
+</div>
+<div class="dash-chart-wrap"><canvas id="dashEquityChart"></canvas></div>
 </article>
-<article class="panel calendar-panel tilt" id="calendar">
-<div class="panel-head compact">
-<h2>Calendar</h2>
-<div class="calendar-nav"><strong id="calendarTitle">May 2024</strong><button id="prevMonth">‹</button><button id="nextMonth">›</button></div>
+<article class="panel dash-calendar-panel">
+<div class="dash-panel-head">
+<h3>Monthly Performance</h3>
+<div class="dash-calendar-nav">
+<strong id="dashCalendarTitle">May 2024</strong>
+<button id="dashPrevMonth" type="button">‹</button>
+<button id="dashNextMonth" type="button">›</button>
 </div>
-<div class="weekdays"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
-<div class="calendar-grid" id="calendarGrid"></div>
-<div class="calendar-legend"><span><i class="dot green"></i>Profit</span><span><i class="dot red"></i>Loss</span><span><i class="dot gray"></i>No Trades</span></div>
+</div>
+<div class="dash-weekdays"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+<div class="dash-calendar-grid" id="dashCalendarGrid"></div>
+<div class="dash-calendar-legend">
+<span><i class="dash-dot green"></i>Profit</span>
+<span><i class="dash-dot red"></i>Loss</span>
+<span><i class="dash-dot gray"></i>No Trades</span>
+</div>
 </article>
 </section>
-<section class="analytics-grid">
-<article class="panel tilt" id="winloss">
-<div class="panel-head compact"><h2>Win / Loss Analysis</h2></div>
-<div class="winloss-layout">
-<div class="donut" id="winLossDonut" style="--win:0%; --lossEnd:0%"><div class="donut-hole"></div></div>
-<div class="metric-list">
-<div><span><i class="dot green"></i>Winning Trades</span><strong id="winningTradesMetric">0 (0%)</strong></div>
-<div><span><i class="dot red"></i>Losing Trades</span><strong id="losingTradesMetric">0 (0%)</strong></div>
-<div><span><i class="dot orange-dot"></i>Breakeven</span><strong id="breakevenTradesMetric">0 (0%)</strong></div>
+<section class="dash-analytics-grid">
+<article class="panel dash-mini-panel">
+<h3>Win / Loss Analysis</h3>
+<div class="dash-donut-layout">
+<div class="dash-donut" id="dashWinLossDonut"><div></div></div>
+<div class="dash-donut-legend">
+<p><i class="dash-dot green"></i><span>Winning Trades<small id="dashWinsLegend">145 (63.0%)</small></span></p>
+<p><i class="dash-dot red"></i><span>Losing Trades<small id="dashLossesLegend">73 (31.7%)</small></span></p>
+<p><i class="dash-dot gray"></i><span>Breakeven<small id="dashBreakevenLegend">11 (5.3%)</small></span></p>
 </div>
 </div>
-<div class="panel-foot"><span>Total Trades</span><strong id="totalTrades">0</strong></div>
+<div class="dash-panel-footer"><span>Total Trades</span><strong id="dashTotalTrades">229</strong></div>
 </article>
-<article class="panel tilt" id="session">
-<div class="panel-head compact"><h2>Session Performance</h2></div>
-<div class="bar-list" id="sessionPerformanceList"></div>
-<div class="bar-scale"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
+<article class="panel dash-mini-panel">
+<h3>Session Analysis</h3>
+<div class="dash-bars" id="dashSessionBars">
+<div><span>London</span><div><i style="--w:63.5%"></i></div><strong>63.5%</strong></div>
+<div><span>New York</span><div><i style="--w:58.2%"></i></div><strong>58.2%</strong></div>
+<div><span>London + NY</span><div><i style="--w:64.8%"></i></div><strong>64.8%</strong></div>
+<div><span>Asian</span><div class="orange"><i style="--w:42.1%"></i></div><strong>42.1%</strong></div>
+</div>
 </article>
-<article class="panel tilt">
-<div class="panel-head compact"><h2>Top Pairs</h2></div>
-<div class="table-wrap compact-table">
-<table>
+<article class="panel dash-mini-panel">
+<h3>Top Pairs</h3>
+<table class="dash-table">
 <thead><tr><th>Pair</th><th>Trades</th><th>Win %</th><th>Net Profit</th></tr></thead>
-<tbody id="topPairsBody"></tbody>
+<tbody id="dashTopPairsBody"><tr><td class="empty-row" colspan="4">Loading pair performance…</td></tr></tbody>
 </table>
-</div>
-<button class="text-button" id="viewAllPairsButton">View all pairs →</button>
+<button class="dash-text-btn" id="dashViewPairsBtn" type="button">View all pairs →</button>
 </article>
-<article class="panel tilt heatmap-panel">
-<div class="panel-head compact"><h2>Heatmap</h2></div>
-<div class="heatmap-layout">
-<div class="heat-labels"><span>6AM</span><span>9AM</span><span>12PM</span><span>3PM</span><span>6PM</span><span>9PM</span></div>
-<div class="heat-content">
-<div class="heat-days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span></div>
-<div class="heat-grid" id="heatGrid"></div>
+<article class="panel dash-mini-panel">
+<h3>Time Analysis</h3>
+<div class="dash-time-layout">
+<div class="dash-time-stats" id="dashTimeStats">
+<p><span>Best Hour</span><strong class="positive">9:00 AM</strong></p>
+<p><span>Worst Hour</span><strong class="negative">3:00 PM</strong></p>
+<p><span>Best Day</span><strong class="positive">Tuesday</strong></p>
+<p><span>Worst Day</span><strong class="negative">Friday</strong></p>
+</div>
+<div class="dash-heat-wrap">
+<div class="dash-heat-head"><span></span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span></div>
+<div class="dash-heat-grid" id="dashHeatGrid"></div>
 </div>
 </div>
-<div class="heat-legend"><span>Low</span><div><i></i><i></i><i></i><i></i><i></i></div><span>High</span></div>
 </article>
 </section>
-<section class="bottom-grid">
-<article class="panel tilt risk-panel" id="risk">
-<div class="panel-head compact"><h2>Risk Management</h2></div>
-<div class="risk-layout">
-<div class="risk-list">
-<div><span>Average Risk %</span><b class="profit" id="riskAverage">—</b></div>
-<div><span>Highest Risk %</span><b class="profit" id="riskHighest">—</b></div>
-<div><span>Average Lot Size</span><b id="averageLotSize">—</b></div>
-<div><span>Risk / Reward Ratio</span><b id="averageRiskReward">—</b></div>
-<div><span>Rule Violations</span><b class="loss" id="ruleViolations">—</b></div>
+<section class="dash-bottom-grid">
+<article class="panel dash-risk-panel">
+<h3>Risk Management</h3>
+<div class="dash-risk-layout">
+<div class="dash-risk-stats" id="dashRiskStats">
+<p><span>Average Risk %</span><strong class="positive">0.83%</strong></p>
+<p><span>Highest Risk %</span><strong class="positive">2.00%</strong></p>
+<p><span>Average Lot Size</span><strong>0.42</strong></p>
+<p><span>Risk / Reward Ratio</span><strong>1:2.4</strong></p>
+<p><span>Rule Violations</span><strong class="negative">5</strong></p>
 </div>
-<div class="mini-risk-chart"><canvas id="riskChart"></canvas></div>
-</div>
-</article>
-<article class="panel tilt" id="psychology">
-<div class="panel-head compact"><h2>Psychology</h2></div>
-<div class="psy-list">
-<div><span><i class="psy-icon green-psy">⌁</i>Avg Confidence</span><strong id="averageConfidence">—</strong></div>
-<div><span><i class="psy-icon green-psy">◉</i>Avg Stress</span><strong id="averageStress">—</strong></div>
-<div><span><i class="psy-icon green-psy">☺</i>Best Mood</span><strong class="profit" id="bestMood">—</strong></div>
-<div><span><i class="psy-icon orange-psy">⚠</i>Common Mistake</span><strong class="orange-text" id="commonMistake">—</strong></div>
-<div><span><i class="psy-icon red-psy">♡</i>Most Emotional Day</span><strong class="loss" id="emotionalDay">—</strong></div>
+<div class="dash-risk-chart-wrap"><canvas id="dashRiskChart"></canvas></div>
 </div>
 </article>
-<article class="panel tilt recent-panel" id="recent">
-<div class="panel-head compact"><h2>Recent Trades</h2></div>
-<div class="table-wrap">
-<table id="recentTradesTable">
+<article class="panel dash-psych-panel">
+<h3>Psychology Overview</h3>
+<div class="dash-psych-list" id="dashPsychList">
+<p><span>Avg Confidence</span><strong>3.4 / 10</strong></p>
+<p><span>Avg Stress</span><strong>6.1 / 10</strong></p>
+<p><span>Best Mood</span><strong class="positive">Calm</strong></p>
+<p><span>Most Common Mistake</span><strong class="orange-text">FOMO</strong></p>
+<p><span>Most Emotional Day</span><strong class="negative">Friday</strong></p>
+</div>
+</article>
+<article class="panel dash-recent-panel">
+<h3>Recent Trades</h3>
+<div class="table-scroll">
+<table class="dash-table" id="dashRecentTrades">
 <thead><tr><th>Pair</th><th>Direction</th><th>Entry</th><th>Exit</th><th>R/R</th><th>P&amp;L</th><th>Date</th></tr></thead>
-<tbody id="recentTradesBody"><tr><td class="muted-table-cell" colspan="7">Loading your trades…</td></tr></tbody>
+<tbody><tr><td class="empty-row" colspan="7">Loading trades…</td></tr></tbody>
 </table>
 </div>
 </article>
 </section>
-<footer class="footer-strip">
+</section>
+<footer class="bottom-summary">
 <div class="quote"><span class="diamond">◇</span><span>Discipline is the bridge between goals and accomplishment.</span></div>
-<div class="footer-stats">
-<div><span>Total Trades</span><strong id="footerTrades">0</strong></div>
-<div><span>Profitable Trades</span><strong id="footerWins">0</strong></div>
-<div><span>Losing Trades</span><strong id="footerLosses">0</strong></div>
-<div><span>Breakeven</span><strong id="footerBreakeven">0</strong></div>
-</div>
+<div class="summary-stat"><small>Total Trades</small><strong id="footerTotalTrades">229</strong></div>
+<div class="summary-stat"><small>Profitable Trades</small><strong class="positive" id="footerWins">145 <em>(63.0%)</em></strong></div>
+<div class="summary-stat"><small>Losing Trades</small><strong class="negative" id="footerLosses">73 <em>(31.7%)</em></strong></div>
+<div class="summary-stat"><small>Breakeven</small><strong id="footerBreakeven">11 <em>(5.3%)</em></strong></div>
 </footer>
 </main>
 </div>
-<div aria-hidden="true" class="modal" id="tradeModal">
-<div class="modal-backdrop" data-close-modal=""></div>
-<section aria-labelledby="tradeModalTitle" aria-modal="true" class="modal-card" role="dialog">
-<div class="modal-head">
-<div><p class="eyebrow">TRADE ENTRY</p><h2 id="tradeModalTitle">Add New Trade</h2></div>
-<button aria-label="Close modal" class="modal-close" data-close-modal="">×</button>
-</div>
-<form id="tradeForm">
-<div class="form-grid">
-<label><span>Pair</span><input name="symbol" placeholder="EURUSD" required="" value=""/></label>
-<label><span>Direction</span><select name="direction"><option value="Long">Buy / Long</option><option value="Short">Sell / Short</option></select></label>
-<label><span>Entry Price</span><input name="entryPrice" placeholder="1.08234" required="" step="any" type="number" value=""/></label>
-<label><span>Exit Price</span><input name="exitPrice" placeholder="1.08720" step="any" type="number" value=""/></label>
-<label><span>Risk / Reward</span><input name="rr" placeholder="2.1" step="0.01" type="number" value=""/></label>
-<label><span>P&amp;L ($)</span><input name="profitLoss" placeholder="120.00" step="0.01" type="number" value=""/></label>
-<label class="full"><span>Date</span><input name="tradeDate" required="" type="date" value=""/></label><label><span>Session</span><select name="session"><option value="Other">Other</option><option value="Asian">Asian</option><option value="London">London</option><option value="New York">New York</option></select></label><label><span>Quantity / Lot Size</span><input min="0" name="quantity" step="any" type="number" value="1"/></label>
-</div>
-<div class="modal-actions"><button class="secondary-button" data-close-modal="" type="button">Cancel</button><button class="primary-button" type="submit">Save Trade</button></div>
+<div class="modal-backdrop" hidden="" id="dateModal">
+<form class="modal" id="dateForm">
+<div class="modal-head"><div><h3>Select Date Range</h3><p>Update the reporting period.</p></div><button data-close="dateModal" type="button">×</button></div>
+<div class="form-grid"><label>Start Date<input id="startDate" required="" type="date" value="2026-06-08"/></label><label>End Date<input id="endDate" required="" type="date" value="2026-07-07"/></label></div>
+<div class="modal-actions"><button class="secondary" data-close="dateModal" type="button">Cancel</button><button class="primary" type="submit">Apply</button></div>
 </form>
-</section>
 </div>
-<div aria-hidden="true" class="modal" id="dateModal">
-<div class="modal-backdrop" data-close-date=""></div>
-<section aria-modal="true" class="modal-card" role="dialog">
-<div class="modal-head"><div><p class="eyebrow">REPORTING PERIOD</p><h2>Select Date Range</h2></div><button class="modal-close" data-close-date="">×</button></div>
-<form id="dateForm"><div class="form-grid"><label><span>Start Date</span><input id="startDate" type="date"/></label><label><span>End Date</span><input id="endDate" type="date"/></label></div><div class="modal-actions"><button class="secondary-button" id="clearDateRange" type="button">All History</button><button class="secondary-button" data-close-date="" type="button">Cancel</button><button class="primary-button" type="submit">Apply Range</button></div></form>
-</section>
+<div class="modal-backdrop" hidden="" id="tradeModal">
+<form class="modal wide-modal" id="tradeForm">
+<div class="modal-head"><div><h3>Add New Trade</h3><p>Create a new trade record.</p></div><button data-close="tradeModal" type="button">×</button></div><div class="form-grid three"><label>Trade Date<input id="tradeDate" name="tradeDate" required="" type="date"/></label><label>Symbol<input id="symbol" name="symbol" required="" type="text" value="EURUSD"/></label><label>Direction<select id="direction" name="direction"><option value="Long">Long</option><option value="Short">Short</option></select></label><label>Session<select id="session" name="session"><option value="Asian">Asian</option><option value="London">London</option><option value="New York">New York</option><option value="Other">Other</option></select></label><label>Strategy / Model<input id="model" name="model" type="text"/></label><label>Protocol<input id="protocol" name="protocol" type="text"/></label><label>Entry Time<input id="entryTime" name="entryTime" type="time"/></label><label>Exit Time<input id="exitTime" name="exitTime" type="time"/></label><label>Entry Price<input id="entryPrice" name="entryPrice" required="" step="any" type="number"/></label><label>Exit Price<input id="exitPrice" name="exitPrice" step="any" type="number"/></label><label>Stop Loss<input id="stopLoss" name="stopLoss" step="any" type="number"/></label><label>Take Profit<input id="takeProfit" name="takeProfit" step="any" type="number"/></label><label>Quantity<input id="quantity" name="quantity" step="any" type="number" value="1"/></label><label>Commission<input id="commission" name="commission" step="any" type="number" value="0"/></label><label>Net P&amp;L<input id="profitLoss" name="profitLoss" step="any" type="number" value="0"/></label><label>R Multiple<input id="rr" name="rr" step="any" type="number" value="0"/></label><label>Result<select id="result" name="result"><option value="Open">Open</option><option value="Win">Win</option><option value="Loss">Loss</option><option value="Breakeven">Breakeven</option></select></label><label>Rating<select id="rating" name="rating"><option value="">No rating</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label><label>Screenshot URL<input id="screenshotUrl" name="screenshotUrl" type="url"/></label><label class="full-span">Notes<textarea id="notes" maxlength="5000" name="notes" rows="3"></textarea></label></div>
+<div class="modal-actions"><button class="secondary" data-close="tradeModal" type="button">Cancel</button><button class="primary" type="submit">Save Trade</button></div>
+</form>
 </div>
-<div aria-hidden="true" class="modal" id="infoModal">
-<div class="modal-backdrop" data-close-info=""></div>
-<section aria-modal="true" class="modal-card" role="dialog">
-<div class="modal-head"><div><p class="eyebrow">PROTRADE</p><h2 id="infoModalTitle">Details</h2></div><button class="modal-close" data-close-info="">×</button></div>
-<div class="info-modal-content" id="infoModalContent"></div>
-<div class="modal-actions"><button class="primary-button" data-close-info="" type="button">Done</button></div>
-</section>
+<div class="modal-backdrop" hidden="" id="infoModal">
+<div class="modal">
+<div class="modal-head"><div><h3 id="infoTitle">Information</h3><p id="infoSubtitle">Action details</p></div><button data-close="infoModal" type="button">×</button></div>
+<div class="info-body" id="infoBody"></div>
+<div class="modal-actions"><button class="primary" data-close="infoModal" type="button">Done</button></div>
 </div>
-<div class="toast" id="toast"><span>✓</span><p id="toastText">Trade added successfully.</p></div>
-<script src="dashboard-v2.js?v=1"></script>
-<div aria-live="polite" class="sr-only" id="dashboardStatus"></div></body>
+</div>
+<div aria-live="polite" class="toast-stack" id="toastStack"></div>
+<script src="auth.js"></script><script src="dashboard.js"></script>
+</body>
 </html>
