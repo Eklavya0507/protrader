@@ -1,54 +1,50 @@
-PROTRADE FIXED FRAMEWORK — TRADES PAGE ONLY
-
-This package creates only the Trades page.
-Your existing Dashboard page is not changed or included.
+PROTRADE — CALENDAR + PERFORMANCE DASHBOARD
 
 FILES
-- trades.html
-- trades.css
-- trades.js
-- assets/avatar.jpg
-- assets/chart-1.jpg
-- assets/chart-2.jpg
-- assets/chart-3.jpg
+- calendar.html
+- calendar.css
+- calendar.js
 
-HOW TO ADD IT TO YOUR CURRENT PROJECT
-1. Copy trades.html, trades.css, trades.js and the assets folder into the same folder as your existing Dashboard index.html.
-2. The Dashboard button inside trades.html opens index.html.
-3. In your existing Dashboard page, make the Trades sidebar button open trades.html.
+HOW TO USE
+1. Keep all three files in the same folder.
+2. Open calendar.html in a browser.
+3. To connect with the existing ProTrade pages:
+   - Dashboard should be index.html
+   - Trades should be trades.html
+   - Calendar should be calendar.html
 
-CHANGES INCLUDED
-- Fixed ProTrade outer framework preserved.
-- Trades is selected in the left sidebar.
-- Dashboard is not selected on the Trades page.
-- Dashboard button opens the existing index.html.
-- Only the top fixed-header New Trade button exists.
-- The duplicate New Trade button near Filter / Group / Sort is removed.
-- Dark and light mode are working and saved in localStorage.
-- All Trades page and Trade Detail View match the supplied reference layout.
+FINAL STRUCTURE
+- Fixed ProTrade left sidebar
+- Performance removed from sidebar
+- Calendar selected
+- Fixed ProTrade top header
+- Month / Quarter / Year Calendar
+- Performance Dashboard below the Calendar
+- Fixed bottom trading summary
 
-WORKING BUTTONS
-- Dashboard navigation
-- Trades current-page button
-- Other sidebar module feedback
-- Date range selector
+WORKING FEATURES
+- Animated Light / Dark mode
+- Header and sidebar theme controls stay synchronized
+- Dashboard and Trades navigation links
+- Responsive mobile sidebar
+- Profile menu
+- Account balance hide / show
 - Account selector
 - Notifications
-- Top New Trade modal
-- Filter, Group, Sort and More
-- All/Open/Closed/Unreviewed tabs
-- Date sorting
-- Table row selection
-- Review tools and star rating
-- Pagination and page size
-- Metric cards
-- Back to Trades
-- Edit Trade
-- CSV export
-- Share / copy
-- Screenshot preview and upload
-- Import CSV / JSON
-- Profile menu
-- Balance hide/show
-- Dark / light mode
-- Mobile sidebar
+- Import CSV / JSON file selector
+- Date-range modal
+- New Trade modal
+- Month, Quarter and Year calendar views
+- Previous / next calendar navigation
+- Calendar day trade details
+- Weekly performance cards
+- Performance range buttons
+- Equity curve chart
+- Performance heatmap
+- Win / Loss donut
+- Strategy and symbol controls
+- New trades update Calendar and Performance metrics
+- Escape key closes modals, popovers and mobile navigation
+
+NO EXTERNAL LIBRARY REQUIRED
+The page uses only HTML, CSS and vanilla JavaScript.
