@@ -1,389 +1,391 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
-<head>
-  <script src="auth.js?v=6"></script>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>Psychology | ProTrade Analytics</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <style>
-    body { font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #101415; }
-    ::-webkit-scrollbar-thumb { background: #323537; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: #45464d; }
-    .glass-header { backdrop-filter: blur(12px); background: rgba(29, 32, 34, 0.92); }
-    input[type="range"] { accent-color: #adc6ff; }
-    .chart-container { position: relative; width: 100%; height: 300px; }
-    .pulse-dot { animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
-  </style>
-  <script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-secondary-fixed-variant": "#004395", "on-error": "#690005", "secondary-container": "#0566d9", background: "#101415", "on-tertiary-container": "#009365", "primary-fixed": "#dae2fd", "on-background": "#e0e3e5", "on-primary-container": "#798098", "tertiary-container": "#001c10", secondary: "#adc6ff", "inverse-primary": "#565e74", "surface-variant": "#323537", "inverse-on-surface": "#2d3133", "tertiary-fixed-dim": "#4edea3", "primary-container": "#0f172a", surface: "#101415", primary: "#bec6e0", "inverse-surface": "#e0e3e5", "surface-container-lowest": "#0b0f10", "on-primary": "#283044", "error-container": "#93000a", "surface-container": "#1d2022", "on-tertiary-fixed": "#002113", outline: "#909097", "on-secondary-fixed": "#001a42", "on-error-container": "#ffdad6", "on-tertiary-fixed-variant": "#005236", "surface-dim": "#101415", "on-surface-variant": "#c6c6cd", "tertiary-fixed": "#6ffbbe", "surface-container-high": "#272a2c", "surface-tint": "#bec6e0", error: "#ffb4ab", "surface-bright": "#363a3b", "primary-fixed-dim": "#bec6e0", "secondary-fixed": "#d8e2ff", "on-surface": "#e0e3e5", "surface-container-highest": "#323537", tertiary: "#4edea3", "on-tertiary": "#003824", "outline-variant": "#45464d", "on-secondary": "#002e6a", "on-primary-fixed": "#131b2e", "on-secondary-container": "#e6ecff", "surface-container-low": "#191c1e", "on-primary-fixed-variant": "#3f465c", "secondary-fixed-dim": "#adc6ff"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", "2xl": "1rem", full: "9999px"}, spacing: {"container-padding": "2rem", "unit-xl": "2.5rem", "unit-sm": "0.5rem", gutter: "1.5rem", "unit-lg": "1.5rem", "unit-xs": "0.25rem", "unit-md": "1rem", "sidebar-width": "280px"}, fontFamily: {"display-lg": ["DM Sans"], "label-uppercase": ["DM Sans"], "body-lg": ["DM Sans"], "headline-lg": ["DM Sans"], "title-md": ["DM Sans"], "headline-lg-mobile": ["DM Sans"], "data-mono": ["DM Sans"], "body-sm": ["DM Sans"], headline: ["DM Sans"], display: ["DM Sans"], body: ["DM Sans"], label: ["DM Sans"]}, fontSize: {"display-lg": ["48px", {lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700"}], "label-uppercase": ["12px", {lineHeight: "1", letterSpacing: "0.05em", fontWeight: "700"}], "body-lg": ["16px", {lineHeight: "1.6", fontWeight: "400"}], "headline-lg": ["32px", {lineHeight: "1.2", letterSpacing: "-0.01em", fontWeight: "700"}], "title-md": ["20px", {lineHeight: "1.4", fontWeight: "600"}], "headline-lg-mobile": ["24px", {lineHeight: "1.2", fontWeight: "700"}], "data-mono": ["14px", {lineHeight: "1", letterSpacing: "-0.01em", fontWeight: "500"}], "body-sm": ["14px", {lineHeight: "1.5", fontWeight: "400"}]}}}};</script>
-</head>
-<body class="bg-background text-on-background selection:bg-secondary-container selection:text-on-secondary-container min-h-screen pb-16 md:pb-0">
-  <aside class="fixed left-0 top-0 h-full w-[280px] z-50 bg-surface-container-low border-r border-outline-variant flex-col py-6 px-4 hidden md:flex">
-    <div class="mb-10 px-2">
-      <a href="index.html" class="block"><h1 class="text-[32px] leading-tight font-black text-primary tracking-tight">ProTrade</h1><p class="text-[12px] uppercase tracking-[.05em] font-bold text-on-surface-variant opacity-70">Institutional Grade</p></a>
-    </div>
-    <nav class="flex-1 space-y-1">
-      <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="dashboard.html"><span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
-      <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="trades.html"><span class="material-symbols-outlined">receipt_long</span><span>Trades</span></a>
-      <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="calendar.html"><span class="material-symbols-outlined">calendar_month</span><span>Calendar</span></a>
-      <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="analytics.html"><span class="material-symbols-outlined">analytics</span><span>Analytics</span></a>
-      <a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-semibold shadow-sm" href="psychology.html"><span class="material-symbols-outlined">psychology</span><span>Psychology</span></a>
-      <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="ai-journal.html"><span class="material-symbols-outlined">smart_toy</span><span>AI Journal</span></a>
-      <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-all" href="settings.html"><span class="material-symbols-outlined">settings</span><span>Settings</span></a>
-    </nav>
-    <div class="mt-auto space-y-6">
-      <a href="dashboard.html" class="w-full py-4 px-6 bg-tertiary text-on-tertiary rounded-xl font-bold hover:opacity-90 flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[20px]">workspace_premium</span>Upgrade to Pro</a>
-      <div class="flex items-center gap-4 p-2 border-t border-outline-variant pt-6"><div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center"><span class="material-symbols-outlined text-primary">account_circle</span></div><div><p class="text-sm font-bold"><span class="auth-user-name">Alex Rivera</span></p><p class="text-[10px] text-tertiary flex items-center gap-1"><span class="material-symbols-outlined text-[12px]" style="font-variation-settings:'FILL' 1">verified</span>PRO MEMBER</p></div></div>
-    </div>
-  
-<button data-auth-logout type="button" class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-red-400/20 bg-red-400/5 px-4 py-2.5 text-sm font-bold text-red-300 transition hover:bg-red-400/10 disabled:opacity-60">
-  <span class="material-symbols-outlined text-[20px]">logout</span>
-  Logout
+<html data-theme="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="#06111f" name="theme-color"/><title>ProTrade — Psychology</title><link href="styles.css?v=14" rel="stylesheet"/><script src="auth.js?v=6"></script><style>
+/* =========================================================
+   PSYCHOLOGY PAGE — CONTENT ONLY
+   Sidebar, top header, buttons, theme and bottom shell are
+   inherited from the same shared styles.css used by Dashboard.
+   ========================================================= */
+:root { --cyan:#18a8c9; }
+.center-content.psychology-page { padding:16px 18px 10px; max-width:none; }
+.psychology-grid {
+  display:grid;
+  grid-template-columns:1.26fr 1.26fr .96fr 1.06fr 1.06fr;
+  grid-template-rows:220px 220px 302px;
+  grid-template-areas:
+    "score ai mental checklist emotion"
+    "score ai bias rules timeline"
+    "weekly weekly habit habit reflection";
+  gap:12px;
+}
+.card {
+  min-width:0;
+  overflow:hidden;
+  border:1px solid rgba(133,163,193,.22);
+  border-radius:11px;
+  background:linear-gradient(145deg,rgba(11,29,45,.96),rgba(8,23,37,.96));
+  box-shadow:0 14px 35px rgba(0,0,0,.18);
+}
+html[data-theme="light"] .card { background:linear-gradient(145deg,#fff,#f3f8fb); }
+.card-head {
+  min-height:44px;
+  padding:0 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  border-bottom:1px solid var(--line);
+}
+.card-head h3 { margin:0; display:flex; align-items:center; gap:8px; font-size:13px; }
+.card-head > span { color:var(--muted); font-size:12px; }
+.card-body { padding:11px; }
+.head-icon { font-size:16px; }
+.head-icon.green { color:#19d567; }
+.head-icon.purple { color:#8e63ff; }
+.head-icon.cyan { color:#00d3c4; }
+.head-icon.yellow { color:#ffc62a; }
+.head-icon.orange { color:#ff9f1f; }
+.head-icon.blue { color:#1aa8ff; }
+.score-panel { grid-area:score; }
+.ai { grid-area:ai; }
+.mental { grid-area:mental; }
+.checklist { grid-area:checklist; }
+.emotion { grid-area:emotion; }
+.bias { grid-area:bias; }
+.rules { grid-area:rules; }
+.timeline { grid-area:timeline; }
+.weekly { grid-area:weekly; }
+.habit { grid-area:habit; }
+.reflection { grid-area:reflection; }
+
+/* Psychology score */
+.score-panel .card-body {
+  height:calc(100% - 44px);
+  padding:10px 16px 14px;
+  display:flex;
+  flex-direction:column;
+}
+.score-ring-wrap { display:flex; align-items:center; justify-content:center; padding:6px 0 9px; }
+.score-ring {
+  width:174px;
+  height:174px;
+  position:relative;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  filter:drop-shadow(0 0 16px rgba(40,200,154,.22));
+}
+.score-ring svg { position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg); }
+.score-ring circle { fill:none; stroke-width:10; }
+.score-ring .track { stroke:color-mix(in srgb,var(--line-strong) 68%,transparent); }
+.score-ring .value {
+  stroke:url(#psychGradient);
+  stroke-linecap:round;
+  stroke-dasharray:452.39;
+  stroke-dashoffset:452.39;
+  transition:stroke-dashoffset .7s ease;
+}
+.score-ring-inner { position:relative; z-index:2; text-align:center; }
+.score-ring-inner strong { display:block; font-size:48px; line-height:.9; }
+.score-ring-inner small { color:var(--muted); font-size:13px; }
+.score-ring-inner span { display:block; margin-top:7px; color:var(--green); font-size:12px; font-weight:800; }
+.score-breakdown { margin-top:2px; }
+.break-title { margin-bottom:8px; font-size:11px; font-weight:800; }
+.score-row { margin:9px 0; }
+.score-row > div:first-child { display:flex; justify-content:space-between; gap:8px; color:var(--muted); font-size:10px; }
+.score-row b { color:var(--text); }
+.meter { height:6px; margin-top:5px; overflow:hidden; border-radius:999px; background:color-mix(in srgb,var(--line-strong) 80%,transparent); }
+.meter i { display:block; width:0; height:100%; border-radius:inherit; background:var(--meter,var(--primary)); transition:width .65s ease; }
+
+/* AI psychologist */
+.ai .card-head h3 { color:var(--text); }
+.ai .card-body { height:calc(100% - 44px); padding:12px; display:flex; flex-direction:column; gap:10px; }
+.ai-intro { display:grid; grid-template-columns:38px 1fr; gap:10px; align-items:center; padding:10px; border-radius:9px; background:rgba(119,92,255,.09); }
+.ai-avatar { width:36px; height:36px; display:grid; place-items:center; border-radius:50%; color:#fff; background:linear-gradient(145deg,#7657e9,#4930af); }
+.ai-intro p,.ai-insight p,.ai-suggestion p { margin:0; font-size:10px; line-height:1.65; }
+.ai-insight,.ai-suggestion { padding:11px; border:1px solid rgba(126,89,255,.35); border-radius:9px; background:rgba(102,67,203,.08); }
+.ai-insight small,.ai-suggestion small { display:block; margin-bottom:6px; color:#a988ff; font-size:10px; }
+.ai-insight strong { display:block; margin-bottom:4px; font-size:10px; }
+.ai-btn { width:100%; height:36px; margin-top:auto; border:1px solid rgba(119,92,255,.28); border-radius:8px; color:#fff; background:linear-gradient(90deg,#5531bf,#7449dc); font-size:10px; font-weight:800; }
+
+/* Compact right-side metric cards */
+.center-stat { height:calc(100% - 44px); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center; }
+.center-stat small { color:var(--muted); font-size:10px; }
+.center-stat > b { font-size:11px; }
+.big-fraction { font-size:34px; }
+.semi-gauge { width:130px; height:72px; position:relative; overflow:hidden; }
+.semi-gauge::before { content:""; position:absolute; inset:0; border:12px solid rgba(88,119,148,.25); border-bottom:0; border-radius:130px 130px 0 0; }
+.semi-gauge i { position:absolute; inset:0; border:12px solid #1ecf88; border-right-color:transparent; border-bottom:0; border-radius:130px 130px 0 0; transform:rotate(25deg); transform-origin:50% 100%; }
+.semi-gauge strong { position:absolute; left:0; right:0; bottom:4px; font-size:28px; }
+.progress { height:6px; overflow:hidden; border-radius:999px; background:color-mix(in srgb,var(--line-strong) 80%,transparent); }
+.progress i { display:block; width:0; height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--primary),var(--green)); transition:width .65s ease; }
+.checklist .progress,.rules .progress { width:78%; margin:8px 0 0; }
+.checklist #checklistPercent,.rules #rulePercent { margin-top:-21px; margin-left:auto; padding-right:8px; color:var(--text); }
+.emotion-face { font-size:48px; line-height:1; }
+.emotion-main { color:#9ae33f; font-size:26px; }
+.risk-main { color:#ff9f22; font-size:24px; }
+.timeline-main { color:#b8d1e5; font-size:31px; }
+.bias .card-body { gap:9px; }
+
+/* Weekly report */
+.text-btn { border:0; color:#a985ff; background:transparent; font-size:9px; }
+.weekly-body { height:calc(100% - 44px); padding:10px 13px; display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:76px 76px 1fr; gap:5px; }
+.week-stat { min-width:0; padding:8px 4px; border:1px solid rgba(133,163,193,.14); border-radius:8px; text-align:center; }
+.week-stat small { display:block; color:var(--muted); font-size:9px; }
+.week-stat strong { display:block; margin-top:5px; font-size:18px; }
+.week-stat em { display:block; margin-top:3px; color:var(--muted); font-size:8px; font-style:normal; }
+.mini-bars { grid-column:1/-1; height:76px; padding:6px 8px 0; display:flex; align-items:flex-end; gap:4px; border-top:1px solid var(--line); }
+.mini-bars i { flex:1; min-height:7px; border-radius:3px 3px 1px 1px; background:linear-gradient(180deg,var(--primary),var(--blue)); }
+
+/* Habit tracker */
+.habit { display:flex; flex-direction:column; }
+.habit-body { flex:1; height:auto; padding:10px 12px; display:grid; grid-template-columns:94px repeat(7,1fr) 45px; gap:4px; align-items:center; font-size:8px; }
+.habit-head { color:var(--muted); text-align:center; }
+.habit-name { overflow:hidden; color:var(--muted); white-space:nowrap; text-overflow:ellipsis; }
+.habit-dot { width:17px; height:17px; margin:auto; position:relative; border:1px solid var(--line-strong); border-radius:50%; background:color-mix(in srgb,var(--line-strong) 65%,transparent); }
+.habit-dot.on { border-color:transparent; background:var(--green); box-shadow:0 0 7px rgba(32,173,96,.42); }
+.habit-dot.on::after { content:"✓"; position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-size:10px; font-style:normal; }
+.habit-streak { color:var(--primary); text-align:center; font-weight:800; }
+.habit-total { padding:8px 12px 12px; display:grid; grid-template-columns:110px 1fr 42px; align-items:center; gap:8px; border-top:1px solid var(--line); font-size:9px; }
+.habit-total .progress { margin:0; }
+.habit-total strong { font-size:12px; }
+
+/* Reflection notes */
+.reflection-body { height:calc(100% - 44px); display:flex; flex-direction:column; }
+.reflection-body label { padding:12px 14px; border-bottom:1px solid var(--line); }
+.reflection-body label strong { display:block; margin-bottom:7px; color:#ffd12f; font-size:10px; }
+.reflection-body p { margin:0; color:var(--muted); font-size:9px; line-height:1.55; }
+.reflection textarea { width:100%; height:51px; padding:0; resize:none; border:0; outline:0; color:var(--text); background:transparent; font-size:9px; line-height:1.55; }
+.save-note { height:27px; margin:8px 14px 12px; padding:0 9px; border:1px solid var(--line); border-radius:7px; background:var(--panel); font-size:8px; }
+
+/* Dashboard-style bottom summary, expanded for psychology metrics */
+.bottom-summary.psychology-summary { min-height:104px; margin:10px 18px 16px; padding:0 18px; grid-template-columns:1.45fr repeat(6,1fr); }
+.psychology-summary .quote { font-size:10px; }
+.quote-mark { width:45px; height:45px; display:grid; place-items:center; flex:0 0 auto; border-radius:50%; color:#fff; background:#0c4c64; font-size:34px; font-weight:900; }
+.psychology-summary .summary-stat { min-height:62px; }
+.psychology-summary .summary-stat small { font-size:9px; }
+.psychology-summary .summary-stat strong { font-size:17px; }
+
+.toast-stack { position:fixed; right:15px; bottom:15px; z-index:130; display:grid; gap:7px; }
+.toast { min-width:245px; padding:11px 13px; border:1px solid var(--line-strong); border-radius:11px; background:var(--panel-solid); box-shadow:var(--shadow); }
+.toast strong { display:block; font-size:11px; }
+.toast span { display:block; margin-top:3px; color:var(--muted); font-size:9px; }
+
+@media (max-width:1350px) {
+  .psychology-grid { grid-template-columns:1.18fr 1.18fr .92fr .98fr .98fr; gap:9px; }
+  .card-head h3 { font-size:11px; }
+  .weekly-body { padding:8px; }
+  .bottom-summary.psychology-summary { grid-template-columns:1.4fr repeat(6,1fr); }
+}
+@media (max-width:1100px) {
+  .psychology-grid {
+    grid-template-columns:repeat(2,1fr);
+    grid-template-rows:auto;
+    grid-template-areas:
+      "score ai"
+      "score ai"
+      "mental checklist"
+      "bias rules"
+      "emotion timeline"
+      "weekly weekly"
+      "habit habit"
+      "reflection reflection";
+  }
+  .score-panel,.ai { min-height:470px; }
+  .weekly,.habit,.reflection { min-height:300px; }
+  .bottom-summary.psychology-summary { grid-template-columns:repeat(2,1fr); }
+  .psychology-summary .quote { grid-column:1/-1; padding:8px 0; }
+}
+@media (max-width:700px) {
+  .psychology-grid {
+    grid-template-columns:1fr;
+    grid-template-areas:"score" "ai" "mental" "checklist" "emotion" "bias" "rules" "timeline" "weekly" "habit" "reflection";
+  }
+  .weekly-body { grid-template-columns:repeat(2,1fr); grid-template-rows:auto; }
+  .habit-body { overflow-x:auto; grid-template-columns:90px repeat(7,36px) 42px; }
+  .bottom-summary.psychology-summary { grid-template-columns:1fr; margin:8px; }
+  .psychology-summary .summary-stat { padding:6px; border-left:0; border-top:1px solid var(--line); }
+}
+</style></head><body><div class="app-shell"><aside class="sidebar" id="sidebar">
+<div class="brand-row">
+<div aria-hidden="true" class="brand-mark">
+<span></span><span></span><span></span><span></span>
+</div>
+<div class="brand-copy">
+<h1>ProTrade</h1>
+<p>TRADING JOURNAL</p>
+</div>
+</div>
+<nav aria-label="Primary navigation" class="sidebar-nav" id="sidebarNav">
+<button class="nav-item" data-page="Dashboard" data-route="dashboard.html" type="button">
+<span class="nav-icon">▣</span><span>Dashboard</span>
 </button>
-
-</aside>
-
-  <main class="md:ml-[280px] min-h-screen">
-    <header class="sticky top-0 z-40 glass-header border-b border-outline-variant shadow-sm">
-      <div class="flex justify-between items-center px-6 h-16 max-w-[1600px] mx-auto">
-        <div class="flex items-center gap-4 flex-1"><a href="index.html" class="md:hidden text-xl font-bold text-primary">ProTrade</a><div class="relative hidden sm:block"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span><input id="searchInput" class="bg-surface-container-low border border-outline-variant rounded-full py-1.5 pl-10 pr-4 w-72 focus:ring-1 focus:ring-primary focus:outline-none text-sm text-on-surface" placeholder="Search mistake, symbol or note..." type="search"/></div></div>
-        <div class="flex items-center gap-3"><button id="refreshBtn" class="p-2 text-on-surface-variant hover:bg-surface-bright rounded-full" title="Refresh live data"><span class="material-symbols-outlined">refresh</span></button><a href="trades.html" class="bg-primary text-on-primary font-bold px-4 py-2 rounded-lg text-sm flex items-center gap-2 hover:opacity-80"><span class="material-symbols-outlined text-[20px]">add</span><span class="hidden sm:inline">Add Trade</span></a></div>
-      </div>
-    </header>
-
-    <div class="p-6 lg:p-10 max-w-[1600px] mx-auto space-y-7">
-      <div id="loadingBanner" class="rounded-xl border border-secondary/30 bg-secondary/10 px-4 py-3 flex items-center gap-3 text-secondary"><span class="w-2.5 h-2.5 rounded-full bg-secondary pulse-dot"></span><span>Loading live psychology analytics from MongoDB…</span></div>
-      <div id="errorBanner" class="hidden rounded-xl border border-error/40 bg-error/10 px-4 py-3 text-error"></div>
-
-      <section class="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
-        <div><p class="text-tertiary text-sm font-bold tracking-wide mb-2">LIVE BEHAVIOR ANALYTICS</p><h2 class="text-3xl lg:text-4xl font-bold">Psychological Performance</h2><p class="text-on-surface-variant mt-2">Discipline, execution quality and recurring behavior patterns calculated from your verified trades.</p></div>
-        <div class="flex flex-wrap items-center gap-2"><button class="range-btn px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-bold text-sm" data-range="7D">7D</button><button class="range-btn px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-bold text-sm" data-range="30D">30D</button><button class="range-btn px-4 py-2 rounded-lg bg-secondary text-on-secondary font-bold text-sm" data-range="ALL">ALL</button><button id="exportBtn" class="px-4 py-2 rounded-lg border border-outline-variant font-bold text-sm flex items-center gap-2 hover:bg-surface-container-high"><span class="material-symbols-outlined text-[18px]">download</span>Export</button></div>
-      </section>
-
-      <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
-        <article class="bg-surface-container rounded-2xl p-5 border border-outline-variant"><p class="text-xs uppercase tracking-wider text-on-surface-variant font-bold">Readiness Score</p><div class="flex items-end justify-between mt-3"><p id="readinessScore" class="text-3xl font-black text-tertiary">—</p><span class="material-symbols-outlined text-tertiary">verified_user</span></div><p id="readinessLabel" class="text-sm text-on-surface-variant mt-2">Waiting for trade data</p></article>
-        <article class="bg-surface-container rounded-2xl p-5 border border-outline-variant"><p class="text-xs uppercase tracking-wider text-on-surface-variant font-bold">Discipline</p><div class="flex items-end justify-between mt-3"><p id="disciplineScore" class="text-3xl font-black text-secondary">—</p><span class="material-symbols-outlined text-secondary">rule</span></div><p class="text-sm text-on-surface-variant mt-2">Checklist + mistake control</p></article>
-        <article class="bg-surface-container rounded-2xl p-5 border border-outline-variant"><p class="text-xs uppercase tracking-wider text-on-surface-variant font-bold">Execution Rating</p><div class="flex items-end justify-between mt-3"><p id="executionRating" class="text-3xl font-black text-primary">—</p><span class="material-symbols-outlined text-primary">stars</span></div><p id="ratedTrades" class="text-sm text-on-surface-variant mt-2">No rated trades yet</p></article>
-        <article class="bg-surface-container rounded-2xl p-5 border border-outline-variant"><p class="text-xs uppercase tracking-wider text-on-surface-variant font-bold">Clean Trade Rate</p><div class="flex items-end justify-between mt-3"><p id="cleanTradeRate" class="text-3xl font-black text-tertiary">—</p><span class="material-symbols-outlined text-tertiary">task_alt</span></div><p id="cleanTradeText" class="text-sm text-on-surface-variant mt-2">No trades analyzed</p></article>
-        <article class="bg-primary-container rounded-2xl p-5 border border-secondary-container/50"><p class="text-xs uppercase tracking-wider text-on-primary-container font-bold">Emotional Risk</p><div class="flex items-end justify-between mt-3"><p id="emotionalRisk" class="text-3xl font-black text-secondary">—</p><span class="material-symbols-outlined text-secondary">monitor_heart</span></div><p id="riskLabel" class="text-sm text-on-primary-container mt-2">Waiting for data</p></article>
-      </section>
-
-      <section class="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        <article class="xl:col-span-4 bg-surface-container rounded-2xl p-6 border border-outline-variant">
-          <div class="flex items-start justify-between gap-4"><div><h3 class="text-xl font-bold">Session Check-in</h3><p class="text-sm text-on-surface-variant mt-1">Quick self-assessment before your next trade.</p></div><span id="checkinScore" class="text-2xl font-black text-secondary">80</span></div>
-          <div class="grid grid-cols-3 gap-3 mt-6">
-            <button data-mood="focused" class="mood-btn flex flex-col items-center gap-2 p-3 rounded-xl border border-outline-variant hover:border-tertiary"><span class="material-symbols-outlined text-3xl">center_focus_strong</span><span class="text-xs font-bold">Focused</span></button>
-            <button data-mood="calm" class="mood-btn flex flex-col items-center gap-2 p-3 rounded-xl border border-secondary bg-secondary/10 text-secondary"><span class="material-symbols-outlined text-3xl">self_improvement</span><span class="text-xs font-bold">Calm</span></button>
-            <button data-mood="anxious" class="mood-btn flex flex-col items-center gap-2 p-3 rounded-xl border border-outline-variant hover:border-error"><span class="material-symbols-outlined text-3xl">bolt</span><span class="text-xs font-bold">Anxious</span></button>
-          </div>
-          <p id="moodInsight" class="text-sm text-on-surface-variant italic mt-4">Balanced emotional state. Good for disciplined execution.</p>
-          <div class="space-y-5 mt-6">
-            <div><div class="flex justify-between text-sm mb-2"><label for="confidenceSlider" class="font-bold">Confidence</label><span id="confidenceValue" class="text-secondary font-bold">8/10</span></div><input id="confidenceSlider" class="w-full" min="1" max="10" value="8" type="range"/></div>
-            <div><div class="flex justify-between text-sm mb-2"><label for="disciplineSlider" class="font-bold">Discipline</label><span id="disciplineValue" class="text-tertiary font-bold">9/10</span></div><input id="disciplineSlider" class="w-full" min="1" max="10" value="9" type="range"/></div>
-            <div><div class="flex justify-between text-sm mb-2"><label for="stressSlider" class="font-bold">Stress</label><span id="stressValue" class="text-error font-bold">3/10</span></div><input id="stressSlider" class="w-full" min="1" max="10" value="3" type="range"/></div>
-          </div>
-          <p class="text-xs text-on-surface-variant mt-5 border-t border-outline-variant pt-4">This check-in is interactive only. It is not saved to MongoDB until a dedicated psychology check-in API is added.</p>
-        </article>
-
-        <article class="xl:col-span-8 bg-surface-container rounded-2xl p-6 border border-outline-variant">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><h3 class="text-xl font-bold">Behavior Trend</h3><p class="text-sm text-on-surface-variant mt-1">Execution rating and clean-execution score across filtered trades.</p></div><p id="trendSummary" class="text-sm text-on-surface-variant">No trend yet</p></div>
-          <div class="chart-container mt-5"><canvas id="behaviorTrendChart"></canvas></div>
-        </article>
-      </section>
-
-      <section class="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        <article class="xl:col-span-7 bg-surface-container rounded-2xl p-6 border border-outline-variant">
-          <div class="flex items-center justify-between gap-4"><div><h3 class="text-xl font-bold">Emotional Volatility by Weekday</h3><p class="text-sm text-on-surface-variant mt-1">Risk combines mistakes, losses and low execution ratings.</p></div><div class="text-xs text-on-surface-variant"><span class="inline-block w-2.5 h-2.5 bg-tertiary rounded-sm mr-1"></span>Low <span class="inline-block w-2.5 h-2.5 bg-error rounded-sm ml-3 mr-1"></span>High</div></div>
-          <div id="weekdayHeatmap" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mt-6"></div>
-          <p id="weekdayInsight" class="text-sm text-on-surface-variant mt-5">Add more trades to identify weekday behavior patterns.</p>
-        </article>
-
-        <article class="xl:col-span-5 bg-surface-container rounded-2xl p-6 border border-outline-variant">
-          <div class="flex items-center justify-between"><div><h3 class="text-xl font-bold">Psychological Slip-ups</h3><p class="text-sm text-on-surface-variant mt-1">Live frequency from mistake tags.</p></div><span id="mistakeTotal" class="text-error font-bold">0 tags</span></div>
-          <div id="mistakeList" class="space-y-3 mt-6"></div>
-          <a href="trades.html" class="mt-5 w-full py-3 border border-dashed border-outline-variant rounded-xl text-on-surface-variant font-bold text-sm hover:border-primary hover:text-primary transition-all flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[18px]">edit_note</span>Tag mistakes inside a trade</a>
-        </article>
-      </section>
-
-      <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <article class="bg-surface-container rounded-2xl p-6 border border-outline-variant"><h3 class="text-lg font-bold">Checklist Discipline</h3><div class="grid grid-cols-2 gap-3 mt-5"><div class="bg-surface-container-low rounded-xl p-4"><p class="text-xs text-on-surface-variant uppercase font-bold">Coverage</p><p id="checklistCoverage" class="text-2xl font-black text-tertiary mt-2">—</p></div><div class="bg-surface-container-low rounded-xl p-4"><p class="text-xs text-on-surface-variant uppercase font-bold">Avg Items</p><p id="avgChecklist" class="text-2xl font-black text-secondary mt-2">—</p></div></div><p id="topChecklist" class="text-sm text-on-surface-variant mt-4">No checklist data yet.</p></article>
-        <article class="bg-surface-container rounded-2xl p-6 border border-outline-variant"><h3 class="text-lg font-bold">Journal Quality</h3><div class="grid grid-cols-2 gap-3 mt-5"><div class="bg-surface-container-low rounded-xl p-4"><p class="text-xs text-on-surface-variant uppercase font-bold">Notes Added</p><p id="journalRate" class="text-2xl font-black text-primary mt-2">—</p></div><div class="bg-surface-container-low rounded-xl p-4"><p class="text-xs text-on-surface-variant uppercase font-bold">Tagged Trades</p><p id="taggedTradeRate" class="text-2xl font-black text-error mt-2">—</p></div></div><p id="journalInsight" class="text-sm text-on-surface-variant mt-4">No journal data yet.</p></article>
-        <article class="bg-primary-container rounded-2xl p-6 border border-secondary-container/50"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-tertiary">auto_awesome</span><h3 class="text-lg font-bold">Performance Insight</h3></div><p id="performanceInsight" class="text-sm text-on-primary-container mt-4 leading-relaxed">Loading behavioral insight…</p><p id="focusArea" class="mt-5 rounded-xl bg-surface-container-lowest/70 border border-outline-variant p-4 text-sm"><strong class="text-secondary">Focus:</strong> Continue recording checklists, notes and honest mistake tags.</p></article>
-      </section>
-
-      <section class="bg-surface-container rounded-2xl border border-outline-variant overflow-hidden">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-6 border-b border-outline-variant"><div><h3 class="text-xl font-bold">Recent Psychology Review</h3><p class="text-sm text-on-surface-variant mt-1">The latest filtered executions and their behavior signals.</p></div><span id="reviewCount" class="text-sm text-on-surface-variant">0 trades</span></div>
-        <div class="overflow-x-auto"><table class="w-full min-w-[900px]"><thead class="bg-surface-container-high text-xs uppercase text-on-surface-variant"><tr><th class="px-6 py-4 text-left">Date</th><th class="px-6 py-4 text-left">Symbol</th><th class="px-6 py-4 text-left">Rating</th><th class="px-6 py-4 text-left">Checklist</th><th class="px-6 py-4 text-left">Mistakes</th><th class="px-6 py-4 text-right">P&amp;L</th><th class="px-6 py-4 text-left">Review</th></tr></thead><tbody id="reviewTableBody" class="divide-y divide-outline-variant"></tbody></table></div>
-      </section>
-    </div>
-  </main>
-
-  <nav class="fixed bottom-0 left-0 right-0 bg-surface-container border-t border-outline-variant h-16 md:hidden flex items-center justify-around px-4 z-50"><a class="flex flex-col items-center text-on-surface-variant" href="dashboard.html"><span class="material-symbols-outlined">dashboard</span><span class="text-[10px] mt-1">Dashboard</span></a><a class="flex flex-col items-center text-on-surface-variant" href="trades.html"><span class="material-symbols-outlined">receipt_long</span><span class="text-[10px] mt-1">Trades</span></a><a class="flex flex-col items-center text-on-surface-variant" href="calendar.html"><span class="material-symbols-outlined">calendar_month</span><span class="text-[10px] mt-1">Calendar</span></a><a class="flex flex-col items-center text-secondary" href="psychology.html"><span class="material-symbols-outlined">psychology</span><span class="text-[10px] mt-1">Psych</span></a><a class="flex flex-col items-center text-on-surface-variant" href="settings.html"><span class="material-symbols-outlined">account_circle</span><span class="text-[10px] mt-1">Profile</span></a></nav>
-
-  <script>
-    "use strict";
-    const API_URL = "https://protrader-backend-n8oj.onrender.com/api/trades";
-    const $ = id => document.getElementById(id);
-    const state = { allTrades: [], range: "ALL", search: "", mood: "calm" };
-    let behaviorTrendChart = null;
-
-    const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[char]);
-    const number = value => Number.isFinite(Number(value)) ? Number(value) : 0;
-    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-    const percent = value => `${clamp(value, 0, 100).toFixed(1)}%`;
-    const formatMoney = value => `${value >= 0 ? "+" : "-"}$${Math.abs(number(value)).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
-    function parseTradeDate(trade) {
-      if (!trade?.tradeDate) return null;
-      const raw = String(trade.tradeDate);
-      const date = /^\d{4}-\d{2}-\d{2}/.test(raw) ? new Date(`${raw.slice(0,10)}T12:00:00`) : new Date(raw);
-      return Number.isNaN(date.getTime()) ? null : date;
-    }
-
-    function dateLabel(trade) {
-      const date = parseTradeDate(trade);
-      return date ? date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Unknown";
-    }
-
-    function getFilteredTrades() {
-      const now = new Date();
-      let trades = [...state.allTrades];
-      if (state.range !== "ALL") {
-        const days = state.range === "7D" ? 7 : 30;
-        const start = new Date(now);
-        start.setHours(0,0,0,0);
-        start.setDate(start.getDate() - (days - 1));
-        trades = trades.filter(t => { const date = parseTradeDate(t); return date && date >= start; });
-      }
-      const query = state.search.trim().toLowerCase();
-      if (query) {
-        trades = trades.filter(t => [t.symbol, t.model, t.session, t.notes, ...(Array.isArray(t.mistakeTags) ? t.mistakeTags : []), ...(Array.isArray(t.checklist) ? t.checklist : [])].filter(Boolean).join(" ").toLowerCase().includes(query));
-      }
-      return trades.sort((a,b) => (parseTradeDate(a)?.getTime() || 0) - (parseTradeDate(b)?.getTime() || 0));
-    }
-
-    function calculateMetrics(trades) {
-      const total = trades.length;
-      const rated = trades.filter(t => number(t.rating) > 0);
-      const avgRating = rated.length ? rated.reduce((sum,t) => sum + clamp(number(t.rating),1,10),0) / rated.length : 0;
-      const mistakeTagged = trades.filter(t => Array.isArray(t.mistakeTags) && t.mistakeTags.filter(Boolean).length > 0);
-      const cleanRate = total ? (total - mistakeTagged.length) / total * 100 : 0;
-      const checklistTrades = trades.filter(t => Array.isArray(t.checklist) && t.checklist.filter(Boolean).length > 0);
-      const checklistCoverage = total ? checklistTrades.length / total * 100 : 0;
-      const noteTrades = trades.filter(t => String(t.notes || "").trim().length > 0);
-      const journalRate = total ? noteTrades.length / total * 100 : 0;
-      const losses = trades.filter(t => number(t.profitLoss) < 0 || String(t.result || "").toLowerCase() === "loss");
-      const lossRate = total ? losses.length / total * 100 : 0;
-      const mistakeRate = total ? mistakeTagged.length / total * 100 : 0;
-      const emotionalRisk = total ? clamp(mistakeRate * 0.65 + lossRate * 0.25 + (100 - (avgRating ? avgRating * 10 : 70)) * 0.10, 0, 100) : 0;
-      const discipline = total ? clamp((checklistCoverage * 0.38 + cleanRate * 0.42 + (avgRating ? avgRating * 10 : 60) * 0.20) / 10, 0, 10) : 0;
-      const readiness = total ? clamp(discipline * 4.5 + (avgRating ? avgRating * 10 : 60) * 0.30 + cleanRate * 0.25, 0, 100) : 0;
-      return { total, rated, avgRating, mistakeTagged, cleanRate, checklistTrades, checklistCoverage, noteTrades, journalRate, losses, lossRate, mistakeRate, emotionalRisk, discipline, readiness };
-    }
-
-    function renderKpis(trades) {
-      const m = calculateMetrics(trades);
-      $("readinessScore").textContent = m.total ? `${m.readiness.toFixed(0)}/100` : "—";
-      $("readinessLabel").textContent = !m.total ? "No trades in this filter" : m.readiness >= 80 ? "Strong behavioral readiness" : m.readiness >= 60 ? "Stable, with room to improve" : "High execution risk";
-      $("disciplineScore").textContent = m.total ? `${m.discipline.toFixed(1)}/10` : "—";
-      $("executionRating").textContent = m.rated.length ? `${m.avgRating.toFixed(1)}/10` : "—";
-      $("ratedTrades").textContent = `${m.rated.length} rated trade${m.rated.length === 1 ? "" : "s"}`;
-      $("cleanTradeRate").textContent = m.total ? percent(m.cleanRate) : "—";
-      $("cleanTradeText").textContent = m.total ? `${m.total - m.mistakeTagged.length} of ${m.total} without mistake tags` : "No trades analyzed";
-      $("emotionalRisk").textContent = m.total ? `${m.emotionalRisk.toFixed(0)}/100` : "—";
-      $("riskLabel").textContent = !m.total ? "No behavior signals" : m.emotionalRisk < 25 ? "Low emotional risk" : m.emotionalRisk < 55 ? "Moderate emotional risk" : "High emotional risk";
-    }
-
-    function chartOptions() {
-      return { responsive:true, maintainAspectRatio:false, interaction:{mode:"index",intersect:false}, plugins:{legend:{labels:{color:"#c6c6cd",usePointStyle:true}},tooltip:{backgroundColor:"#0b0f10",titleColor:"#e0e3e5",bodyColor:"#c6c6cd",borderColor:"#45464d",borderWidth:1}}, scales:{x:{ticks:{color:"#909097",maxRotation:0},grid:{color:"rgba(144,144,151,.08)"}},y:{min:0,max:10,ticks:{color:"#909097",stepSize:2},grid:{color:"rgba(144,144,151,.10)"}}}};
-    }
-
-    function renderTrend(trades) {
-      const points = trades.slice(-20);
-      const labels = points.map(t => { const d = parseTradeDate(t); return d ? d.toLocaleDateString("en-US", { month:"short", day:"numeric" }) : "Trade"; });
-      const ratings = points.map(t => number(t.rating) > 0 ? clamp(number(t.rating),1,10) : null);
-      const cleanScores = points.map(t => {
-        const hasMistake = Array.isArray(t.mistakeTags) && t.mistakeTags.filter(Boolean).length > 0;
-        const hasChecklist = Array.isArray(t.checklist) && t.checklist.filter(Boolean).length > 0;
-        return clamp((hasMistake ? 3 : 8) + (hasChecklist ? 2 : 0),0,10);
-      });
-      if (behaviorTrendChart) behaviorTrendChart.destroy();
-      behaviorTrendChart = new Chart($("behaviorTrendChart"), { type:"line", data:{labels,datasets:[{label:"Execution Rating",data:ratings,borderColor:"#adc6ff",backgroundColor:"rgba(173,198,255,.12)",tension:.35,pointRadius:4,spanGaps:true},{label:"Clean Execution",data:cleanScores,borderColor:"#4edea3",backgroundColor:"rgba(78,222,163,.12)",tension:.35,pointRadius:4}]}, options:chartOptions() });
-      const m = calculateMetrics(trades);
-      $("trendSummary").textContent = !m.total ? "No trades in this filter" : `${m.total} trade${m.total === 1 ? "" : "s"} · ${m.avgRating ? m.avgRating.toFixed(1) : "—"}/10 avg rating`;
-    }
-
-    function renderWeekdayHeatmap(trades) {
-      const names = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-      const buckets = names.map(() => []);
-      trades.forEach(t => { const d = parseTradeDate(t); if (d) buckets[d.getDay()].push(t); });
-      const risks = buckets.map(items => {
-        if (!items.length) return null;
-        const mistakeRatio = items.filter(t => Array.isArray(t.mistakeTags) && t.mistakeTags.filter(Boolean).length).length / items.length;
-        const lossRatio = items.filter(t => number(t.profitLoss) < 0 || String(t.result || "").toLowerCase() === "loss").length / items.length;
-        const ratingRisk = items.reduce((sum,t) => sum + (number(t.rating) ? (10-clamp(number(t.rating),1,10))/10 : .3),0) / items.length;
-        return clamp((mistakeRatio*.45 + lossRatio*.35 + ratingRisk*.20)*100,0,100);
-      });
-      $("weekdayHeatmap").innerHTML = names.map((name,index) => {
-        const risk = risks[index];
-        if (risk === null) return `<div class="rounded-xl border border-outline-variant bg-surface-container-low p-4 text-center opacity-55"><p class="text-xs font-bold text-on-surface-variant">${name}</p><p class="text-xl font-black mt-3">—</p><p class="text-[10px] text-on-surface-variant mt-1">No trades</p></div>`;
-        const background = risk < 25 ? `rgba(78,222,163,${0.16 + risk/200})` : risk < 55 ? `rgba(173,198,255,${0.18 + risk/220})` : `rgba(255,180,171,${0.20 + risk/180})`;
-        const color = risk < 25 ? "#4edea3" : risk < 55 ? "#adc6ff" : "#ffb4ab";
-        return `<div class="rounded-xl border border-outline-variant p-4 text-center" style="background:${background}"><p class="text-xs font-bold text-on-surface-variant">${name}</p><p class="text-xl font-black mt-3" style="color:${color}">${risk.toFixed(0)}%</p><p class="text-[10px] text-on-surface-variant mt-1">${buckets[index].length} trade${buckets[index].length===1?"":"s"}</p></div>`;
-      }).join("");
-      const valid = risks.map((risk,index) => ({risk,index})).filter(x => x.risk !== null).sort((a,b) => b.risk-a.risk);
-      $("weekdayInsight").innerHTML = valid.length ? `Highest behavior risk currently appears on <strong class="${valid[0].risk >= 55 ? "text-error" : "text-secondary"}">${names[valid[0].index]}</strong> (${valid[0].risk.toFixed(0)}%). Use smaller size and a stricter checklist on that weekday.` : "Add more trades to identify weekday behavior patterns.";
-    }
-
-    function renderMistakes(trades) {
-      const counts = new Map();
-      trades.forEach(t => (Array.isArray(t.mistakeTags) ? t.mistakeTags : []).filter(Boolean).forEach(tag => counts.set(tag,(counts.get(tag)||0)+1)));
-      const rows = [...counts.entries()].sort((a,b) => b[1]-a[1]);
-      const total = rows.reduce((sum,[,count]) => sum+count,0);
-      $("mistakeTotal").textContent = `${total} tag${total===1?"":"s"}`;
-      if (!rows.length) {
-        $("mistakeList").innerHTML = `<div class="rounded-xl border border-dashed border-outline-variant p-6 text-center text-on-surface-variant"><span class="material-symbols-outlined text-3xl text-tertiary">verified</span><p class="font-bold text-on-surface mt-2">No mistake tags recorded</p><p class="text-sm mt-1">Keep tagging honestly after every execution.</p></div>`;
-        return;
-      }
-      const max = rows[0][1];
-      $("mistakeList").innerHTML = rows.slice(0,6).map(([tag,count],index) => `<div class="bg-surface-container-low rounded-xl border border-outline-variant p-4"><div class="flex justify-between gap-3"><span class="font-bold">${escapeHtml(tag)}</span><span class="${index===0?"text-error":"text-on-surface-variant"} font-bold">${count}</span></div><div class="h-2 bg-surface-container-highest rounded-full mt-3 overflow-hidden"><div class="h-full ${index===0?"bg-error":index===1?"bg-secondary":"bg-primary"} rounded-full" style="width:${count/max*100}%"></div></div></div>`).join("");
-    }
-
-    function renderDisciplineCards(trades) {
-      const m = calculateMetrics(trades);
-      const allItems = trades.flatMap(t => Array.isArray(t.checklist) ? t.checklist.filter(Boolean) : []);
-      const itemCounts = new Map();
-      allItems.forEach(item => itemCounts.set(item,(itemCounts.get(item)||0)+1));
-      const topItem = [...itemCounts.entries()].sort((a,b)=>b[1]-a[1])[0];
-      $("checklistCoverage").textContent = m.total ? percent(m.checklistCoverage) : "—";
-      $("avgChecklist").textContent = m.total ? (allItems.length/m.total).toFixed(1) : "—";
-      $("topChecklist").innerHTML = topItem ? `Most repeated item: <strong class="text-on-surface">${escapeHtml(topItem[0])}</strong> (${topItem[1]}×).` : "No checklist data yet.";
-      $("journalRate").textContent = m.total ? percent(m.journalRate) : "—";
-      $("taggedTradeRate").textContent = m.total ? percent(m.mistakeRate) : "—";
-      $("journalInsight").textContent = !m.total ? "No journal data yet." : m.journalRate >= 80 ? "Strong review habit. Your notes create a useful learning dataset." : "Add a short post-trade note more consistently to improve pattern detection.";
-    }
-
-    function renderInsight(trades) {
-      const m = calculateMetrics(trades);
-      if (!m.total) {
-        $("performanceInsight").textContent = "No trades match this filter. Add or retag trades to build a reliable behavioral dataset.";
-        $("focusArea").innerHTML = `<strong class="text-secondary">Focus:</strong> Record rating, checklist, notes and mistake tags on every trade.`;
-        return;
-      }
-      const counts = new Map();
-      trades.forEach(t => (Array.isArray(t.mistakeTags) ? t.mistakeTags : []).filter(Boolean).forEach(tag => counts.set(tag,(counts.get(tag)||0)+1)));
-      const top = [...counts.entries()].sort((a,b)=>b[1]-a[1])[0];
-      if (top) {
-        const affected = trades.filter(t => (t.mistakeTags||[]).includes(top[0]));
-        const pnl = affected.reduce((sum,t)=>sum+number(t.profitLoss),0);
-        $("performanceInsight").innerHTML = `Your most frequent execution issue is <strong class="text-error">${escapeHtml(top[0])}</strong>, recorded ${top[1]} time${top[1]===1?"":"s"}. Trades carrying this tag produced ${formatMoney(pnl)} in the current filter.`;
-        $("focusArea").innerHTML = `<strong class="text-secondary">Focus:</strong> Create one pre-trade rule that specifically blocks “${escapeHtml(top[0])}”.`;
-      } else {
-        $("performanceInsight").innerHTML = `No recurring mistake tag is visible in ${m.total} filtered trade${m.total===1?"":"s"}. Clean-trade rate is <strong class="text-tertiary">${percent(m.cleanRate)}</strong>, while checklist coverage is <strong class="text-secondary">${percent(m.checklistCoverage)}</strong>.`;
-        $("focusArea").innerHTML = `<strong class="text-secondary">Focus:</strong> Maintain the same checklist discipline and continue honest post-trade reviews.`;
-      }
-    }
-
-    function renderReviewTable(trades) {
-      const recent = [...trades].sort((a,b)=>(parseTradeDate(b)?.getTime()||0)-(parseTradeDate(a)?.getTime()||0)).slice(0,8);
-      $("reviewCount").textContent = `${trades.length} trade${trades.length===1?"":"s"}`;
-      $("reviewTableBody").innerHTML = recent.length ? recent.map(t => {
-        const mistakes = Array.isArray(t.mistakeTags) ? t.mistakeTags.filter(Boolean) : [];
-        const checklist = Array.isArray(t.checklist) ? t.checklist.filter(Boolean) : [];
-        const rating = number(t.rating);
-        const review = mistakes.length ? "Needs review" : checklist.length ? "Clean execution" : "Add checklist";
-        const reviewClass = mistakes.length ? "text-error" : checklist.length ? "text-tertiary" : "text-secondary";
-        return `<tr class="hover:bg-surface-container-high/50"><td class="px-6 py-4 text-sm text-on-surface-variant">${dateLabel(t)}</td><td class="px-6 py-4 font-bold">${escapeHtml(t.symbol || "—")}</td><td class="px-6 py-4">${rating ? `${rating}/10` : "—"}</td><td class="px-6 py-4">${checklist.length} item${checklist.length===1?"":"s"}</td><td class="px-6 py-4">${mistakes.length ? mistakes.map(tag=>`<span class="inline-block bg-error/10 text-error rounded-full px-2 py-1 text-xs mr-1 mb-1">${escapeHtml(tag)}</span>`).join("") : `<span class="text-on-surface-variant">None</span>`}</td><td class="px-6 py-4 text-right font-bold ${number(t.profitLoss)>=0?"text-tertiary":"text-error"}">${formatMoney(number(t.profitLoss))}</td><td class="px-6 py-4 font-bold ${reviewClass}">${review}</td></tr>`;
-      }).join("") : `<tr><td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">No trades match the selected psychology filter.</td></tr>`;
-    }
-
-    function renderAll() {
-      const trades = getFilteredTrades();
-      renderKpis(trades);
-      renderTrend(trades);
-      renderWeekdayHeatmap(trades);
-      renderMistakes(trades);
-      renderDisciplineCards(trades);
-      renderInsight(trades);
-      renderReviewTable(trades);
-    }
-
-    async function loadTrades() {
-      $("loadingBanner").classList.remove("hidden");
-      $("errorBanner").classList.add("hidden");
-      try {
-        const response = await fetch(API_URL, { headers:{Accept:"application/json"} });
-        if (!response.ok) throw new Error(`API returned ${response.status}`);
-        const payload = await response.json();
-        state.allTrades = Array.isArray(payload) ? payload : Array.isArray(payload.data) ? payload.data : [];
-        renderAll();
-      } catch (error) {
-        console.error(error);
-        $("errorBanner").textContent = "Could not load psychology analytics. The Render free server may be waking up; wait 30–60 seconds and press refresh.";
-        $("errorBanner").classList.remove("hidden");
-        state.allTrades = [];
-        renderAll();
-      } finally {
-        $("loadingBanner").classList.add("hidden");
-      }
-    }
-
-    function updateCheckin() {
-      const confidence = number($("confidenceSlider").value);
-      const discipline = number($("disciplineSlider").value);
-      const stress = number($("stressSlider").value);
-      const moodBonus = state.mood === "focused" ? 8 : state.mood === "calm" ? 6 : -8;
-      const score = clamp(confidence*4 + discipline*5 + (10-stress)*3 + moodBonus,0,100);
-      $("checkinScore").textContent = score.toFixed(0);
-      $("confidenceValue").textContent = `${confidence}/10`;
-      $("disciplineValue").textContent = `${discipline}/10`;
-      $("stressValue").textContent = `${stress}/10`;
-    }
-
-    document.querySelectorAll(".range-btn").forEach(btn => btn.addEventListener("click", () => {
-      state.range = btn.dataset.range;
-      document.querySelectorAll(".range-btn").forEach(item => { item.classList.remove("bg-secondary","text-on-secondary"); item.classList.add("bg-surface-container-high","text-on-surface-variant"); });
-      btn.classList.remove("bg-surface-container-high","text-on-surface-variant");
-      btn.classList.add("bg-secondary","text-on-secondary");
-      renderAll();
-    }));
-
-    $("searchInput").addEventListener("input", event => { state.search = event.target.value; renderAll(); });
-    $("refreshBtn").addEventListener("click", loadTrades);
-    ["confidenceSlider","disciplineSlider","stressSlider"].forEach(id => $(id).addEventListener("input", updateCheckin));
-
-    const moodMessages = { focused:"Optimal attention state for executing a written plan.", calm:"Balanced emotional state. Good for disciplined execution.", anxious:"Elevated emotional risk. Reduce size or pause before entering." };
-    document.querySelectorAll(".mood-btn").forEach(btn => btn.addEventListener("click", () => {
-      state.mood = btn.dataset.mood;
-      document.querySelectorAll(".mood-btn").forEach(item => { item.classList.remove("border-secondary","bg-secondary/10","text-secondary","border-error","bg-error/10","text-error","border-tertiary","bg-tertiary/10","text-tertiary"); item.classList.add("border-outline-variant"); });
-      btn.classList.remove("border-outline-variant");
-      if (state.mood === "anxious") btn.classList.add("border-error","bg-error/10","text-error"); else if (state.mood === "focused") btn.classList.add("border-tertiary","bg-tertiary/10","text-tertiary"); else btn.classList.add("border-secondary","bg-secondary/10","text-secondary");
-      $("moodInsight").textContent = moodMessages[state.mood];
-      updateCheckin();
-    }));
-
-    $("exportBtn").addEventListener("click", () => {
-      const trades = getFilteredTrades();
-      const headers = ["Date","Symbol","Rating","Checklist Items","Mistake Tags","Notes","P&L"];
-      const rows = trades.map(t => [String(t.tradeDate||"").slice(0,10),t.symbol||"",number(t.rating)||"",(t.checklist||[]).join(" | "),(t.mistakeTags||[]).join(" | "),String(t.notes||"").replace(/\r?\n/g," "),number(t.profitLoss)]);
-      const csv = [headers,...rows].map(row => row.map(value => `"${String(value).replace(/"/g,'""')}"`).join(",")).join("\n");
-      const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = `protrade-psychology-${state.range.toLowerCase()}.csv`;
-      link.click();
-      URL.revokeObjectURL(link.href);
-    });
-
-    updateCheckin();
-    loadTrades();
-  </script>
-</body>
-</html>
+<button class="nav-item" data-page="Trades" data-route="trades.html" type="button">
+<span class="nav-icon">↻</span><span>Trades</span>
+</button>
+<button class="nav-item" data-page="Calendar" data-route="calendar.html" type="button">
+<span class="nav-icon">▦</span><span>Calendar</span>
+</button>
+<button class="nav-item" data-page="Analytics" data-route="analytics.html" type="button">
+<span class="nav-icon">⌁</span><span>Analytics</span><small class="pro-pill">Pro</small>
+</button>
+<button class="nav-item" data-page="Performance" data-route="analytics.html" type="button">
+<span class="nav-icon">▥</span><span>Performance</span>
+</button>
+<button class="nav-item" data-page="Risk Management" data-route="analytics.html" type="button">
+<span class="nav-icon">◇</span><span>Risk Management</span>
+</button>
+<button aria-current="page" class="nav-item active" data-page="Psychology" data-route="psychology.html" type="button">
+<span class="nav-icon">♡</span><span>Psychology</span>
+<span class="nav-tail">›</span></button>
+<button class="nav-item" data-page="Journal" data-route="ai-journal.html" type="button">
+<span class="nav-icon">▤</span><span>Journal</span>
+</button>
+<button class="nav-item" data-page="Reports" data-route="analytics.html" type="button">
+<span class="nav-icon">▧</span><span>Reports</span>
+</button>
+<button class="nav-item" data-route="trades.html" id="importTradesBtn" type="button">
+<span class="nav-icon">⇩</span><span>Import Trades</span>
+</button>
+<input accept=".csv,.json" hidden="" id="importTradesInput" type="file"/>
+<button class="nav-item" data-page="Settings" data-route="settings.html" type="button">
+<span class="nav-icon">⚙</span><span>Settings</span>
+</button>
+</nav>
+<div class="sidebar-bottom">
+<div class="profile-wrap">
+<button class="profile-card" id="profileBtn" type="button">
+<span class="avatar auth-user-initials">T</span>
+<span class="profile-copy"><strong class="auth-user-name">Trader</strong><small id="profileRole">Independent Trader</small></span>
+<span>⌄</span>
+</button>
+<div class="popover profile-popover" hidden="" id="profilePopover">
+<button data-profile-action="profile" type="button">My Profile</button>
+<button data-profile-action="account" type="button">Account Settings</button>
+<button data-profile-action="logout" type="button">Sign Out</button>
+</div>
+</div>
+<div class="account-card">
+<div class="account-head">
+<span>Account Balance</span>
+<button aria-label="Hide or show balance" class="ghost-icon" id="balanceVisibilityBtn" type="button">◉</button>
+</div>
+<strong id="sidebarBalance">—</strong>
+<div class="equity-block"><span>Equity</span><b id="sidebarEquity">—</b></div>
+<div class="broker-block"><span>Data Source</span><strong id="dataSourceLabel">MongoDB Journal</strong><i></i></div>
+</div>
+<div class="theme-card">
+<span id="themeLabel">Light Mode</span>
+<button aria-label="Switch light and dark mode" class="theme-switch" id="themeSwitch" type="button"><span></span></button>
+</div>
+</div>
+</aside><div class="sidebar-overlay" id="sidebarOverlay"></div><main class="main"><header class="top-header">
+<div class="welcome-area">
+<button aria-label="Open menu" class="mobile-menu" id="mobileMenuBtn" type="button">☰</button>
+<div>
+<h2>Welcome back, <span class="auth-user-name" id="welcomeName">Trader</span><span> ♛</span></h2>
+<p>Discipline today, freedom tomorrow.</p>
+</div>
+</div>
+<div class="header-actions">
+<button class="header-control" id="dateRangeBtn" type="button"><span id="dateRangeLabel">Last 30 Days</span><span>▦</span></button>
+<div class="dropdown-wrap">
+<button class="header-control" id="accountSelectorBtn" type="button"><span id="accountLabel">All Accounts</span><span>⌄</span></button>
+<div class="popover dropdown-popover" hidden="" id="accountPopover"><button data-account="All Accounts" type="button">All Accounts</button></div>
+</div>
+<button aria-label="Notifications" class="notification-btn" id="notificationBtn" type="button">♧<span id="notificationCount">0</span></button>
+<button class="new-trade-btn" id="newTradeBtn" type="button">＋ New Trade</button>
+</div>
+</header><section class="center-content psychology-page">
+<div class="data-hooks" hidden="">
+<p data-state="loading" id="psychologyStatus">Connecting to ProTrade backend…</p>
+<div id="rangeTabs"><button data-range="7D">7D</button><button class="active" data-range="30D">30D</button><button data-range="ALL">All</button></div>
+<span id="kpiPsychScore"></span><span id="kpiPsychNote"></span><span id="kpiDiscipline"></span><span id="kpiRating"></span><span id="kpiRatedTrades"></span><span id="kpiCleanRate"></span><span id="kpiCleanTrades"></span><span id="kpiEmotionalRisk"></span><span id="kpiRiskLabel"></span>
+</div>
+<section class="psychology-grid">
+<article class="card score-panel">
+<div class="card-head"><h3><span class="head-icon green">◉</span> Psychology Score</h3><span>ⓘ</span></div>
+<div class="card-body">
+<div class="score-ring-wrap"><div class="score-ring"><svg viewbox="0 0 160 160"><defs><lineargradient id="psychGradient" x1="0" x2="1"><stop offset="0" stop-color="#24a98a"></stop><stop offset="1" stop-color="#27d26f"></stop></lineargradient></defs><circle class="track" cx="80" cy="80" r="72"></circle><circle class="value" cx="80" cy="80" id="scoreCircle" r="72"></circle></svg><div class="score-ring-inner"><strong id="scoreNumber">—</strong><small>/100</small><span id="scoreLabel">Analyzing</span></div></div></div>
+<div class="score-breakdown"><div class="break-title">Score Breakdown</div>
+<div class="score-row"><div><span>Discipline</span><b id="breakDiscipline">—</b></div><div class="meter"><i id="barDiscipline" style="--meter:linear-gradient(90deg,#169e70,#78d34d)"></i></div></div>
+<div class="score-row"><div><span>Emotional Control</span><b id="breakEmotion">—</b></div><div class="meter"><i id="barEmotion" style="--meter:linear-gradient(90deg,#8ea342,#f1dc35)"></i></div></div>
+<div class="score-row"><div><span>Patience</span><b id="breakExecution">—</b></div><div class="meter"><i id="barExecution" style="--meter:linear-gradient(90deg,#839c4b,#d9dc3c)"></i></div></div>
+<div class="score-row"><div><span>Confidence</span><b id="mentalConfidence">—</b></div><div class="meter"><i id="confidenceBar" style="--meter:linear-gradient(90deg,#bd624e,#f0ad45)"></i></div></div>
+<div class="score-row"><div><span>Focus</span><b id="mentalFocus">—</b></div><div class="meter"><i id="focusBar" style="--meter:linear-gradient(90deg,#148f6b,#6cc94c)"></i></div></div>
+<span hidden="" id="breakReview"></span><i hidden="" id="barReview"></i><span hidden="" id="mentalPatience"></span><span hidden="" id="mentalControl"></span><div hidden="" id="scoreChange"></div>
+</div>
+</div>
+</article>
+<article class="card ai">
+<div class="card-head"><h3><span class="head-icon purple">✦</span> AI Psychologist</h3><span>ⓘ</span></div>
+<div class="card-body">
+<div class="ai-intro"><span class="ai-avatar">◉</span><p id="aiMessage">Your coaching insight will appear after protected trade data loads.</p></div>
+<div class="ai-insight"><small>Key Insight</small><strong id="aiTitle">Behavior coaching</strong><p id="aiInsightText">Your patience and discipline are calculated from real journal activity.</p></div>
+<div class="ai-suggestion"><small>Suggestion</small><p>Use the checklist before every entry and record your reflection immediately after exit.</p></div>
+<button class="ai-btn" id="openJournalBtn">▢ Chat with AI Psychologist</button>
+</div>
+</article>
+<article class="card mental"><div class="card-head"><h3><span class="head-icon cyan">◉</span> Mental State</h3></div><div class="card-body center-stat"><div class="semi-gauge"><i id="mentalGauge"></i><strong id="mentalStateValue">—</strong></div><b id="mentalStateLabel">Analyzing</b><small>Emotional Balance</small></div></article>
+<article class="card checklist"><div class="card-head"><h3><span class="head-icon green">☑</span> Pre-Trade Checklist</h3></div><div class="card-body center-stat"><strong class="big-fraction" id="checklistFraction">0/10</strong><b class="positive">Completed</b><div class="progress"><i id="checklistBar"></i></div><small id="checklistPercent">0%</small><div hidden=""><span id="planRate"></span><span id="riskRate"></span><span id="reviewRate"></span><span id="notesRate"></span></div></div></article>
+<article class="card emotion"><div class="card-head"><h3><span class="head-icon yellow">☺</span> Emotion Tracker</h3></div><div class="card-body center-stat"><div class="emotion-face" id="emotionFace">😐</div><strong class="emotion-main" id="emotionLabel">Neutral</strong><small id="emotionDescription">Current Emotion</small><div class="emotion-scale" hidden=""></div></div></article>
+<article class="card bias"><div class="card-head"><h3><span class="head-icon orange">◖</span> Cognitive Bias</h3></div><div class="card-body center-stat"><strong class="risk-main" id="biasName">No bias tagged</strong><b id="biasCount">0 occurrences</b><small>Today</small><ul class="bias-list" hidden=""></ul></div></article>
+<article class="card rules"><div class="card-head"><h3><span class="head-icon green">◇</span> Trading Rules</h3></div><div class="card-body center-stat"><strong class="big-fraction" id="ruleScore">—</strong><b class="positive" id="ruleState">Analyzing</b><div class="progress"><i id="ruleBar"></i></div><small id="rulePercent">0%</small><div hidden=""><span id="ruleClean"></span><span id="ruleMistakes"></span><span id="ruleReviewed"></span></div></div></article>
+<article class="card timeline"><div class="card-head"><h3><span class="head-icon blue">◷</span> Trading Timeline</h3></div><div class="card-body center-stat"><strong class="timeline-main" id="tradingTime">—</strong><b>Market Time</b><small>Today</small><div hidden="" id="timelineBars"></div><div class="timeline-labels" hidden=""></div></div></article>
+<article class="card weekly"><div class="card-head"><h3><span class="head-icon purple">▦</span> Weekly Psychology Report</h3><button class="text-btn" type="button">View Full Report →</button></div><div class="weekly-body">
+<div class="week-stat"><small>Avg Score</small><strong id="weekScore">—</strong></div><div class="week-stat"><small>Best Day</small><strong id="weekBest">—</strong><em id="weekBestDate">—</em></div><div class="week-stat"><small>Worst Day</small><strong class="negative" id="weekWorst">—</strong><em id="weekWorstDate">—</em></div><div class="week-stat"><small>Total Trades</small><strong id="weekTrades">0</strong></div>
+<div class="week-stat"><small>Win Rate</small><strong id="weekWinRate">0%</strong></div><div class="week-stat"><small>Profit Factor</small><strong id="weekProfitFactor">—</strong></div><div class="week-stat"><small>Total P&amp;L</small><strong id="weekPnl">—</strong></div><div class="week-stat"><small>Expectancy</small><strong id="weekExpectancy">—</strong></div>
+<div class="mini-bars" id="weeklyBars"></div>
+</div></article>
+<article class="card habit"><div class="card-head"><h3><span class="head-icon green">▦</span> Habit Tracker</h3></div><div class="habit-body" id="habitGrid"></div><div class="habit-total"><span>Overall Completion</span><div class="progress"><i id="habitCompletionBar"></i></div><strong id="habitCompletion">0%</strong></div></article>
+<article class="card reflection"><div class="card-head"><h3><span class="head-icon purple">✎</span> Reflection Notes</h3></div><div class="reflection-body"><label><strong>What did I do well today?</strong><textarea id="reflectionNote" placeholder="Write your reflection..."></textarea></label><label><strong>What can I improve?</strong><p>Review early entries, stop-loss discipline and emotional triggers.</p></label><label><strong>Lesson for tomorrow</strong><p>Patience creates opportunity.</p></label><button class="save-note" id="saveReflectionBtn">Save Reflection</button></div></article>
+</section>
+</section><footer class="bottom-summary psychology-summary">
+<div class="quote"><span class="quote-mark">“</span><span>Trading is 90% mindset<br/>and 10% strategy.</span></div>
+<div class="summary-stat"><small>Total Trades</small><strong id="footerTotalTrades">0</strong></div>
+<div class="summary-stat"><small>Profitable Trades</small><strong class="positive" id="footerWins">0 <em>(0.0%)</em></strong></div>
+<div class="summary-stat"><small>Losing Trades</small><strong class="negative" id="footerLosses">0 <em>(0.0%)</em></strong></div>
+<div class="summary-stat"><small>Breakeven Trades</small><strong id="footerBreakeven">0 <em>(0.0%)</em></strong></div>
+<div class="summary-stat"><small>Total P&amp;L</small><strong class="positive" id="footerTotalPnl">—</strong></div>
+<div class="summary-stat"><small>Win Rate</small><strong class="positive" id="footerWinRate">0%</strong></div>
+</footer></main></div><div class="toast-stack" id="toastStack"></div><script>
+(() => {
+  "use strict";
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+  const API_BASE = window.ProTradeAuth?.API_BASE || "https://protrader-backend-n8oj.onrender.com/api";
+  const ENDPOINTS = { trades:`${API_BASE}/trades`, settings:`${API_BASE}/settings`, alerts:`${API_BASE}/security/alerts/summary` };
+  const state = { trades:[], settings:{}, alerts:{unread:0}, range:"30D", balanceHidden:false };
+  const num = (v,f=0) => Number.isFinite(Number(v)) ? Number(v) : f;
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const escapeHtml=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  const apiJson = async (url, options={}) => { const headers=new Headers(options.headers||undefined);headers.set("Accept","application/json");if(options.body)headers.set("Content-Type","application/json");const res=await fetch(url,{...options,headers});const body=await res.json().catch(()=>({}));if(!res.ok||body.success===false)throw new Error(body.message||`HTTP ${res.status}`);return body; };
+  const tradeDate=t=>{const d=new Date(t?.tradeDate||t?.createdAt||"");return Number.isNaN(d.getTime())?null:d};
+  const resultOf=t=>{const r=String(t?.result||"").toLowerCase();if(["win","loss","breakeven","open"].includes(r))return r;const p=num(t?.profitLoss);return p>0?"win":p<0?"loss":"breakeven"};
+  const money=v=>{const c=state.settings.currency||"USD";try{return new Intl.NumberFormat("en-US",{style:"currency",currency:c,maximumFractionDigits:c==="JPY"?0:2}).format(v)}catch{return `${v>=0?"":"-"}$${Math.abs(v).toFixed(2)}`}};
+  const pct=v=>`${clamp(v,0,100).toFixed(0)}%`;
+  const toast=(title,msg="")=>{const n=document.createElement("div");n.className="toast";n.innerHTML=`<strong>${escapeHtml(title)}</strong><span>${escapeHtml(msg)}</span>`;$("#toastStack").append(n);setTimeout(()=>n.remove(),3000)};
+  const setStatus=(msg,type="loading")=>{const n=$("#psychologyStatus");n.textContent=msg;n.dataset.state=type};
+  const filtered=()=>{if(state.range==="ALL")return [...state.trades];const days=state.range==="7D"?7:30;const start=new Date();start.setHours(0,0,0,0);start.setDate(start.getDate()-(days-1));return state.trades.filter(t=>{const d=tradeDate(t);return d&&d>=start})};
+  const metrics=list=>{const total=list.length;const rated=list.filter(t=>num(t.rating)>0);const avgRating=rated.length?rated.reduce((s,t)=>s+clamp(num(t.rating),1,10),0)/rated.length:0;const mistakes=list.filter(t=>Array.isArray(t.mistakeTags)&&t.mistakeTags.filter(Boolean).length);const checklist=list.filter(t=>Array.isArray(t.checklist)&&t.checklist.filter(Boolean).length);const notes=list.filter(t=>String(t.notes||"").trim());const cleanRate=total?(total-mistakes.length)/total*100:0;const checklistRate=total?checklist.length/total*100:0;const reviewRate=total?notes.length/total*100:0;const losses=list.filter(t=>resultOf(t)==="loss").length;const lossRate=total?losses/total*100:0;const emotionalRisk=total?clamp((100-cleanRate)*.6+lossRate*.28+(avgRating?100-avgRating*10:25)*.12,0,100):0;const discipline=total?clamp(cleanRate*.45+checklistRate*.35+(avgRating?avgRating*10:60)*.20,0,100):0;const execution=avgRating?avgRating*10:total?60:0;const emotion=total?100-emotionalRisk:0;const review=reviewRate;const score=total?clamp(discipline*.36+execution*.27+emotion*.23+review*.14,0,100):0;return{total,rated,avgRating,mistakes,checklist,notes,cleanRate,checklistRate,reviewRate,losses,lossRate,emotionalRisk,discipline,execution,emotion,review,score}};
+  const updateProfile=()=>{const u=window.ProTradeAuth?.getUser?.()||{};const name=u.name||u.fullName||u.displayName||u.email?.split("@")[0]||"Trader";$$('.auth-user-name').forEach(n=>n.textContent=name);$$('.auth-user-initials').forEach(n=>n.textContent=name.split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase())};
+  const applyTheme=(theme,save=false)=>{const dark=String(theme).toLowerCase().includes("dark");document.documentElement.dataset.theme=dark?"dark":"light";$("#themeLabel").textContent=dark?"Dark Mode":"Light Mode";$("#themeSwitch").classList.toggle("active",dark);document.querySelector('meta[name="theme-color"]').content=dark?"#06111f":"#f5f9fc";localStorage.setItem("protrade-theme",dark?"Dark":"Light");if(save)apiJson(ENDPOINTS.settings,{method:"PUT",body:JSON.stringify({theme:dark?"Dark":"Light"})}).catch(()=>{});};
+  const updateBalance=()=>{const start=num(state.settings.startingBalance,5000);const pnl=state.trades.reduce((s,t)=>s+num(t.profitLoss),0);const text=state.balanceHidden?"••••••":money(start+pnl);$("#sidebarBalance").textContent=text;$("#sidebarEquity").textContent=text};
+  const renderTimeline=list=>{const points=[...list].sort((a,b)=>(tradeDate(a)||0)-(tradeDate(b)||0)).slice(-12);$("#timelineBars").innerHTML=(points.length?points:[{rating:0}]).map(t=>{const rating=num(t.rating)||clamp(7+(resultOf(t)==="win"?1:resultOf(t)==="loss"?-2:0),1,10);return `<i style="height:${Math.max(10,rating*9)}%;background:${rating>=7?'linear-gradient(180deg,var(--primary),var(--blue))':rating>=5?'linear-gradient(180deg,var(--orange),var(--blue))':'linear-gradient(180deg,var(--red),var(--orange))'}"></i>`}).join("")};
+  const renderHabit=list=>{const now=new Date();const days=Array.from({length:7},(_,i)=>{const d=new Date(now);d.setDate(now.getDate()-(6-i));return d});const rows=[{name:"Journaling",test:t=>String(t.notes||"").trim()},{name:"Checklist",test:t=>Array.isArray(t.checklist)&&t.checklist.length},{name:"Clean Trade",test:t=>!(Array.isArray(t.mistakeTags)&&t.mistakeTags.length)},{name:"Trade Review",test:t=>num(t.rating)>0}];let html=`<div></div>${days.map(d=>`<div class="habit-head">${d.toLocaleDateString("en-US",{weekday:"narrow"})}</div>`).join("")}<div class="habit-head">Streak</div>`;rows.forEach(row=>{const hits=days.map(d=>list.some(t=>{const td=tradeDate(t);return td&&td.toDateString()===d.toDateString()&&row.test(t)}));let streak=0;for(let i=hits.length-1;i>=0&&hits[i];i--)streak++;html+=`<div class="habit-name">${row.name}</div>${hits.map(v=>`<i class="habit-dot ${v?'on':''}"></i>`).join("")}<div class="habit-streak">${streak}</div>`});$("#habitGrid").innerHTML=html};
+  const renderWeekly=list=>{const now=new Date();const start=new Date(now);start.setDate(now.getDate()-6);start.setHours(0,0,0,0);const week=list.filter(t=>{const d=tradeDate(t);return d&&d>=start});const byDay=Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(start.getDate()+i);const trades=week.filter(t=>tradeDate(t)?.toDateString()===d.toDateString());const m=metrics(trades);return{d,trades,m,pnl:trades.reduce((s,t)=>s+num(t.profitLoss),0)}});const wm=metrics(week);const active=byDay.filter(x=>x.trades.length);const best=active.length?[...active].sort((a,b)=>b.m.score-a.m.score)[0]:null;const worst=active.length?[...active].sort((a,b)=>a.m.score-b.m.score)[0]:null;const wins=week.filter(t=>resultOf(t)==="win").length;$("#weekScore").textContent=week.length?wm.score.toFixed(0):"—";$("#weekBest").textContent=best?best.m.score.toFixed(0):"—";$("#weekBestDate").textContent=best?best.d.toLocaleDateString("en-US",{month:"short",day:"numeric"}):"—";$("#weekWorst").textContent=worst?worst.m.score.toFixed(0):"—";$("#weekWorstDate").textContent=worst?worst.d.toLocaleDateString("en-US",{month:"short",day:"numeric"}):"—";$("#weekTrades").textContent=week.length;$("#weekWinRate").textContent=week.length?pct(wins/week.length*100):"0%";const pnl=week.reduce((s,t)=>s+num(t.profitLoss),0);$("#weekPnl").textContent=money(pnl);$("#weekPnl").className=pnl>=0?"positive":"negative";const grossWin=week.filter(t=>num(t.profitLoss)>0).reduce((s,t)=>s+num(t.profitLoss),0),grossLoss=Math.abs(week.filter(t=>num(t.profitLoss)<0).reduce((s,t)=>s+num(t.profitLoss),0));$("#weekProfitFactor").textContent=grossLoss?(grossWin/grossLoss).toFixed(2):(grossWin?"∞":"—");$("#weekExpectancy").textContent=week.length?money(pnl/week.length):"—";$("#weeklyBars").innerHTML=byDay.map(x=>`<i style="height:${Math.max(7,x.trades.length?x.m.score*.7:7)}%;background:${x.pnl<0?'linear-gradient(180deg,var(--red),var(--orange))':'linear-gradient(180deg,var(--primary),var(--blue))'}"></i>`).join("")};
+  const render=()=>{const list=filtered();const m=metrics(list);$("#kpiPsychScore").textContent=m.total?`${m.score.toFixed(0)}/100`:"—";$("#kpiPsychNote").textContent=m.total?(m.score>=80?"Strong behavioral readiness":m.score>=60?"Stable with room to improve":"High execution risk"):"No trades in this range";$("#kpiDiscipline").textContent=m.total?`${(m.discipline/10).toFixed(1)}/10`:"—";$("#kpiRating").textContent=m.rated.length?`${m.avgRating.toFixed(1)}/10`:"—";$("#kpiRatedTrades").textContent=`${m.rated.length} rated trade${m.rated.length===1?"":"s"}`;$("#kpiCleanRate").textContent=m.total?pct(m.cleanRate):"—";$("#kpiCleanTrades").textContent=m.total?`${m.total-m.mistakes.length} of ${m.total} without mistake tags`:"No trades analyzed";$("#kpiEmotionalRisk").textContent=m.total?`${m.emotionalRisk.toFixed(0)}/100`:"—";$("#kpiRiskLabel").textContent=!m.total?"Waiting for signals":m.emotionalRisk<25?"Low emotional risk":m.emotionalRisk<55?"Moderate emotional risk":"High emotional risk";
+    $("#scoreNumber").textContent=m.total?m.score.toFixed(0):"—";$("#scoreLabel").textContent=!m.total?"No data":m.score>=80?"Strong":m.score>=60?"Good":"At Risk";$("#scoreCircle").style.strokeDashoffset=452.39*(1-m.score/100);[["Discipline",m.discipline],["Execution",m.execution],["Emotion",m.emotion],["Review",m.review]].forEach(([n,v])=>{$(`#break${n}`).textContent=m.total?pct(v):"—";$(`#bar${n}`).style.width=`${m.total?v:0}%`});
+    const focus=clamp(m.execution*.55+m.review*.20+m.cleanRate*.25,0,100),confidence=clamp(m.execution*.75+m.cleanRate*.25,0,100),patience=clamp(m.cleanRate*.70+m.discipline*.30,0,100),control=clamp(m.emotion*.70+m.discipline*.30,0,100);$("#mentalFocus").textContent=m.total?pct(focus):"—";$("#mentalConfidence").textContent=m.total?pct(confidence):"—";$("#focusBar").style.width=`${m.total?focus:0}%`;$("#confidenceBar").style.width=`${m.total?confidence:0}%`;$("#mentalStateValue").textContent=m.total?pct(control):"—";$("#mentalStateLabel").textContent=!m.total?"Analyzing":control>=80?"Good":control>=60?"Stable":"At Risk";$("#mentalPatience").textContent=m.total?pct(patience):"—";$("#mentalControl").textContent=m.total?pct(control):"—";
+    $("#checklistPercent").textContent=pct(m.checklistRate);$("#checklistFraction").textContent=`${Math.round(m.checklistRate/10)}/10`;$("#checklistBar").style.width=`${m.checklistRate}%`;$("#planRate").textContent=pct(m.checklistRate);$("#riskRate").textContent=pct(m.cleanRate);$("#reviewRate").textContent=pct(m.reviewRate);$("#notesRate").textContent=pct(m.reviewRate);
+    const risk=m.emotionalRisk;$("#emotionFace").textContent=!m.total?"😐":risk<25?"🙂":risk<55?"😐":"😣";$("#emotionLabel").textContent=!m.total?"Neutral":risk<25?"Calm":risk<55?"Watchful":"Elevated";$("#emotionDescription").textContent=!m.total?"Waiting for trade data":`${risk.toFixed(0)}/100 emotional-risk proxy`;
+    const counts=new Map();list.forEach(t=>(Array.isArray(t.mistakeTags)?t.mistakeTags:[]).filter(Boolean).forEach(tag=>counts.set(tag,(counts.get(tag)||0)+1)));const top=[...counts.entries()].sort((a,b)=>b[1]-a[1])[0];$("#biasName").textContent=top?top[0]:"No bias tagged";$("#biasCount").textContent=top?`${top[1]} occurrence${top[1]===1?"":"s"}`:"0 occurrences";$("#ruleScore").textContent=m.total?`${Math.round(m.discipline/12.5)}/8`:"—";$("#rulePercent").textContent=m.total?pct(m.discipline):"0%";$("#ruleBar").style.width=`${m.total?m.discipline:0}%`;$("#ruleState").textContent=!m.total?"No data":m.discipline>=80?"Strong adherence":m.discipline>=60?"Improving":"Needs review";$("#ruleClean").textContent=m.total-m.mistakes.length;$("#ruleMistakes").textContent=m.mistakes.length;$("#ruleReviewed").textContent=m.notes.length;
+    const aiTitle=top?`Reduce ${top[0]}`:m.total?"Protect your clean process":"Build your behavior profile";const aiMessage=!m.total?"Add rated trades, notes, checklists and mistake tags to unlock psychology coaching.":top?`Your most repeated trigger is ${top[0]}. Add a mandatory pause and checklist confirmation before the next entry.`:m.emotionalRisk>45?"Emotional risk is elevated. Reduce size and use a ten-minute reset after a loss.":"Your recent execution is relatively clean. Keep rating trades and writing same-day reflections.";$("#aiTitle").textContent=aiTitle;$("#aiMessage").textContent=aiMessage;
+    renderTimeline(list);renderWeekly(state.trades);renderHabit(state.trades);const totalMinutes=list.reduce((s,t)=>{if(!t.entryTime||!t.exitTime)return s;const [eh,em]=String(t.entryTime).split(":").map(Number),[xh,xm]=String(t.exitTime).split(":").map(Number);const d=(xh*60+xm)-(eh*60+em);return s+(d>0?d:0)},0);$("#tradingTime").textContent=`${Math.floor(totalMinutes/60)}h ${totalMinutes%60}m`;const habitDots=$$("#habitGrid .habit-dot");const habitOn=habitDots.filter(x=>x.classList.contains("on")).length;const habitPct=habitDots.length?habitOn/habitDots.length*100:0;$("#habitCompletion").textContent=pct(habitPct);$("#habitCompletionBar").style.width=`${habitPct}%`;const results=list.map(resultOf),wins=results.filter(x=>x==="win").length,losses=results.filter(x=>x==="loss").length,be=results.filter(x=>x==="breakeven").length,closed=wins+losses+be;$("#footerTotalTrades").textContent=list.length;$("#footerWins").innerHTML=`${wins} <em>(${closed?(wins/closed*100).toFixed(1):"0.0"}%)</em>`;$("#footerLosses").innerHTML=`${losses} <em>(${closed?(losses/closed*100).toFixed(1):"0.0"}%)</em>`;$("#footerBreakeven").innerHTML=`${be} <em>(${closed?(be/closed*100).toFixed(1):"0.0"}%)</em>`;const totalPnl=list.reduce((s,t)=>s+num(t.profitLoss),0);$("#footerTotalPnl").textContent=money(totalPnl);$("#footerTotalPnl").className=totalPnl>=0?"positive":"negative";$("#footerWinRate").textContent=closed?pct(wins/closed*100):"0%";
+  };
+  const load=async()=>{setStatus("Loading protected psychology data…");try{await window.ProTradeAuth.ready;const [tb,sb,ab]=await Promise.all([apiJson(ENDPOINTS.trades),apiJson(ENDPOINTS.settings),apiJson(ENDPOINTS.alerts).catch(()=>({data:{unread:0}}))]);state.trades=Array.isArray(tb.data)?tb.data:[];state.settings=sb.data||{};state.alerts=ab.data||{unread:0};updateProfile();applyTheme(state.settings.theme||localStorage.getItem("protrade-theme")||"Dark");updateBalance();$("#notificationCount").textContent=num(state.alerts.unread)||"";render();setStatus(`${state.trades.length} trades synced from MongoDB.`,"success")}catch(e){console.error(e);setStatus(e.message,"error");toast("Psychology could not load",e.message)}};
+  $$('.nav-item[data-route]').forEach(b=>b.addEventListener("click",()=>location.href=b.dataset.route));$("#newTradeBtn").addEventListener("click",()=>location.href="trades.html");$("#openJournalBtn").addEventListener("click",()=>location.href="ai-journal.html");$("#notificationBtn").addEventListener("click",()=>location.href="settings.html#security-alerts");$("#profileBtn").addEventListener("click",()=>location.href="settings.html");$("#themeSwitch").addEventListener("click",()=>applyTheme(document.documentElement.dataset.theme==="dark"?"Light":"Dark",true));$("#balanceVisibilityBtn").addEventListener("click",()=>{state.balanceHidden=!state.balanceHidden;updateBalance()});$("#mobileMenuBtn").addEventListener("click",()=>document.body.classList.add("sidebar-open"));$("#sidebarOverlay").addEventListener("click",()=>document.body.classList.remove("sidebar-open"));$("#accountSelectorBtn").addEventListener("click",e=>{e.stopPropagation();$("#accountPopover").hidden=!$("#accountPopover").hidden});document.addEventListener("click",()=>$("#accountPopover").hidden=true);
+  $("#dateRangeBtn").addEventListener("click",()=>{const next=state.range==="30D"?"7D":state.range==="7D"?"ALL":"30D";state.range=next;$("#dateRangeLabel").textContent=next==="ALL"?"All Time":next==="7D"?"Last 7 Days":"Last 30 Days";$$('#rangeTabs button').forEach(b=>b.classList.toggle("active",b.dataset.range===next));render()});$$('#rangeTabs button').forEach(b=>b.addEventListener("click",()=>{state.range=b.dataset.range;$$('#rangeTabs button').forEach(x=>x.classList.toggle("active",x===b));$("#dateRangeLabel").textContent=state.range==="ALL"?"All Time":state.range==="7D"?"Last 7 Days":"Last 30 Days";render()}));
+  const savedNote=localStorage.getItem("protrade-psychology-reflection")||"";$("#reflectionNote").value=savedNote;$("#saveReflectionBtn").addEventListener("click",()=>{localStorage.setItem("protrade-psychology-reflection",$("#reflectionNote").value.trim());toast("Reflection saved","Stored safely on this device.")});
+  load();
+})();
+</script></body></html>
