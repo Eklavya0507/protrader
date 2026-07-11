@@ -1,38 +1,30 @@
-PROTRADE RISK MANAGEMENT — DASHBOARD COLOR + BACKEND CONNECTED
+PROTRADE COMPLETE FINAL — DIRECT GITHUB UPLOAD
 
-UPLOAD TO THE ROOT OF:
-https://github.com/Eklavya0507/protrader
+1. Extract this ZIP.
+2. Open the frontend repository root: Eklavya0507/protrader
+3. Upload all extracted files and the assets folder to the repository root.
+4. Replace files when GitHub asks.
+5. Commit message:
+   Unify ProTrade pages shell journal reports and trade log
+6. Wait 1–3 minutes, then hard refresh with Ctrl+F5.
 
-Upload / replace:
-1. risk-management.html
-2. risk-management.css
-3. risk-management.js
-4. auth.js
+LIVE ENTRY:
+https://eklavya0507.github.io/protrader/
 
-styles.css:
-- This package includes the dashboard-matched styles.css for testing and recovery.
-- If your current main ProTrade repository already contains the latest dashboard styles.css, do not replace it.
-- Upload this styles.css only when the file is missing or the Risk page appears as plain white HTML.
+CORE BACKEND ROUTES USED:
+/api/trades
+/api/journals
+/api/journals/stats
+/api/settings
+/api/security/alerts/summary
+/api/auth/*
 
-DO NOT upload the old index.html from risk-management.test2-main because it can replace the cinematic landing page.
+IMPORTANT:
+- No backend code or environment secret is included.
+- Existing stable 2FA keys must not be rotated for this frontend update.
+- trade-log.html is the new advanced trade form opened by every + New Trade button.
+- journal.html uses the existing Journal CRUD backend.
+- reports.html uses real Trades + Journals data.
+- Old analytics/performance/ai-journal URLs redirect to the new connected pages.
 
-COMMIT MESSAGE:
-Connect risk management page to backend and dashboard theme
-
-LIVE URL:
-https://eklavya0507.github.io/protrader/risk-management.html
-
-BACKEND ROUTES USED:
-GET  /api/trades
-POST /api/trades
-GET  /api/settings
-PUT  /api/settings
-GET  /api/security/alerts/summary
-DELETE /api/auth/sessions/current (through auth.js logout)
-
-CURRENT BACKEND LIMITATIONS:
-- No live broker positions or live market price feed.
-- No contract-size / pip-value metadata.
-- No maxOpenExposure or maxDrawdownLimit setting fields.
-- Open exposure and position-size values are journal-based estimates.
-- 5% open-exposure and 15% drawdown references are frontend fallback thresholds.
+FINAL FILE COUNT: 52

@@ -20,15 +20,21 @@
     "psychology.html",
     "risk-management.html",
     "ai-journal.html",
+    "journal.html",
+    "reports.html",
+    "trade-log.html",
     "settings.html",
   ]);
 
   const isProtectedPage = protectedPages.has(currentPage);
 
   const wireRiskManagementRoute = () => {
-    document.querySelectorAll('[data-page="Risk Management"]').forEach((node) => {
-      node.dataset.route = "risk-management.html";
-      if (node.tagName === "A") node.setAttribute("href", "risk-management.html");
+    const routes = {"Risk Management":"risk-management.html","Journal":"journal.html","Reports":"reports.html"};
+    Object.entries(routes).forEach(([page, route]) => {
+      document.querySelectorAll(`[data-page="${page}"]`).forEach((node) => {
+        node.dataset.route = route;
+        if (node.tagName === "A") node.setAttribute("href", route);
+      });
     });
   };
 
@@ -1128,6 +1134,19 @@
       redirectToLogin();
     }
   })();
+})();
+
+
+(() => {
+  "use strict";
+  const page = window.location.pathname.split("/").pop() || "index.html";
+  const eligiblePages = new Set(["dashboard.html","trades.html","calendar.html","analytics.html","reports.html","psychology.html","risk-management.html","journal.html","ai-journal.html","settings.html"]);
+  if (!eligiblePages.has(page) || document.querySelector('script[data-protrade-new-trade-modal]')) return;
+  const script = document.createElement("script");
+  script.src = "new-trade-modal.js?v=2";
+  script.defer = true;
+  script.dataset.protradeNewTradeModal = "true";
+  document.head.appendChild(script);
 })();
 
 

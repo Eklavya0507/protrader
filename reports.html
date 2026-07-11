@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="#06111f" name="theme-color"/><title>ProTrade — Reports</title><link href="styles.css" rel="stylesheet"/><link href="reports.css" rel="stylesheet"/><link href="app-loader.css" rel="stylesheet"/><link href="protrade-shell.css" rel="stylesheet"/></head><body class="protrade-page"><div aria-label="Loading ProTrade" aria-live="polite" class="app-loading" id="appLoading">
+<aside aria-hidden="true" class="loading-sidebar">
+<div class="sk sk-logo"></div>
+<div class="loading-nav"><div class="sk sk-nav"></div><div class="sk sk-nav"></div><div class="sk sk-nav"></div><div class="sk sk-nav"></div><div class="sk sk-nav"></div><div class="sk sk-nav"></div></div>
+<div class="loading-grow"></div><div class="sk sk-profile"></div><div class="sk sk-account"></div><div class="sk sk-theme"></div>
+</aside>
+<section aria-hidden="true" class="loading-main">
+<div class="loading-top"><div class="sk sk-welcome"></div><div class="sk sk-actions"></div></div>
+<div class="loading-content"><div class="sk sk-title"></div><div class="loading-cards"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div><div class="loading-panels"><div class="sk"></div><div class="sk"></div></div><div class="sk sk-wide"></div></div>
+</section>
+</div><div class="app-shell"><aside class="sidebar" id="sidebar">
+<div class="brand-row">
+<div aria-hidden="true" class="brand-mark"><span></span><span></span><span></span><span></span></div>
+<div class="brand-copy"><h1>ProTrade</h1><p>TRADING JOURNAL</p></div>
+<button aria-label="Collapse sidebar" class="sidebar-collapse" id="sidebarCollapseBtn" title="Collapse sidebar" type="button">‹</button></div>
+<nav aria-label="Primary navigation" class="sidebar-nav" id="sidebarNav"><button class="nav-item active" data-page="Dashboard" data-route="dashboard.html" type="button">
+<span class="nav-icon">▣</span><span>Dashboard</span><span class="nav-tail">›</span>
+</button><button class="nav-item" data-page="Trades" data-route="trades.html" type="button">
+<span class="nav-icon">↻</span><span>Trades</span>
+</button><button class="nav-item" data-page="Calendar" data-route="calendar.html" type="button">
+<span class="nav-icon">▦</span><span>Calendar</span>
+</button><button class="nav-item" data-page="Risk Management" data-route="risk-management.html" type="button">
+<span class="nav-icon">◇</span><span>Risk Management</span>
+</button><button class="nav-item" data-page="Psychology" data-route="psychology.html" type="button">
+<span class="nav-icon">♡</span><span>Psychology</span>
+</button><button class="nav-item" data-page="Journal" data-route="journal.html" type="button">
+<span class="nav-icon">▤</span><span>Journal</span>
+</button><button class="nav-item" data-page="Reports" data-route="reports.html" type="button">
+<span class="nav-icon">▧</span><span>Reports</span>
+</button><button class="nav-item" data-page="Settings" data-route="settings.html" type="button">
+<span class="nav-icon">⚙</span><span>Settings</span>
+</button></nav>
+<div class="sidebar-bottom">
+<div class="profile-wrap">
+<button class="profile-card" id="profileBtn" type="button">
+<span class="avatar auth-user-initials">T</span>
+<span class="profile-copy"><strong class="auth-user-name">Trader</strong><small id="profileRole">Independent Trader</small></span><span>⌄</span>
+</button>
+<div class="popover profile-popover" hidden="" id="profilePopover"><button data-profile-action="profile" type="button">My Profile</button><button data-profile-action="account" type="button">Account Settings</button><button data-profile-action="logout" type="button">Sign Out</button></div>
+</div>
+<div class="account-card">
+<div class="account-head"><span>Account Balance</span><button aria-label="Hide or show balance" class="ghost-icon" id="balanceVisibilityBtn" type="button">◉</button></div>
+<strong id="sidebarBalance">—</strong>
+<div class="equity-block"><span>Equity</span><b id="sidebarEquity">—</b></div>
+<div class="broker-block"><span>Data Source</span><strong id="dataSourceLabel">MongoDB Journal</strong><i></i></div>
+</div>
+<div class="theme-card"><span id="themeLabel">Dark Mode</span><button aria-label="Switch light and dark mode" class="theme-switch" id="themeSwitch" type="button"><span></span></button></div>
+</div>
+</aside><div class="sidebar-overlay" id="sidebarOverlay"></div><main class="main"><header class="top-header topbar">
+<div class="welcome-area welcome welcome-block"><button aria-label="Open menu" class="mobile-menu" id="mobileMenuBtn" type="button">☰</button><div><h2>Welcome back, <span class="auth-user-name" id="welcomeName">Trader</span><span> ♛</span></h2><p>Discipline today, freedom tomorrow.</p></div></div>
+<div class="header-actions top-actions topbar-actions">
+<button class="header-control" id="dateRangeBtn" type="button"><span id="dateRangeLabel">Last 30 Days</span><span>▦</span></button>
+<div class="dropdown-wrap"><button class="header-control" id="accountSelectorBtn" type="button"><span id="accountLabel">All Accounts</span><span>⌄</span></button><div class="popover dropdown-popover" hidden="" id="accountPopover"><button data-account="all" type="button">All Accounts</button></div></div>
+<button aria-label="Notifications" class="notification-btn" id="notificationBtn" type="button">♧<span id="notificationCount">0</span></button>
+<button class="new-trade-btn" data-new-trade="" id="newTradeBtn" type="button">＋ New Trade</button>
+</div>
+</header><section class="reports-page center-content"><div class="reports-head"><div><span class="eyebrow">PERFORMANCE INTELLIGENCE</span><h1>Reports</h1><p>MongoDB trades and journal reviews combined into one synchronized report.</p></div><div class="report-actions"><button class="report-btn" id="refreshReportBtn">↻ Refresh</button><button class="report-btn primary" id="exportReportBtn">⇩ Export CSV</button></div></div><div class="report-status" id="reportStatus">Connecting to protected backend…</div><div class="range-tabs" id="reportRanges"><button class="active" data-range="30D">30 Days</button><button data-range="90D">90 Days</button><button data-range="YTD">YTD</button><button data-range="ALL">All Time</button></div><section class="report-kpis"><article><span>Net P&amp;L</span><strong id="rNet">—</strong><small id="rNetSub">Recorded trades</small></article><article><span>Win Rate</span><strong id="rWin">—</strong><small id="rWinSub">Closed trades</small></article><article><span>Profit Factor</span><strong id="rPf">—</strong><small>Gross profit ÷ gross loss</small></article><article><span>Max Drawdown</span><strong id="rDd">—</strong><small id="rDdSub">Peak-to-valley</small></article><article><span>Average R</span><strong id="rAvgR">—</strong><small>Per recorded trade</small></article><article><span>Journal Completion</span><strong id="rJournal">—</strong><small id="rJournalSub">Backend entries</small></article></section><section class="report-grid"><article class="report-card span-2"><div class="card-title"><div><h2>Equity &amp; Drawdown</h2><p>Running journal equity for the selected range.</p></div><span id="equityLegend">Equity</span></div><canvas id="equityReportCanvas"></canvas></article><article class="report-card"><div class="card-title"><div><h2>Outcomes</h2><p>Win, loss, breakeven and open trades.</p></div></div><canvas id="outcomeReportCanvas"></canvas><div class="outcome-legend" id="outcomeLegend"></div></article><article class="report-card"><div class="card-title"><div><h2>Monthly P&amp;L</h2><p>Net performance by month.</p></div></div><canvas id="monthlyReportCanvas"></canvas></article><article class="report-card"><div class="card-title"><div><h2>Session Performance</h2><p>Where your edge appears.</p></div></div><div class="report-list" id="sessionReport"></div></article><article class="report-card"><div class="card-title"><div><h2>Top Symbols</h2><p>Trade count, win rate and net result.</p></div></div><div class="report-table-wrap"><table><thead><tr><th>Symbol</th><th>Trades</th><th>Win %</th><th>Net</th></tr></thead><tbody id="symbolReport"></tbody></table></div></article><article class="report-card"><div class="card-title"><div><h2>Journal Quality</h2><p>Completion, confidence and discipline.</p></div></div><div class="journal-quality" id="journalQuality"></div></article><article class="report-card span-2"><div class="card-title"><div><h2>Recent Review Timeline</h2><p>Latest backend journal entries linked with trading outcomes.</p></div></div><div class="review-timeline" id="reviewTimeline"></div></article></section></section></main></div><div class="toast-stack" id="reportToasts"></div><script src="auth.js"></script><script src="reports.js"></script><script src="new-trade-modal.js"></script><script src="protrade-shell.js"></script><script src="app-loader.js"></script></body></html>

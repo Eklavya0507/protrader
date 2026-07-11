@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+
+<html data-theme="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="light dark" name="color-scheme"/>
+<title>ProTrade Journal Dashboard — Superior Synced Charts</title>
+<link href="journal.css" rel="stylesheet"/>
+<link href="styles.css" rel="stylesheet"/><link href="app-loader.css" rel="stylesheet"/><link href="protrade-shell.css" rel="stylesheet"/><meta content="#06111f" name="theme-color"/></head>
+<body class="protrade-page"><div aria-label="Loading ProTrade" aria-live="polite" class="app-loading" id="appLoading">
+<aside aria-hidden="true" class="loading-sidebar">
+<div class="sk sk-logo"></div>
+<div class="loading-nav"><div class="sk sk-nav"></div><div class="sk sk-nav"></div><div class="sk sk-nav"></div><div class="sk sk-nav"></div><div class="sk sk-nav"></div><div class="sk sk-nav"></div></div>
+<div class="loading-grow"></div><div class="sk sk-profile"></div><div class="sk sk-account"></div><div class="sk sk-theme"></div>
+</aside>
+<section aria-hidden="true" class="loading-main">
+<div class="loading-top"><div class="sk sk-welcome"></div><div class="sk sk-actions"></div></div>
+<div class="loading-content"><div class="sk sk-title"></div><div class="loading-cards"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div><div class="loading-panels"><div class="sk"></div><div class="sk"></div></div><div class="sk sk-wide"></div></div>
+</section>
+</div>
+<div class="app-shell">
+<aside class="sidebar" id="sidebar">
+<div class="brand-row">
+<div aria-hidden="true" class="brand-mark"><span></span><span></span><span></span><span></span></div>
+<div class="brand-copy"><h1>ProTrade</h1><p>TRADING JOURNAL</p></div>
+<button aria-label="Collapse sidebar" class="sidebar-collapse" id="sidebarCollapseBtn" title="Collapse sidebar" type="button">‹</button></div>
+<nav aria-label="Primary navigation" class="sidebar-nav" id="sidebarNav"><button class="nav-item" data-page="Dashboard" data-route="dashboard.html" type="button">
+<span class="nav-icon">▣</span><span>Dashboard</span>
+</button><button class="nav-item" data-page="Trades" data-route="trades.html" type="button">
+<span class="nav-icon">↻</span><span>Trades</span>
+</button><button class="nav-item" data-page="Calendar" data-route="calendar.html" type="button">
+<span class="nav-icon">▦</span><span>Calendar</span>
+</button><button class="nav-item" data-page="Risk Management" data-route="risk-management.html" type="button">
+<span class="nav-icon">◇</span><span>Risk Management</span>
+</button><button class="nav-item" data-page="Psychology" data-route="psychology.html" type="button">
+<span class="nav-icon">♡</span><span>Psychology</span>
+</button><button class="nav-item active" data-page="Journal" data-route="journal.html" type="button">
+<span class="nav-icon">▤</span><span>Journal</span><span class="nav-tail">›</span>
+</button><button class="nav-item" data-page="Reports" data-route="reports.html" type="button">
+<span class="nav-icon">▧</span><span>Reports</span>
+</button><button class="nav-item" data-page="Settings" data-route="settings.html" type="button">
+<span class="nav-icon">⚙</span><span>Settings</span>
+</button></nav>
+<div class="sidebar-bottom">
+<div class="profile-wrap">
+<button class="profile-card" id="profileBtn" type="button">
+<span class="avatar auth-user-initials">T</span>
+<span class="profile-copy"><strong class="auth-user-name">Trader</strong><small id="profileRole">Independent Trader</small></span><span>⌄</span>
+</button>
+<div class="popover profile-popover" hidden="" id="profilePopover"><button data-profile-action="profile" type="button">My Profile</button><button data-profile-action="account" type="button">Account Settings</button><button data-profile-action="logout" type="button">Sign Out</button></div>
+</div>
+<div class="account-card">
+<div class="account-head"><span>Account Balance</span><button aria-label="Hide or show balance" class="ghost-icon" id="balanceVisibilityBtn" type="button">◉</button></div>
+<strong id="sidebarBalance">—</strong>
+<div class="equity-block"><span>Equity</span><b id="sidebarEquity">—</b></div>
+<div class="broker-block"><span>Data Source</span><strong id="dataSourceLabel">MongoDB Journal</strong><i></i></div>
+</div>
+<div class="theme-card"><span id="themeLabel">Dark Mode</span><button aria-label="Switch light and dark mode" class="theme-switch" id="themeSwitch" type="button"><span></span></button></div>
+</div>
+</aside><div class="sidebar-overlay" id="sidebarOverlay"></div>
+<main class="main">
+<header class="top-header topbar">
+<div class="welcome-area welcome welcome-block"><button aria-label="Open menu" class="mobile-menu" id="mobileMenuBtn" type="button">☰</button><div><h2>Welcome back, <span class="auth-user-name" id="welcomeName">Trader</span><span> ♛</span></h2><p>Discipline today, freedom tomorrow.</p></div></div>
+<div class="header-actions top-actions topbar-actions">
+<button class="header-control" id="dateRangeBtn" type="button"><span id="dateRangeLabel">Last 30 Days</span><span>▦</span></button>
+<div class="dropdown-wrap"><button class="header-control" id="accountSelectorBtn" type="button"><span id="accountLabel">All Accounts</span><span>⌄</span></button><div class="popover dropdown-popover" hidden="" id="accountPopover"><button data-account="all" type="button">All Accounts</button></div></div>
+<button aria-label="Notifications" class="notification-btn" id="notificationBtn" type="button">♧<span id="notificationCount">0</span></button>
+<button class="new-trade-btn" data-new-trade="" id="newTradeBtn" type="button">＋ New Trade</button>
+</div>
+</header>
+<section class="content">
+<div class="page-head">
+<div class="page-title">
+<h1>Trading Journal</h1>
+<p>Plan, execute, review and improve — every trading day.</p>
+</div>
+<div class="head-actions">
+<button class="btn btn-secondary" id="importBtn">⇧ Import</button>
+<button class="btn btn-secondary" id="exportBtn">⇩ Export</button>
+<button class="btn btn-primary" id="newEntryBtn">＋ New Journal Entry</button>
+<input accept=".json" hidden="" id="importFile" type="file"/>
+</div>
+</div>
+<nav class="tabs" id="tabs">
+<button class="tab-btn active" data-tab="overview">Overview</button>
+<button class="tab-btn" data-tab="entries">Entries</button>
+<button class="tab-btn" data-tab="calendar">Calendar</button>
+<button class="tab-btn" data-tab="weekly">Weekly Review</button>
+<button class="tab-btn" data-tab="analytics">Analytics</button>
+</nav>
+<section class="tab-panel active" id="panel-overview">
+<div class="metrics-grid">
+<article class="metric-card" style="--metric-color:var(--info);animation-delay:.02s">
+<div class="metric-top"><div class="metric-icon">⇄</div><span class="metric-trend up">+2</span></div>
+<div class="metric-label">Total Trades</div>
+<div class="metric-value counter" data-target="6">0</div>
+<div class="mini-progress"><span data-width="68"></span></div>
+</article>
+<article class="metric-card" style="--metric-color:var(--positive);animation-delay:.06s">
+<div class="metric-top"><div class="metric-icon">$</div><span class="metric-trend up">+4.8%</span></div>
+<div class="metric-label">Daily P&amp;L</div>
+<div class="metric-value positive counter-money" data-target="248.60">$0</div>
+<div class="mini-progress"><span data-width="79"></span></div>
+</article>
+<article class="metric-card" style="--metric-color:var(--brand);animation-delay:.1s">
+<div class="metric-top"><div class="metric-icon">◎</div><span class="metric-trend up">+7%</span></div>
+<div class="metric-label">Win Rate</div>
+<div class="metric-value counter-percent" data-target="67">0%</div>
+<div class="mini-progress"><span data-width="67"></span></div>
+</article>
+<article class="metric-card" style="--metric-color:var(--warning);animation-delay:.14s">
+<div class="metric-top"><div class="metric-icon">◈</div><span class="metric-trend down">0.8%</span></div>
+<div class="metric-label">Risk Used</div>
+<div class="metric-value counter-percent" data-target="1.8">0%</div>
+<div class="mini-progress"><span data-width="46"></span></div>
+</article>
+<article class="metric-card" style="--metric-color:var(--purple);animation-delay:.18s">
+<div class="metric-top"><div class="metric-icon">✓</div><span class="metric-trend up">+5%</span></div>
+<div class="metric-label">Rule Adherence</div>
+<div class="metric-value counter-percent" data-target="83" id="metricAdherence">0%</div>
+<div class="mini-progress"><span data-width="83" id="metricAdherenceBar"></span></div>
+</article>
+<article class="metric-card" style="--metric-color:var(--negative);animation-delay:.22s">
+<div class="metric-top"><div class="metric-icon">♥</div><span class="metric-trend up">Stable</span></div>
+<div class="metric-label">Psychology Score</div>
+<div class="metric-value counter" data-target="78" id="psychMetric">0</div>
+<div class="mini-progress"><span data-width="78" id="psychMetricBar"></span></div>
+</article>
+</div>
+<div class="grid-main">
+<div class="stack">
+<article class="card" id="planCard">
+<div class="card-head">
+<div class="card-head-icon">◉</div>
+<div class="card-title"><h3>Pre-Market Plan</h3><p>Define bias, limits and no-trade conditions before execution.</p></div>
+<div class="card-actions">
+<span class="badge success" id="planStatus">Saved</span>
+<button class="collapse-btn">⌄</button>
+</div>
+</div>
+<div class="card-body">
+<div class="form-grid">
+<div class="field full">
+<label>Market Bias</label>
+<div class="segmented" id="biasGroup">
+<button class="segment active" data-value="Bullish">↗ Bullish</button>
+<button class="segment" data-value="Neutral">→ Neutral</button>
+<button class="segment" data-value="Bearish">↘ Bearish</button>
+</div>
+</div>
+<div class="field">
+<label>Selected Instruments</label>
+<input class="input" id="instruments" value="EURUSD, XAUUSD, NAS100"/>
+</div>
+<div class="field">
+<label>Trading Session</label>
+<select class="select" id="session"><option>London</option><option>New York</option><option>Asian</option><option>London + New York</option></select>
+</div>
+<div class="field">
+<label>Market Condition</label>
+<select class="select" id="marketCondition"><option>Trending</option><option>Ranging</option><option>High Volatility</option><option>Low Liquidity</option></select>
+</div>
+<div class="field">
+<label>Allowed Strategy</label>
+<select class="select" id="strategy"><option>Breakout + Retest</option><option>Supply &amp; Demand</option><option>Trend Continuation</option><option>Liquidity Sweep</option></select>
+</div>
+<div class="field full">
+<label>Important Levels</label>
+<input class="input" id="levels" value="EURUSD 1.0820 / 1.0865 · XAUUSD 2358 / 2376"/>
+</div>
+<div class="field">
+<label>Maximum Trades</label>
+<input class="input" id="maxTrades" max="20" min="1" type="number" value="3"/>
+</div>
+<div class="field">
+<label>Maximum Daily Loss</label>
+<input class="input" id="maxLoss" value="$100"/>
+</div>
+<div class="field">
+<label>Risk Per Trade</label>
+<input class="input" id="riskPerTrade" value="0.5%"/>
+</div>
+<div class="field">
+<label>Profit Target</label>
+<input class="input" id="profitTarget" value="$250"/>
+</div>
+<div class="field full">
+<label>No-Trade Conditions</label>
+<div class="check-grid" id="noTradeGrid">
+<label class="check-item"><input checked="" type="checkbox"/> Avoid high-impact news ±15 min</label>
+<label class="check-item"><input checked="" type="checkbox"/> Skip incomplete setup confirmation</label>
+<label class="check-item"><input checked="" type="checkbox"/> Stop after daily loss limit</label>
+<label class="check-item"><input type="checkbox"/> Avoid trading when focus is below 50</label>
+</div>
+</div>
+<div class="field full">
+<label>Today’s Main Goal</label>
+<textarea class="textarea" id="dailyGoal">Take only A+ setups, remain patient, and stop after three trades.</textarea>
+</div>
+</div>
+<div class="form-actions">
+<button class="btn btn-secondary btn-sm" id="resetPlan">Reset</button>
+<button class="btn btn-primary btn-sm" id="savePlan">Save Pre-Market Plan</button>
+</div>
+</div>
+</article>
+<article class="card">
+<div class="card-head">
+<div class="card-head-icon">⇄</div>
+<div class="card-title"><h3>Linked Trades</h3><p>Today’s trades automatically connected to this journal.</p></div>
+<div class="card-actions">
+<span class="badge info" id="linkedCount">3 linked</span>
+<button class="btn btn-secondary btn-sm" id="linkTradeBtn">＋ Link Trade</button>
+<button class="collapse-btn">⌄</button>
+</div>
+</div>
+<div class="card-body">
+<div class="trade-summary">
+<div class="summary-chip"><span>Total P&amp;L</span><strong class="positive" id="linkedPnl">+$248.60</strong></div>
+<div class="summary-chip"><span>Total Risk</span><strong>1.5%</strong></div>
+<div class="summary-chip"><span>Average R</span><strong>+1.42R</strong></div>
+<div class="summary-chip"><span>Win / Loss</span><strong>2 / 1</strong></div>
+</div>
+<div class="trade-list" id="tradeList">
+<div class="trade-card" data-pnl="162.4">
+<div class="trade-head"><span class="trade-symbol">EURUSD</span><span class="badge success">LONG</span><span class="badge">Closed</span><span class="trade-pnl positive">+$162.40</span></div>
+<div class="trade-meta">
+<div>Entry<strong>1.08320</strong></div><div>Exit<strong>1.08610</strong></div><div>Stop<strong>1.08180</strong></div><div>Target<strong>1.08640</strong></div><div>Session<strong>London</strong></div><div>Result<strong>+2.07R</strong></div>
+</div>
+<div class="trade-actions"><button class="btn btn-secondary btn-sm">Review Trade</button><button class="btn btn-ghost btn-sm">Open</button><button class="btn btn-danger btn-sm unlink-trade">Unlink</button></div>
+</div>
+<div class="trade-card" data-pnl="-68.2">
+<div class="trade-head"><span class="trade-symbol">XAUUSD</span><span class="badge danger">SHORT</span><span class="badge">Closed</span><span class="trade-pnl negative">-$68.20</span></div>
+<div class="trade-meta">
+<div>Entry<strong>2367.80</strong></div><div>Exit<strong>2371.20</strong></div><div>Stop<strong>2371.10</strong></div><div>Target<strong>2359.50</strong></div><div>Session<strong>London</strong></div><div>Result<strong>-1.00R</strong></div>
+</div>
+<div class="trade-actions"><button class="btn btn-secondary btn-sm">Review Trade</button><button class="btn btn-ghost btn-sm">Open</button><button class="btn btn-danger btn-sm unlink-trade">Unlink</button></div>
+</div>
+<div class="trade-card" data-pnl="154.4">
+<div class="trade-head"><span class="trade-symbol">NAS100</span><span class="badge success">LONG</span><span class="badge">Closed</span><span class="trade-pnl positive">+$154.40</span></div>
+<div class="trade-meta">
+<div>Entry<strong>19,928</strong></div><div>Exit<strong>19,982</strong></div><div>Stop<strong>19,897</strong></div><div>Target<strong>20,005</strong></div><div>Session<strong>New York</strong></div><div>Result<strong>+1.76R</strong></div>
+</div>
+<div class="trade-actions"><button class="btn btn-secondary btn-sm">Review Trade</button><button class="btn btn-ghost btn-sm">Open</button><button class="btn btn-danger btn-sm unlink-trade">Unlink</button></div>
+</div>
+</div>
+</div>
+</article>
+<article class="card">
+<div class="card-head">
+<div class="card-head-icon">≋</div>
+<div class="card-title"><h3>Plan vs Execution</h3><p>See exactly where execution matched or deviated from the plan.</p></div>
+<div class="card-actions"><span class="badge success">83% adherence</span><button class="collapse-btn">⌄</button></div>
+</div>
+<div class="card-body">
+<div class="progress-wrap">
+<div class="ring" data-value="83"><svg viewbox="0 0 82 82"><circle class="track" cx="41" cy="41" r="36"></circle><circle class="value" cx="41" cy="41" r="36"></circle></svg><div><strong>83%</strong><small>Matched</small></div></div>
+<div class="progress-copy"><h4>Good execution with one important deviation</h4><p>You respected risk and setup quality, but took one New York session trade outside the original London-only plan.</p></div>
+</div>
+<div class="comparison">
+<div class="comparison-row header"><span>Parameter</span><span>Planned</span><span>Actual</span><span>Status</span></div>
+<div class="comparison-row"><strong>Maximum trades</strong><span>3 trades</span><span>3 trades</span><span class="status followed">Followed</span></div>
+<div class="comparison-row"><strong>Risk per trade</strong><span>0.5%</span><span>0.5%</span><span class="status followed">Followed</span></div>
+<div class="comparison-row"><strong>Session</strong><span>London</span><span>London + NY</span><span class="status partial">Partial</span></div>
+<div class="comparison-row"><strong>Setup quality</strong><span>A+ only</span><span>2 A+, 1 B</span><span class="status partial">Partial</span></div>
+<div class="comparison-row"><strong>Daily loss stop</strong><span>-$100</span><span>Not reached</span><span class="status followed">Followed</span></div>
+</div>
+</div>
+</article>
+<article class="card">
+<div class="card-head">
+<div class="card-head-icon">✎</div>
+<div class="card-title"><h3>End-of-Day Reflection</h3><p>Turn today’s decisions into tomorrow’s improvement.</p></div>
+<div class="card-actions"><span class="badge warn" id="reflectionStatus">Draft</span><button class="collapse-btn">⌄</button></div>
+</div>
+<div class="card-body">
+<div class="form-grid">
+<div class="field"><label>What went well?</label><textarea class="textarea" id="wentWell">Waited for clean confirmation on EURUSD and managed risk consistently.</textarea></div>
+<div class="field"><label>Biggest mistake</label><textarea class="textarea" id="biggestMistake">Took NAS100 outside the planned session after seeing momentum.</textarea></div>
+<div class="field"><label>Best decision</label><textarea class="textarea">Skipped a low-quality XAUUSD re-entry after the first loss.</textarea></div>
+<div class="field"><label>Worst decision</label><textarea class="textarea">Entered NAS100 with a B-grade setup instead of waiting.</textarea></div>
+<div class="field full"><label>Main lesson</label><textarea class="textarea" id="mainLesson">A profitable trade can still be a poor process decision. Judge execution before outcome.</textarea></div>
+<div class="field full"><label>Tomorrow’s focus</label><input class="input" id="tomorrowFocus" value="Follow the session plan and require two confirmations."/></div>
+</div>
+<div class="section-label">Daily Ratings</div>
+<div id="ratings">
+<div class="rating-row" data-rating="8"><label>Execution</label><div class="rating-dots"></div><span class="rating-number">8</span></div>
+<div class="rating-row" data-rating="9"><label>Discipline</label><div class="rating-dots"></div><span class="rating-number">9</span></div>
+<div class="rating-row" data-rating="7"><label>Patience</label><div class="rating-dots"></div><span class="rating-number">7</span></div>
+<div class="rating-row" data-rating="9"><label>Risk Management</label><div class="rating-dots"></div><span class="rating-number">9</span></div>
+<div class="rating-row" data-rating="8"><label>Emotional Control</label><div class="rating-dots"></div><span class="rating-number">8</span></div>
+</div>
+<div class="form-actions"><button class="btn btn-secondary btn-sm" id="saveDraftBtn">Save Draft</button><button class="btn btn-primary btn-sm" id="completeJournalBtn">Complete Journal</button></div>
+</div>
+</article>
+<article class="card">
+<div class="card-head">
+<div class="card-head-icon">⌁</div>
+<div class="card-title"><h3>Attachments &amp; Evidence</h3><p>Add screenshots, voice notes, videos or documents.</p></div>
+<div class="card-actions"><span class="badge" id="attachmentCount">0 files</span><button class="collapse-btn">⌄</button></div>
+</div>
+<div class="card-body">
+<div class="dropzone" id="dropzone">
+<div style="font-size:26px;margin-bottom:6px">⇧</div>
+<strong style="font-size:11px">Drop files here or click to browse</strong>
+<p style="font-size:9px;margin:5px 0 0">Images, videos, audio, PDF and chart screenshots</p>
+<input hidden="" id="attachmentInput" multiple="" type="file"/>
+</div>
+<div class="attachment-list" id="attachmentList"></div>
+</div>
+</article>
+</div>
+<aside class="stack">
+<article class="card">
+<div class="card-head">
+<div class="card-head-icon">♥</div>
+<div class="card-title"><h3>Mental Check-In</h3><p>Rate your readiness before trading.</p></div>
+<button class="collapse-btn">⌄</button>
+</div>
+<div class="card-body">
+<div class="emotion-grid" id="emotionGrid">
+<button class="emotion active">😌 Calm</button><button class="emotion">💪 Confident</button><button class="emotion">😟 Fearful</button>
+<button class="emotion">⏱ Impatient</button><button class="emotion">🤑 Greedy</button><button class="emotion">😤 Frustrated</button><button class="emotion">🌀 Distracted</button>
+</div>
+<div class="slider-list" id="mentalSliders">
+<div class="slider-row"><label>Confidence</label><input data-key="confidence" max="100" min="0" type="range" value="82"/><span class="slider-value">82</span></div>
+<div class="slider-row"><label>Focus</label><input data-key="focus" max="100" min="0" type="range" value="76"/><span class="slider-value">76</span></div>
+<div class="slider-row"><label>Stress</label><input data-key="stress" max="100" min="0" type="range" value="28"/><span class="slider-value">28</span></div>
+<div class="slider-row"><label>Energy</label><input data-key="energy" max="100" min="0" type="range" value="72"/><span class="slider-value">72</span></div>
+<div class="slider-row"><label>Sleep Quality</label><input data-key="sleep" max="100" min="0" type="range" value="70"/><span class="slider-value">70</span></div>
+<div class="slider-row"><label>FOMO</label><input data-key="fomo" max="100" min="0" type="range" value="22"/><span class="slider-value">22</span></div>
+<div class="slider-row"><label>Revenge Urge</label><input data-key="revenge" max="100" min="0" type="range" value="12"/><span class="slider-value">12</span></div>
+</div>
+<div class="readiness" id="readiness"><span>● Ready to Trade</span><b id="readinessScore">78/100</b></div>
+</div>
+</article>
+<article class="card">
+<div class="card-head">
+<div class="card-head-icon">✓</div>
+<div class="card-title"><h3>Rule Checklist</h3><p id="ruleSub">10 of 12 rules followed.</p></div>
+<button class="collapse-btn">⌄</button>
+</div>
+<div class="card-body">
+<div class="rule-score"><div class="bar"><span id="ruleBar"></span></div><strong id="rulePercent">83%</strong></div>
+<div class="rule-list" id="ruleList">
+<label class="rule-row completed"><input checked="" type="checkbox"/><span>Followed trading session</span></label>
+<label class="rule-row completed"><input checked="" type="checkbox"/><span>Waited for setup confirmation</span></label>
+<label class="rule-row completed"><input checked="" type="checkbox"/><span>Calculated risk before entry</span></label>
+<label class="rule-row completed"><input checked="" type="checkbox"/><span>Placed stop-loss</span></label>
+<label class="rule-row completed"><input checked="" type="checkbox"/><span>Avoided revenge trading</span></label>
+<label class="rule-row completed"><input checked="" type="checkbox"/><span>Avoided FOMO</span></label>
+<label class="rule-row completed"><input checked="" type="checkbox"/><span>Avoided overtrading</span></label>
+<label class="rule-row completed"><input checked="" type="checkbox"/><span>Followed maximum daily loss</span></label>
+<label class="rule-row completed"><input checked="" type="checkbox"/><span>Avoided major news</span></label>
+<label class="rule-row"><input type="checkbox"/><span>Captured all screenshots</span></label>
+<label class="rule-row completed"><input checked="" type="checkbox"/><span>Reviewed every trade</span></label>
+<label class="rule-row"><input type="checkbox"/><span>Completed journal</span></label>
+</div>
+<button class="btn btn-ghost btn-sm" id="addRuleBtn" style="width:100%;justify-content:center;margin-top:10px">＋ Add Custom Rule</button>
+</div>
+</article>
+<article class="card">
+<div class="card-head">
+<div class="card-head-icon">⚑</div>
+<div class="card-title"><h3>Mistakes &amp; Biases</h3><p>Select patterns observed today.</p></div>
+<button class="collapse-btn">⌄</button>
+</div>
+<div class="card-body">
+<div class="section-label" style="margin-top:0">Trading mistakes</div>
+<div class="tag-cloud" id="mistakeTags">
+<button class="tag">Early Entry</button><button class="tag">Late Entry</button><button class="tag">Early Exit</button>
+<button class="tag active">Outside Session</button><button class="tag">Oversized Position</button><button class="tag">Moved Stop</button>
+<button class="tag">Overtrading</button><button class="tag">Revenge Trading</button><button class="tag active">B-Grade Setup</button><button class="tag">FOMO</button>
+</div>
+<div class="section-label">Cognitive biases</div>
+<div class="tag-cloud" id="biasTags">
+<button class="tag">Confirmation Bias</button><button class="tag">Loss Aversion</button><button class="tag">Recency Bias</button>
+<button class="tag active">Outcome Bias</button><button class="tag">Overconfidence</button><button class="tag">Anchoring</button>
+</div>
+<button class="btn btn-ghost btn-sm" id="customTagBtn" style="width:100%;justify-content:center;margin-top:12px">＋ Custom Tag</button>
+</div>
+</article>
+<article class="card ai-card">
+<div class="card-head">
+<div class="ai-orb">✦</div>
+<div class="card-title"><h3>AI Journal Coach</h3><p>Pattern detection and next-step guidance.</p></div>
+<span class="badge success">Online</span>
+</div>
+<div class="card-body">
+<div class="ai-status"><div><strong style="font-size:11px">Daily coaching summary</strong><div style="font-size:9px;color:var(--muted);margin-top:2px">Based on trades, rules and reflection.</div></div></div>
+<div class="insight-list" id="aiInsights">
+<div class="insight"><div class="insight-icon">✓</div><div><b>Positive pattern</b><br/>Risk remained consistent across all three linked trades.</div></div>
+<div class="insight"><div class="insight-icon" style="background:var(--warning-soft);color:var(--warning)">!</div><div><b>Process warning</b><br/>The profitable NAS100 trade was outside your planned session.</div></div>
+<div class="insight"><div class="insight-icon" style="background:var(--purple);color:white">→</div><div><b>Tomorrow’s action</b><br/>Require two confirmations and lock the session after planning.</div></div>
+</div>
+<button class="btn btn-primary btn-sm" id="generateAiBtn" style="width:100%;justify-content:center;margin-top:12px">✦ Generate Fresh Analysis</button>
+<div class="field" style="margin-top:10px">
+<input class="input" id="askAiInput" placeholder="Ask your AI coach..."/>
+<button class="btn btn-secondary btn-sm" id="askAiBtn" style="justify-content:center">Ask Coach</button>
+</div>
+</div>
+</article>
+<article class="card">
+<div class="card-head">
+<div class="card-head-icon">◎</div>
+<div class="card-title"><h3>Journal Completion</h3><p>Complete remaining sections.</p></div>
+</div>
+<div class="card-body">
+<div class="progress-wrap" style="margin:0">
+<div class="ring" data-value="76" id="completionRing"><svg viewbox="0 0 82 82"><circle class="track" cx="41" cy="41" r="36"></circle><circle class="value" cx="41" cy="41" r="36"></circle></svg><div><strong id="completionText">76%</strong><small>Complete</small></div></div>
+<div class="progress-copy"><h4 id="completionTitle">Almost finished</h4><p id="completionHint">Add screenshots and complete the final checklist rule.</p></div>
+</div>
+</div>
+</article>
+</aside>
+</div>
+</section>
+<section class="tab-panel" id="panel-entries">
+<div class="toolbar">
+<input class="input search" id="entrySearch" placeholder="Search journal entries, lessons or tags..."/>
+<select class="select" id="entryTypeFilter" style="width:auto"><option value="all">All Entry Types</option><option>Daily Journal</option><option>Weekly Review</option><option>Strategy Note</option><option>Mistake Note</option></select>
+<select class="select" id="entryEmotionFilter" style="width:auto"><option value="all">All Emotions</option><option>Calm</option><option>Confident</option><option>Frustrated</option><option>Fearful</option></select>
+<div class="view-switch">
+<button class="view-btn active" data-view="cards">Cards</button>
+<button class="view-btn" data-view="timeline">Timeline</button>
+<button class="view-btn" data-view="table">Table</button>
+</div>
+</div>
+<div id="entriesContainer"></div>
+</section>
+<section class="tab-panel" id="panel-calendar">
+<div class="toolbar">
+<button class="btn btn-secondary btn-sm" id="calendarPrev">‹ Previous</button>
+<input class="input" id="calendarMonth" style="width:auto" type="month" value="2026-07"/>
+<button class="btn btn-secondary btn-sm" id="calendarNext">Next ›</button>
+<select class="select" id="calendarAccount" style="width:auto"><option>All Accounts</option><option>Funding Account</option><option>Personal Account</option></select>
+<button class="btn btn-secondary btn-sm" id="calendarRefresh">↻ Sync Calendar</button>
+</div>
+<div class="sync-strip">
+<span class="sync-live">Trade data synced</span>
+<span>Calendar charts are calculated from the same trade records used by Weekly Review and Analytics.</span>
+<div class="sync-meta"><span><b id="calendarTradeCount">0</b> trades</span><span><b id="calendarLastSync">Just now</b></span></div>
+</div>
+<div class="calendar-stat-grid">
+<div class="calendar-stat"><span>Monthly P&amp;L</span><strong class="positive" id="calendarMonthPnl">+$0.00</strong></div>
+<div class="calendar-stat"><span>Active Days</span><strong id="calendarActiveDays">0</strong></div>
+<div class="calendar-stat"><span>Winning Days</span><strong id="calendarWinningDays">0</strong></div>
+<div class="calendar-stat"><span>Journal Completion</span><strong id="calendarCompletion">0%</strong></div>
+</div>
+<div class="calendar-layout">
+<article class="card">
+<div class="card-head">
+<div class="card-head-icon">▣</div>
+<div class="card-title"><h3 id="calendarTitle">July 2026 Journal Calendar</h3><p>Daily profitability, trade count and discipline score.</p></div>
+<span class="badge info" id="calendarBestDay">Best day · —</span>
+</div>
+<div class="card-body"><div class="calendar-grid" id="calendarGrid"></div></div>
+</article>
+<div class="calendar-side">
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Monthly Outcome Donut</h3><p>Winning, losing and breakeven trades.</p></div><span class="chart-type-badge">Donut</span></div>
+<div class="chart-wrap"><canvas id="calendarOutcomeDonutCanvas"></canvas></div>
+<div class="advanced-legend"><span><i style="background:var(--positive)"></i>Wins</span><span><i style="background:var(--negative)"></i>Losses</span><span><i style="background:var(--warning)"></i>Breakeven</span></div>
+</article>
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Journal Completion Gauge</h3><p>Completed journal days against active days.</p></div><span class="chart-type-badge">Semi-circle</span></div>
+<div class="chart-wrap"><canvas id="calendarGaugeCanvas"></canvas></div>
+<div class="chart-foot"><span>Target <strong>100%</strong></span><span id="calendarGaugeLabel">0 of 0 days</span></div>
+</article>
+</div>
+</div>
+<div class="calendar-super-grid">
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Profitability Waffle</h3><p>Every square represents one calendar day.</p></div><span class="chart-type-badge">Waffle</span></div>
+<div class="chart-wrap"><canvas id="calendarWaffleCanvas"></canvas></div>
+<div class="advanced-legend"><span><i style="background:var(--positive)"></i>Profit</span><span><i style="background:var(--negative)"></i>Loss</span><span><i style="background:var(--surface-3)"></i>No trade</span></div>
+</article>
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Winning Days Icon Array</h3><p>Fast visual of consistency across active trading days.</p></div><span class="chart-type-badge">Icon Array</span></div>
+<div class="chart-wrap"><canvas id="calendarIconArrayCanvas"></canvas></div>
+<div class="chart-foot"><span>Consistency</span><strong id="calendarWinDayRate">0%</strong></div>
+</article>
+</div>
+</section>
+<section class="tab-panel" id="panel-weekly">
+<div class="toolbar">
+<select class="select" id="weeklyRange" style="width:auto">
+<option value="current">Week of 6–12 July 2026</option>
+<option value="previous">Week of 29 June–5 July 2026</option>
+</select>
+<select class="select" id="weeklyAccount" style="width:auto"><option>All Accounts</option><option>Funding Account</option><option>Personal Account</option></select>
+<button class="btn btn-primary btn-sm" id="generateWeekly">✦ Generate Weekly Review</button>
+<button class="btn btn-secondary btn-sm" id="exportWeekly">⇩ Export Weekly Stats</button>
+</div>
+<div class="weekly-summary-banner">
+<div class="summary-icon">↗</div>
+<div><h3 id="weeklySummaryTitle">Strong profitable week with improving discipline</h3><p id="weeklySummaryText">Tuesday produced the highest return. London session remained your strongest edge, while early exits were the main performance leak.</p></div>
+<div class="summary-score"><strong id="weeklyGrade">A−</strong><span>Weekly process grade</span></div>
+</div>
+<div class="review-grid">
+<div class="review-card"><span>Weekly P&amp;L</span><strong class="positive" id="weekPnl">+$684.20</strong></div>
+<div class="review-card"><span>Total Trades</span><strong id="weekTrades">18</strong></div>
+<div class="review-card"><span>Win Rate</span><strong id="weekWinRate">61.1%</strong></div>
+<div class="review-card"><span>Average R</span><strong id="weekAvgR">+0.84R</strong></div>
+<div class="review-card"><span>Profit Factor</span><strong id="weekProfitFactor">2.84</strong></div>
+<div class="review-card"><span>Expectancy</span><strong class="positive" id="weekExpectancy">+$38.01</strong></div>
+<div class="review-card"><span>Rule Adherence</span><strong id="weekAdherence">86%</strong></div>
+<div class="review-card"><span>Psychology</span><strong id="weekPsychology">79/100</strong></div>
+</div>
+<div class="weekly-chart-grid">
+<article class="card chart-card weekly-chart-card">
+<div class="chart-header-row"><div><h3>Daily P&amp;L</h3><p>Profit and loss for each active trading day.</p></div><div class="chart-kpi"><strong class="positive" id="bestDayValue">+$312.40</strong><span id="bestDayLabel">Best day · Tuesday</span></div></div>
+<div class="chart-wrap"><canvas data-chart="weekly-daily" id="weeklyDailyPnlCanvas"></canvas></div>
+<div class="chart-legend"><span><i class="legend-dot" style="background:var(--positive)"></i>Profitable day</span><span><i class="legend-dot" style="background:var(--negative)"></i>Losing day</span></div>
+</article>
+<article class="card chart-card weekly-chart-card">
+<div class="chart-header-row"><div><h3>Trade Outcome Distribution</h3><p>Wins, losses and breakeven trades this week.</p></div><div class="chart-kpi"><strong id="outcomeTotal">18</strong><span>Total closed trades</span></div></div>
+<div class="chart-wrap"><canvas data-chart="weekly-outcome" id="weeklyOutcomeCanvas"></canvas></div>
+<div class="pie-legend" id="weeklyOutcomeLegend"></div>
+</article>
+<article class="card chart-card weekly-chart-card">
+<div class="chart-header-row"><div><h3>Cumulative Weekly Performance</h3><p>Account growth across the trading week.</p></div><div class="chart-kpi"><strong class="positive" id="equityGrowth">+13.68%</strong><span>Return on $5,000</span></div></div>
+<div class="chart-wrap"><canvas data-chart="weekly-equity" id="weeklyEquityCanvas"></canvas></div>
+</article>
+<article class="card chart-card weekly-chart-card">
+<div class="chart-header-row"><div><h3>Best Trading Days</h3><p>Trading days ranked by net P&amp;L.</p></div><div class="chart-kpi"><strong id="profitableDays">4 / 5</strong><span>Profitable days</span></div></div>
+<div class="chart-wrap"><canvas data-chart="weekly-best-days" id="weeklyBestDaysCanvas"></canvas></div>
+</article>
+</div>
+<div class="sync-strip">
+<span class="sync-live">Live weekly sync</span>
+<span>All chart types below are generated from the selected week’s individual trade records.</span>
+<div class="sync-meta"><span><b id="weeklySyncedTrades">18</b> records</span><span>Source: <b>MongoDB Journal</b></span></div>
+</div>
+<div class="super-chart-grid">
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Daily Trade Outcomes</h3><p>Wins, losses and breakeven stacked by day.</p></div><span class="chart-type-badge">Stacked Column</span></div>
+<div class="chart-wrap"><canvas id="weeklyStackedCanvas"></canvas></div>
+<div class="advanced-legend"><span><i style="background:var(--positive)"></i>Wins</span><span><i style="background:var(--negative)"></i>Losses</span><span><i style="background:var(--warning)"></i>Breakeven</span></div>
+</article>
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Long vs Short Performance</h3><p>Direction performance split across key symbols.</p></div><span class="chart-type-badge">Population Pyramid</span></div>
+<div class="chart-wrap"><canvas id="weeklyPyramidCanvas"></canvas></div>
+<div class="advanced-legend"><span><i style="background:var(--info)"></i>Long P&amp;L</span><span><i style="background:var(--purple)"></i>Short P&amp;L</span></div>
+</article>
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Strategy Performance Map</h3><p>Session-to-strategy contribution hierarchy.</p></div><span class="chart-type-badge">Sunburst</span></div>
+<div class="chart-wrap"><canvas id="weeklySunburstCanvas"></canvas></div>
+<div class="chart-foot"><span>Inner ring: sessions</span><span>Outer ring: strategies</span></div>
+</article>
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Rule Adherence</h3><p>100-cell view of average weekly rule compliance.</p></div><span class="chart-type-badge">Waffle</span></div>
+<div class="chart-wrap"><canvas id="weeklyWaffleCanvas"></canvas></div>
+<div class="chart-foot"><span>Average adherence</span><strong id="weeklyWaffleValue">0%</strong></div>
+</article>
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Winning Trade Ratio</h3><p>Each dot represents one percentage point.</p></div><span class="chart-type-badge">Icon Array</span></div>
+<div class="chart-wrap"><canvas id="weeklyIconArrayCanvas"></canvas></div>
+<div class="chart-foot"><span>Weekly win rate</span><strong id="weeklyIconValue">0%</strong></div>
+</article>
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Weekly Risk Budget</h3><p>Actual risk used against the configured weekly budget.</p></div><span class="chart-type-badge">Semi-circle Donut</span></div>
+<div class="chart-wrap"><canvas id="weeklyGaugeCanvas"></canvas></div>
+<div class="chart-foot"><span>Budget <strong>9.0%</strong></span><span id="weeklyRiskLabel">0.0% used</span></div>
+</article>
+</div>
+<div class="split" style="margin-bottom:16px">
+<article class="card">
+<div class="card-head"><div class="card-head-icon">▤</div><div class="card-title"><h3>Daily Trading Statistics</h3><p>Day-by-day execution and performance detail.</p></div><span class="badge success" id="activeDaysBadge">5 active days</span></div>
+<div class="card-body">
+<div class="weekly-stat-grid">
+<div class="weekly-stat"><span>Gross Profit</span><strong class="positive" id="grossProfit">+$1,056.80</strong></div>
+<div class="weekly-stat"><span>Gross Loss</span><strong class="negative" id="grossLoss">-$372.60</strong></div>
+<div class="weekly-stat"><span>Average Win</span><strong id="averageWin">+$96.07</strong></div>
+<div class="weekly-stat"><span>Average Loss</span><strong id="averageLoss">-$62.10</strong></div>
+<div class="weekly-stat"><span>Largest Win</span><strong class="positive" id="largestWin">+$218.20</strong></div>
+<div class="weekly-stat"><span>Largest Loss</span><strong class="negative" id="largestLoss">-$82.50</strong></div>
+<div class="weekly-stat"><span>Max Drawdown</span><strong class="negative" id="maxDrawdown">-$118.60</strong></div>
+<div class="weekly-stat"><span>A+ Setup Rate</span><strong id="aSetupRate">72%</strong></div>
+</div>
+<div class="weekly-table-wrap">
+<table><thead><tr><th>Day</th><th>Trades</th><th>W / L / BE</th><th>Win Rate</th><th>Net P&amp;L</th><th>Avg. R</th><th>Rules</th><th>Psychology</th></tr></thead><tbody id="weeklyStatsBody"></tbody></table>
+</div>
+</div>
+</article>
+<article class="card">
+<div class="card-head"><div class="card-head-icon">◎</div><div class="card-title"><h3>Session &amp; Strategy Statistics</h3><p>Where your strongest weekly edge came from.</p></div><span class="badge info" id="bestEdgeBadge">Best: London</span></div>
+<div class="card-body">
+<div class="section-label" style="margin-top:0">Performance by session</div>
+<div class="breakdown-list" id="sessionBreakdown"></div>
+<div class="section-label">Performance by strategy</div>
+<div class="breakdown-list" id="strategyBreakdown"></div>
+<div class="section-label">Weekly quality statistics</div>
+<div class="weekly-stat-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:0">
+<div class="weekly-stat"><span>Plan Adherence</span><strong id="planAdherenceStat">84%</strong></div>
+<div class="weekly-stat"><span>Risk Consistency</span><strong id="riskConsistencyStat">91%</strong></div>
+<div class="weekly-stat"><span>Journal Completion</span><strong id="journalCompletionStat">100%</strong></div>
+<div class="weekly-stat"><span>Best Emotion</span><strong id="bestEmotionStat">Calm</strong></div>
+</div>
+</div>
+</article>
+</div>
+<div class="split">
+<article class="card"><div class="card-head"><div class="card-head-icon">↗</div><div class="card-title"><h3>Weekly Highlights</h3><p>Best and worst decisions.</p></div></div><div class="card-body">
+<div class="insight-list" id="weeklyHighlights">
+<div class="insight"><div class="insight-icon">★</div><div><b>Best trade</b><br/>EURUSD London breakout, +2.7R with full plan adherence.</div></div>
+<div class="insight"><div class="insight-icon" style="background:var(--negative-soft);color:var(--negative)">↓</div><div><b>Worst trade</b><br/>XAUUSD revenge entry after loss, -1R and two rule violations.</div></div>
+<div class="insight"><div class="insight-icon">✓</div><div><b>Improvement</b><br/>Risk consistency improved from 74% to 91% this week.</div></div>
+</div>
+</div></article>
+<article class="card"><div class="card-head"><div class="card-head-icon">→</div><div class="card-title"><h3>Next Week Plan</h3><p>One goal, one rule, one psychology focus.</p></div></div><div class="card-body">
+<div class="form-grid">
+<div class="field full"><label>Primary Goal</label><input class="input" id="nextWeekGoal" value="Take only A+ London session setups"/></div>
+<div class="field"><label>Maximum Weekly Risk</label><input class="input" value="5%"/></div>
+<div class="field"><label>Strategy Focus</label><input class="input" value="Breakout + Retest"/></div>
+<div class="field"><label>Rule Focus</label><input class="input" value="No early exits"/></div>
+<div class="field"><label>Psychology Focus</label><input class="input" value="Patience after losses"/></div>
+</div>
+<div class="form-actions"><button class="btn btn-primary btn-sm" id="saveNextWeekPlan">Save Next Week Plan</button></div>
+</div></article>
+</div>
+</section>
+<section class="tab-panel" id="panel-analytics">
+<div class="toolbar">
+<select class="select" id="analyticsRange" style="width:auto"><option value="30">Last 30 Days</option><option value="60">Last 60 Days</option><option value="all">All Available Data</option></select>
+<select class="select" id="analyticsStrategy" style="width:auto"><option value="all">All Strategies</option><option>Breakout + Retest</option><option>Supply &amp; Demand</option><option>Liquidity Sweep</option></select>
+<select class="select" id="analyticsSession" style="width:auto"><option value="all">All Sessions</option><option>London</option><option>New York</option><option>Asian</option></select>
+<span class="filter-count" id="analyticsTradeCount">0 synced trades</span>
+<button class="btn btn-secondary btn-sm" id="refreshCharts">↻ Refresh Charts</button>
+</div>
+<div class="sync-strip"><span class="sync-live">Analytics synced</span><span>Every visualization recalculates from the same filtered trade dataset.</span><div class="sync-meta"><span>Last sync: <b id="analyticsLastSync">Just now</b></span></div></div>
+<div class="analytics-grid">
+<article class="card chart-card"><h3>Discipline Trend</h3><p>Daily discipline score over the last 14 sessions.</p><div class="chart-wrap"><canvas id="disciplineCanvas"></canvas></div></article>
+<article class="card chart-card"><h3>Psychology Trend</h3><p>Focus, stress and emotional control.</p><div class="chart-wrap"><canvas id="psychologyCanvas"></canvas></div><div class="chart-legend"><span><i class="legend-dot" style="background:var(--brand)"></i>Focus</span><span><i class="legend-dot" style="background:var(--negative)"></i>Stress</span><span><i class="legend-dot" style="background:var(--purple)"></i>Control</span></div></article>
+<article class="card chart-card"><h3>Emotion vs P&amp;L</h3><p>Net result grouped by pre-trade emotion.</p><div class="chart-wrap"><canvas id="emotionCanvas"></canvas></div></article>
+<article class="card chart-card"><h3>Mistake Frequency</h3><p>Most repeated execution mistakes.</p><div class="chart-wrap"><canvas id="mistakeCanvas"></canvas></div></article>
+<article class="card chart-card"><h3>Plan vs Execution</h3><p>How closely actual execution follows planning.</p><div class="chart-wrap"><canvas id="planCanvas"></canvas></div></article>
+<article class="card chart-card"><h3>Journal Completion</h3><p>Completed, draft and missing journal days.</p><div class="chart-wrap"><canvas id="completionCanvas"></canvas></div><div class="chart-legend"><span><i class="legend-dot" style="background:var(--brand)"></i>Completed</span><span><i class="legend-dot" style="background:var(--warning)"></i>Draft</span><span><i class="legend-dot" style="background:var(--surface-3)"></i>Missing</span></div></article>
+</div>
+<div class="super-chart-grid">
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Performance Hierarchy</h3><p>Contribution by session and strategy.</p></div><span class="chart-type-badge">Sunburst</span></div>
+<div class="chart-wrap"><canvas id="analyticsSunburstCanvas"></canvas></div>
+<div class="chart-foot"><span>Inner: session</span><span>Outer: strategy</span></div>
+</article>
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Strategy Profit vs Loss</h3><p>Gross profit and loss diverging from zero.</p></div><span class="chart-type-badge">Diverging Bar</span></div>
+<div class="chart-wrap"><canvas id="analyticsDivergingCanvas"></canvas></div>
+<div class="advanced-legend"><span><i style="background:var(--positive)"></i>Gross profit</span><span><i style="background:var(--negative)"></i>Gross loss</span></div>
+</article>
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Directional Edge by Symbol</h3><p>Long and short P&amp;L mirrored around zero.</p></div><span class="chart-type-badge">Population Pyramid</span></div>
+<div class="chart-wrap"><canvas id="analyticsPyramidCanvas"></canvas></div>
+<div class="advanced-legend"><span><i style="background:var(--info)"></i>Long</span><span><i style="background:var(--purple)"></i>Short</span></div>
+</article>
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>A-Grade Setup Quality</h3><p>Share of trades graded A or A+.</p></div><span class="chart-type-badge">Waffle</span></div>
+<div class="chart-wrap"><canvas id="analyticsWaffleCanvas"></canvas></div>
+<div class="chart-foot"><span>High-quality setups</span><strong id="analyticsWaffleValue">0%</strong></div>
+</article>
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Trade Outcome Array</h3><p>100-dot view of filtered win rate.</p></div><span class="chart-type-badge">Icon Array</span></div>
+<div class="chart-wrap"><canvas id="analyticsIconArrayCanvas"></canvas></div>
+<div class="chart-foot"><span>Winning trades</span><strong id="analyticsIconValue">0%</strong></div>
+</article>
+<article class="card chart-card super-chart-card">
+<div class="chart-card-top"><div><h3>Risk Plan Utilization</h3><p>Average risk used relative to the 0.5% trade plan.</p></div><span class="chart-type-badge">Semi-circle Donut</span></div>
+<div class="chart-wrap"><canvas id="analyticsGaugeCanvas"></canvas></div>
+<div class="chart-foot"><span>Planned per trade <strong>0.50%</strong></span><span id="analyticsRiskLabel">0.00% average</span></div>
+</article>
+</div>
+</section>
+</section>
+</main>
+</div>
+<div class="modal" id="entryModal">
+<div class="modal-card">
+<div class="modal-head"><h3>Create New Journal Entry</h3><button class="modal-close" data-close="entryModal">×</button></div>
+<div class="modal-body">
+<div class="form-grid">
+<div class="field"><label>Entry Date</label><input class="input" id="entryDate" type="date"/></div>
+<div class="field"><label>Entry Type</label><select class="select" id="entryType"><option>Daily Journal</option><option>Trade Journal</option><option>Weekly Review</option><option>Strategy Note</option><option>Mistake Note</option><option>Learning Note</option></select></div>
+<div class="field full"><label>Title</label><input class="input" id="entryTitle" placeholder="Example: London session review"/></div>
+<div class="field"><label>Main Emotion</label><select class="select" id="entryEmotion"><option>Calm</option><option>Confident</option><option>Focused</option><option>Frustrated</option><option>Fearful</option></select></div>
+<div class="field"><label>Status</label><select class="select" id="entryStatus"><option>Draft</option><option>Completed</option></select></div>
+<div class="field full"><label>Initial Note</label><textarea class="textarea" id="entryNote" placeholder="What is this journal entry about?"></textarea></div>
+</div>
+</div>
+<div class="modal-foot"><button class="btn btn-secondary" data-close="entryModal">Cancel</button><button class="btn btn-primary" id="createEntryConfirm">Create Entry</button></div>
+</div>
+</div>
+<div class="modal" id="tradeModal">
+<div class="modal-card">
+<div class="modal-head"><h3>Add New Trade</h3><button class="modal-close" data-close="tradeModal">×</button></div>
+<div class="modal-body">
+<div class="form-grid">
+<div class="field"><label>Symbol</label><input class="input" id="tradeSymbol" value="GBPUSD"/></div>
+<div class="field"><label>Direction</label><select class="select" id="tradeDirection"><option>Long</option><option>Short</option></select></div>
+<div class="field"><label>Entry Price</label><input class="input" id="tradeEntry" value="1.2740"/></div>
+<div class="field"><label>Exit Price</label><input class="input" id="tradeExit" value="1.2770"/></div>
+<div class="field"><label>P&amp;L</label><input class="input" id="tradePnl" type="number" value="95.50"/></div>
+<div class="field"><label>R Multiple</label><input class="input" id="tradeR" value="+1.50R"/></div>
+<div class="field"><label>Session</label><select class="select" id="tradeSession"><option>London</option><option>New York</option><option>Asian</option></select></div>
+<div class="field"><label>Strategy</label><select class="select"><option>Breakout + Retest</option><option>Supply &amp; Demand</option></select></div>
+</div>
+</div>
+<div class="modal-foot"><button class="btn btn-secondary" data-close="tradeModal">Cancel</button><button class="btn btn-primary" id="addTradeConfirm">Add &amp; Link Trade</button></div>
+</div>
+</div>
+<div class="modal" id="simpleModal">
+<div class="modal-card" style="max-width:430px">
+<div class="modal-head"><h3 id="simpleModalTitle">Add Item</h3><button class="modal-close" data-close="simpleModal">×</button></div>
+<div class="modal-body"><div class="field"><label id="simpleModalLabel">Name</label><input class="input" id="simpleModalInput"/></div></div>
+<div class="modal-foot"><button class="btn btn-secondary" data-close="simpleModal">Cancel</button><button class="btn btn-primary" id="simpleModalConfirm">Add</button></div>
+</div>
+</div>
+<div class="popover" id="notificationPopover">
+<div class="notification"><div class="notification-icon">⚠</div><div><strong>Rule adherence warning</strong><p>You traded outside the planned session today.</p></div></div>
+<div class="notification"><div class="notification-icon" style="background:var(--positive-soft)">✓</div><div><strong>Journal streak</strong><p>You completed 12 journal days in a row.</p></div></div>
+<div class="notification"><div class="notification-icon" style="background:var(--info-soft)">✦</div><div><strong>AI review ready</strong><p>Your weekly process analysis is ready to view.</p></div></div>
+</div>
+<div class="chart-tooltip" id="chartTooltip"></div>
+<div class="toast-container" id="toastContainer"></div>
+<script src="auth.js"></script><script src="journal.js"></script><script src="journal-backend.js"></script>
+<script src="new-trade-modal.js"></script><script src="protrade-shell.js"></script><script src="app-loader.js"></script></body>
+</html>

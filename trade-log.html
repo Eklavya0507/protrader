@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html data-theme="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="dark light" name="color-scheme"/>
+<title>ProTrade — Log Trade</title>
+<script defer="" src="auth.js?v=9"></script><link href="trade-log.css" rel="stylesheet"/>
+<link href="protrade-shell.css" rel="stylesheet"/><meta content="#06111f" name="theme-color"/><link href="app-loader.css" rel="stylesheet"/></head>
+<body class="protrade-page"><div aria-label="Loading ProTrade" aria-live="polite" class="app-loading" id="appLoading">
+<aside aria-hidden="true" class="loading-sidebar">
+<div class="sk sk-logo"></div>
+<div class="loading-nav"><div class="sk sk-nav"></div><div class="sk sk-nav"></div><div class="sk sk-nav"></div><div class="sk sk-nav"></div><div class="sk sk-nav"></div><div class="sk sk-nav"></div></div>
+<div class="loading-grow"></div><div class="sk sk-profile"></div><div class="sk sk-account"></div><div class="sk sk-theme"></div>
+</aside>
+<section aria-hidden="true" class="loading-main">
+<div class="loading-top"><div class="sk sk-welcome"></div><div class="sk sk-actions"></div></div>
+<div class="loading-content"><div class="sk sk-title"></div><div class="loading-cards"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div><div class="loading-panels"><div class="sk"></div><div class="sk"></div></div><div class="sk sk-wide"></div></div>
+</section>
+</div>
+<div aria-hidden="true" class="ambient ambient-one"></div>
+<div aria-hidden="true" class="ambient ambient-two"></div>
+<div aria-hidden="true" class="grid-noise"></div>
+<button class="reopen-button" hidden="" id="reopenTradeLog" type="button">
+<span>＋</span> Open Log Trade
+  </button>
+<main class="page-shell">
+<section aria-labelledby="tradeModalTitle" class="trade-modal" id="tradeModal">
+<header class="modal-header">
+<div class="title-group">
+<h1 id="tradeModalTitle">Log Trade</h1>
+<span aria-hidden="true" class="title-trend">↗</span>
+</div>
+<div class="header-actions"><span class="backend-connection is-loading" id="backendConnection">Connecting…</span>
+<div aria-label="Trade status" class="status-switch" role="group">
+<button class="status-option" data-status="Planned" type="button">Planned</button>
+<button class="status-option active" data-status="Executed" type="button">Executed</button>
+<button class="status-option" data-status="Cancelled" type="button">Cancelled</button>
+</div><span class="status-storage-note" title="The current Trade model has no separate status field. Planned and Cancelled are stored as Open with status included in notes.">ⓘ</span>
+<button aria-label="Close trade log" class="icon-button close-modal" id="closeModal" type="button">×</button>
+</div>
+</header>
+<form id="tradeForm" novalidate="">
+<div class="modal-body">
+<div class="form-column left-column">
+<section aria-label="Trade timing" class="basic-grid">
+<label class="field full-width">
+<span class="field-label">Session</span>
+<span class="control-wrap select-wrap">
+<select id="session" name="session" required=""><option value="New York">New York</option><option value="London">London</option><option value="Asian">Asian</option><option value="Other">Other</option></select>
+</span>
+</label>
+<label class="field full-width">
+<span class="field-label">Date</span>
+<span class="control-wrap">
+<input id="tradeDate" name="tradeDate" required="" type="date"/>
+</span>
+</label>
+<label class="field">
+<span class="field-label">Entry Time</span>
+<span class="control-wrap">
+<input id="entryTime" name="entryTime" type="time"/>
+<span aria-hidden="true" class="control-icon">◷</span>
+</span>
+</label>
+<label class="field">
+<span class="field-label">Exit Time</span>
+<span class="control-wrap">
+<input id="exitTime" name="exitTime" type="time"/>
+<span aria-hidden="true" class="control-icon">◷</span>
+</span>
+</label>
+</section>
+<section class="form-section">
+<div class="section-heading">
+<span class="section-icon">↗</span>
+<h2>Instrument &amp; Setup</h2>
+</div>
+<div class="instrument-grid">
+<label class="field">
+<span class="field-label">Symbol</span>
+<span class="control-wrap select-wrap">
+<select id="symbol" name="symbol" required="">
+<option value="XAUUSD">XAUUSD</option>
+<option value="EURUSD">EURUSD</option>
+<option value="GBPUSD">GBPUSD</option>
+<option value="USDJPY">USDJPY</option>
+<option value="NAS100">NAS100</option>
+<option value="US30">US30</option>
+<option value="BTCUSD">BTCUSD</option>
+</select>
+</span>
+</label>
+<fieldset class="field direction-fieldset">
+<legend class="field-label">Direction</legend>
+<div aria-label="Trade direction" class="direction-switch" role="group">
+<button class="direction-option long active" data-direction="Long" type="button">
+<span>Long</span><span aria-hidden="true">↗</span>
+</button>
+<button class="direction-option short" data-direction="Short" type="button">
+<span>Short</span><span aria-hidden="true">↘</span>
+</button>
+</div>
+</fieldset>
+<label class="field full-width">
+<span class="field-label">Setup</span>
+<span class="control-wrap select-wrap">
+<select id="setup" name="setup">
+<option value="ICT Breaker">ICT Breaker</option>
+<option value="Breakout">Breakout</option>
+<option value="Liquidity Sweep">Liquidity Sweep</option>
+<option value="Order Block">Order Block</option>
+<option value="Fair Value Gap">Fair Value Gap</option>
+<option value="Trend Continuation">Trend Continuation</option>
+<option value="Reversal">Reversal</option>
+</select>
+</span>
+</label>
+</div>
+</section>
+<section class="form-section price-section">
+<div class="section-heading">
+<span class="section-icon circular">◎</span>
+<h2>Price Levels</h2>
+</div>
+<div class="price-grid">
+<label class="price-card entry-card">
+<span class="price-card-label"><span aria-hidden="true">⇥</span> Entry</span>
+<input id="entryPrice" min="0" name="entryPrice" placeholder="e.g. 2350.25" required="" step="any" type="number"/>
+</label>
+<label class="price-card exit-card">
+<span class="price-card-label"><span aria-hidden="true">⇄</span> Exit</span>
+<input id="exitPrice" min="0" name="exitPrice" placeholder="e.g. 2368.00" step="any" type="number"/>
+</label>
+<label class="price-card stop-card">
+<span class="price-card-label"><span aria-hidden="true">⊙</span> Stop</span>
+<input id="stopLoss" min="0" name="stopLoss" placeholder="e.g. 2342.00" step="any" type="number"/>
+</label>
+<label class="price-card target-card">
+<span class="price-card-label"><span aria-hidden="true">◉</span> Target</span>
+<input id="takeProfit" min="0" name="takeProfit" placeholder="e.g. 2375.00" step="any" type="number"/>
+</label>
+</div>
+<div class="lower-price-grid">
+<label class="field">
+<span class="field-label">Contracts</span>
+<span class="control-wrap">
+<input id="contracts" min="0.01" name="contracts" required="" step="0.01" type="number" value="1"/>
+</span>
+</label><label class="field"><span class="field-label">Commission</span><span class="control-wrap"><input id="commission" min="0" name="commission" step="any" type="number" value="0"/></span></label>
+<label class="field">
+<span class="field-label">P&amp;L (Override)</span>
+<span class="control-wrap">
+<input id="pnlOverride" name="pnlOverride" placeholder="Auto from entry/exit" step="any" type="number"/>
+<span aria-hidden="true" class="control-icon info-icon" title="Leave blank for automatic calculation">ⓘ</span>
+</span>
+</label>
+</div>
+</section>
+</div>
+<div class="form-column right-column">
+<section class="panel discipline-panel">
+<div class="panel-title-row">
+<h2>Discipline Score</h2>
+<output for="disciplineScore" id="disciplineValue">7 / 10</output>
+</div>
+<input class="range-input discipline-range" id="disciplineScore" max="10" min="1" name="disciplineScore" type="range" value="7"/>
+<div class="range-caption">
+<strong id="disciplineText">Good Discipline</strong>
+<span id="disciplineMessage">Keep it up! 🚀</span>
+</div>
+</section>
+<section class="panel emotional-panel">
+<h2>Emotional State</h2>
+<div aria-label="Emotional state" class="chip-group" id="emotionChips" role="group">
+<button class="choice-chip active" data-emotion="Calm" type="button">☻ Calm</button>
+<button class="choice-chip" data-emotion="Confident" type="button">☼ Confident</button>
+<button class="choice-chip" data-emotion="FOMO" type="button">☹ FOMO</button>
+<button class="choice-chip" data-emotion="Fearful" type="button">☹ Fearful</button>
+<button class="choice-chip" data-emotion="Revenge" type="button">☹ Revenge</button>
+<button class="choice-chip" data-emotion="Overconfident" type="button">☻ Overconfident</button>
+</div>
+<label class="sr-only" for="emotionNote">Emotional state note</label>
+<textarea id="emotionNote" name="emotionNote" placeholder="Custom note (optional)" rows="1"></textarea>
+</section>
+<section class="panel analysis-panel">
+<div class="panel-heading-with-icon">
+<span aria-hidden="true">♧</span>
+<h2>Analysis</h2>
+</div>
+<label class="field analysis-field">
+<span class="field-label">What went well / what to improve</span>
+<textarea id="analysis" name="analysis" placeholder="Analyze your trade execution, emotions, and lessons learned..." rows="4"></textarea>
+</label>
+</section>
+<div class="two-panel-grid journal-grid">
+<section class="panel tag-panel">
+<h2>Trade Tags</h2>
+<div aria-live="polite" class="tag-list" id="tagList">
+<button aria-label="Remove ICT tag" class="tag-pill" data-tag="ICT" type="button">ICT <span>×</span></button>
+<button aria-label="Remove Breaker tag" class="tag-pill" data-tag="Breaker" type="button">Breaker <span>×</span></button>
+<button aria-label="Remove Gold tag" class="tag-pill" data-tag="Gold" type="button">Gold <span>×</span></button>
+</div>
+<div class="tag-adder">
+<button class="soft-button" id="showTagInput" type="button">＋ Add tag</button>
+<input hidden="" id="tagInput" maxlength="24" placeholder="Type tag + Enter" type="text"/>
+</div>
+</section>
+<section class="panel rules-panel">
+<h2>Rules Followed / Mistakes</h2>
+<div class="rule-list" id="ruleList">
+<label class="check-row"><input checked="" type="checkbox" value="Followed Trading Plan"/><span>Followed Trading Plan</span></label>
+<label class="check-row"><input checked="" type="checkbox" value="Respected Risk"/><span>Respected Risk</span></label>
+<label class="check-row"><input type="checkbox" value="Waited for Confirmation"/><span>Waited for Confirmation</span></label>
+<label class="check-row"><input type="checkbox" value="No Overtrading"/><span>No Overtrading</span></label>
+</div>
+<div class="custom-rule-row">
+<button class="link-button" id="showRuleInput" type="button">＋ Add custom rule</button>
+<input hidden="" id="ruleInput" maxlength="48" placeholder="Rule name + Enter" type="text"/>
+</div>
+</section>
+</div>
+<div class="two-panel-grid confidence-grid">
+<section class="panel confidence-panel">
+<h2>Confidence Score</h2>
+<div class="confidence-content">
+<div class="confidence-ring" id="confidenceRing" style="--progress: 75">
+<span id="confidenceValue">75%</span>
+</div>
+<div class="confidence-copy">
+<strong id="confidenceLabel">High Confidence</strong>
+<p id="confidenceDescription">You felt good about this trade.</p>
+</div>
+</div>
+<label class="sr-only" for="confidenceScore">Confidence score</label>
+<input class="range-input confidence-range" id="confidenceScore" max="100" min="0" name="confidenceScore" type="range" value="75"/>
+</section>
+<section class="panel notes-panel">
+<h2>Notes / Extra Notes</h2>
+<label class="sr-only" for="notes">Additional notes</label>
+<textarea id="notes" name="notes" placeholder="Additional context, market conditions, news, thoughts..." rows="5"></textarea>
+</section>
+</div>
+<section aria-live="polite" class="panel summary-panel">
+<div class="panel-heading-with-icon">
+<span aria-hidden="true">◉</span>
+<h2>Live Trade Summary</h2>
+</div>
+<div class="summary-grid">
+<div class="summary-item">
+<span>Risk Amount</span>
+<strong id="riskAmount">$0.00</strong>
+<small id="riskPercent">0.00% of account</small>
+</div>
+<div class="summary-item">
+<span>Potential Reward</span>
+<strong id="rewardAmount">$0.00</strong>
+<small id="rewardPercent">0.00% of account</small>
+</div>
+<div class="summary-item">
+<span>Risk : Reward</span>
+<strong id="riskReward">—</strong>
+<small id="rrQuality">Waiting for prices</small>
+</div>
+<div class="summary-item pnl-summary-item">
+<span>Estimated P&amp;L</span>
+<strong id="estimatedPnl">$0.00</strong>
+<small id="estimatedPnlPercent">0.00%</small>
+</div>
+</div>
+</section>
+<section class="panel screenshots-panel">
+<div class="screenshots-heading">
+<div class="panel-heading-with-icon">
+<span aria-hidden="true">▧</span>
+<h2>Screenshots</h2>
+</div>
+<p>Drag &amp; drop, paste, or click to upload</p>
+</div>
+<label class="field screenshot-url-field">
+<span class="field-label">Screenshot URL saved to MongoDB</span>
+<span class="control-wrap">
+<input id="screenshotUrl" name="screenshotUrl" placeholder="https://example.com/chart.png" type="url"/>
+</span>
+</label>
+<div class="backend-limit-note"><strong>Current backend:</strong> one screenshot URL is stored. Local image boxes below are preview-only until a cloud upload route is added.</div>
+<div class="upload-grid">
+<div class="upload-column">
+<div class="upload-label-row"><span>Entry</span><span title="Entry chart screenshot">ⓘ</span></div>
+<button class="upload-box" data-upload="entryScreenshot" type="button">
+<input accept="image/png,image/jpeg,image/webp" hidden="" id="entryScreenshot" name="entryScreenshot" type="file"/>
+<span class="upload-placeholder"><b>▧</b><small>Add image</small></span>
+<span class="upload-preview" hidden=""></span>
+</button>
+<button class="replace-button" data-replace="entryScreenshot" type="button">↻ Replace</button>
+</div>
+<div class="upload-column">
+<div class="upload-label-row"><span>Management</span><span title="Trade management screenshot">ⓘ</span></div>
+<button class="upload-box" data-upload="managementScreenshot" type="button">
+<input accept="image/png,image/jpeg,image/webp" hidden="" id="managementScreenshot" name="managementScreenshot" type="file"/>
+<span class="upload-placeholder"><b>▧</b><small>Add image</small></span>
+<span class="upload-preview" hidden=""></span>
+</button>
+<button class="replace-button" data-replace="managementScreenshot" type="button">↻ Replace</button>
+</div>
+<div class="upload-column">
+<div class="upload-label-row"><span>Exit</span><span title="Exit chart screenshot">ⓘ</span></div>
+<button class="upload-box" data-upload="exitScreenshot" type="button">
+<input accept="image/png,image/jpeg,image/webp" hidden="" id="exitScreenshot" name="exitScreenshot" type="file"/>
+<span class="upload-placeholder"><b>▧</b><small>Add image</small></span>
+<span class="upload-preview" hidden=""></span>
+</button>
+<button class="replace-button" data-replace="exitScreenshot" type="button">↻ Replace</button>
+</div>
+</div>
+<p class="file-hint">Local preview formats: PNG, JPG, WEBP (max 5MB each). These files are not uploaded to MongoDB.</p>
+</section>
+</div>
+</div>
+<footer class="modal-footer">
+<div class="footer-metrics">
+<div>
+<span>Live P&amp;L</span>
+<strong id="footerPnl">$0.00</strong>
+</div>
+<div>
+<span>R:R</span>
+<strong id="footerRr">—</strong>
+</div>
+</div>
+<div class="footer-actions">
+<button class="secondary-button" id="cancelButton" type="button">Cancel</button>
+<button class="primary-button" id="submitButton" type="submit">
+<span class="button-text">Log Trade</span>
+<span class="button-loader" hidden=""></span>
+</button>
+</div>
+</footer>
+</form>
+</section>
+</main>
+<div aria-atomic="true" aria-live="polite" class="toast-region" id="toastRegion"></div>
+<script defer="" src="trade-log.js?v=2"></script>
+<script src="app-loader.js"></script><script src="protrade-shell.js"></script></body>
+</html>
