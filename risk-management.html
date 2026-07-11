@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#06111f" />
+  <title>ProTrade — Risk Management</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="risk-management.css" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand-row">
+      <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      <div class="brand-copy"><h1>ProTrade</h1><p>TRADING JOURNAL</p></div>
+    </div>
+
+    <nav class="sidebar-nav" id="sidebarNav" aria-label="Primary navigation">
+      <button class="nav-item" data-page="Dashboard" data-route="dashboard.html" type="button"><span class="nav-icon">▣</span><span>Dashboard</span></button>
+      <button class="nav-item" data-page="Trades" data-route="trades.html" type="button"><span class="nav-icon">↻</span><span>Trades</span></button>
+      <button class="nav-item" data-page="Calendar" data-route="calendar.html" type="button"><span class="nav-icon">▦</span><span>Calendar</span></button>
+      <button class="nav-item" data-page="Analytics" data-route="analytics.html" type="button"><span class="nav-icon">⌁</span><span>Analytics</span><small class="pro-pill">Pro</small></button>
+      <button class="nav-item" data-page="Performance" data-route="analytics.html" type="button"><span class="nav-icon">▥</span><span>Performance</span></button>
+      <button class="nav-item active" data-page="Risk Management" data-route="risk-management.html" type="button"><span class="nav-icon">◇</span><span>Risk Management</span><span class="nav-tail">›</span></button>
+      <button class="nav-item" data-page="Psychology" data-route="psychology.html" type="button"><span class="nav-icon">♡</span><span>Psychology</span></button>
+      <button class="nav-item" data-page="Journal" data-route="ai-journal.html" type="button"><span class="nav-icon">▤</span><span>Journal</span></button>
+      <button class="nav-item" data-page="Reports" data-route="analytics.html" type="button"><span class="nav-icon">▧</span><span>Reports</span></button>
+      <button class="nav-item" id="importTradesBtn" type="button"><span class="nav-icon">⇩</span><span>Import Trades</span></button>
+      <input id="importTradesInput" type="file" accept=".csv,.json" hidden />
+      <button class="nav-item" data-page="Settings" data-route="settings.html" type="button"><span class="nav-icon">⚙</span><span>Settings</span></button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="profile-wrap">
+        <button class="profile-card" id="profileBtn" type="button">
+          <span class="avatar auth-user-initials">T</span>
+          <span class="profile-copy"><strong class="auth-user-name">Trader</strong><small id="profileRole">Independent Trader</small></span>
+          <span>⌄</span>
+        </button>
+        <div class="popover profile-popover" id="profilePopover" hidden>
+          <button type="button" data-profile-action="profile">My Profile</button>
+          <button type="button" data-profile-action="account">Account Settings</button>
+          <button type="button" data-profile-action="logout">Sign Out</button>
+        </div>
+      </div>
+      <div class="account-card">
+        <div class="account-head"><span>Account Balance</span><button class="ghost-icon" id="balanceVisibilityBtn" type="button" aria-label="Hide or show balance">◉</button></div>
+        <strong id="sidebarBalance">—</strong>
+        <div class="equity-block"><span>Equity</span><b id="sidebarEquity">—</b></div>
+        <div class="broker-block"><span>Data Source</span><strong>MongoDB Journal</strong><i></i></div>
+      </div>
+      <div class="theme-card"><span id="themeLabel">System - Dark</span><button class="theme-switch" id="themeSwitch" type="button" aria-label="Switch light and dark mode"><span></span></button></div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <main class="main">
+    <header class="top-header">
+      <div class="welcome-area">
+        <button class="mobile-menu" id="mobileMenuBtn" type="button" aria-label="Open menu">☰</button>
+        <div><h2>Welcome back, <span class="auth-user-name" id="welcomeName">Trader</span><span> ♛</span></h2><p>Discipline today, freedom tomorrow.</p></div>
+      </div>
+      <div class="header-actions">
+        <div class="dropdown-wrap">
+          <button class="header-control" id="dateRangeBtn" type="button"><span>▦</span><span id="dateRangeLabel">Last 30 Days</span><span>⌄</span></button>
+          <div class="popover dropdown-popover risk-range-popover" id="dateRangePopover" hidden>
+            <button type="button" data-range-days="7">Last 7 Days</button>
+            <button type="button" data-range-days="30">Last 30 Days</button>
+            <button type="button" data-range-days="90">Last 90 Days</button>
+            <button type="button" data-range-days="0">All Time</button>
+          </div>
+        </div>
+        <div class="dropdown-wrap">
+          <button class="header-control" id="accountSelectorBtn" type="button"><span id="accountLabel">All Accounts</span><span>⌄</span></button>
+          <div class="popover dropdown-popover" id="accountPopover" hidden><button type="button" data-account="All Accounts">All Accounts</button></div>
+        </div>
+        <button class="notification-btn" id="notificationBtn" type="button" aria-label="Notifications">♧<span id="notificationCount">0</span></button>
+        <button class="new-trade-btn" id="newTradeBtn" type="button">＋ New Trade</button>
+      </div>
+    </header>
+
+    <section class="center-content risk-view">
+      <div class="risk-page-heading">
+        <div class="risk-title-icon">◇</div>
+        <div><h1>Risk Management</h1><p>Protect Your Capital. Control Every Risk.</p><small id="riskStatus">Connecting to ProTrade backend…</small></div>
+      </div>
+
+      <section class="risk-kpi-grid">
+        <article class="panel risk-kpi-card">
+          <div class="risk-kpi-label"><span class="risk-chip green">◇</span><span>Risk Score</span></div>
+          <div class="risk-kpi-value-line"><strong class="green-text" id="riskScoreValue">—</strong><svg class="risk-spark" viewBox="0 0 120 36" aria-hidden="true"><path id="riskScoreSpark" d="M2 28 L15 26 L27 29 L39 16 L52 22 L65 10 L78 22 L91 7 L103 18 L118 12" /></svg></div>
+          <small id="riskScoreLabel">Loading…</small>
+        </article>
+        <article class="panel risk-kpi-card">
+          <div class="risk-kpi-label"><span class="risk-chip blue">▧</span><span>Daily Risk</span></div>
+          <strong class="blue-text" id="dailyRiskValue">—</strong>
+          <div class="risk-progress-caption"><span id="dailyRiskLimitText">of — limit</span></div>
+          <div class="risk-progress"><i id="dailyRiskBar"></i></div>
+        </article>
+        <article class="panel risk-kpi-card">
+          <div class="risk-kpi-label"><span class="risk-chip purple">◕</span><span>Open Exposure</span></div>
+          <strong class="purple-text" id="openExposureValue">—</strong>
+          <div class="risk-progress-caption"><span id="openExposureLabel">Journal estimate</span></div>
+          <div class="risk-progress purple"><i id="openExposureBar"></i></div>
+        </article>
+        <article class="panel risk-kpi-card">
+          <div class="risk-kpi-label"><span class="risk-chip red">▥</span><span>Max Drawdown</span></div>
+          <strong class="red-text" id="drawdownValue">—</strong>
+          <div class="risk-progress-caption"><span id="drawdownLabel">From recorded P&amp;L</span></div>
+          <div class="risk-progress red"><i id="drawdownBar"></i></div>
+        </article>
+      </section>
+
+      <section class="risk-main-grid">
+        <article class="panel risk-budget-card">
+          <div class="risk-card-title"><span class="risk-chip green">▣</span><h3>Daily Risk Budget</h3></div>
+          <div class="risk-budget-layout">
+            <div class="risk-ring" id="dailyRiskRing"><div><strong id="dailyRiskRingValue">—</strong><small>Used</small></div></div>
+            <div class="risk-budget-stats">
+              <p><strong id="dailyLimitValue">—</strong><span>Daily Limit</span></p>
+              <p class="green-text"><strong id="dailyRemainingValue">—</strong><span>Remaining</span></p>
+            </div>
+          </div>
+          <div class="risk-reset">◴ <span id="riskResetTimer">Resets at local midnight</span></div>
+        </article>
+
+        <article class="panel position-card">
+          <div class="risk-card-title"><span class="risk-chip blue">▦</span><h3>Position Size Calculator</h3></div>
+          <div class="position-grid">
+            <label>Account Size<input id="calcAccountSize" type="number" min="0" step="any" /></label>
+            <label>Risk Percentage<div class="input-suffix"><input id="calcRiskPercent" type="number" min="0" step="0.01" /><span>%</span></div></label>
+            <label>Entry Price<input id="calcEntry" type="number" step="any" value="1.0850" /></label>
+            <label>Stop Loss<input id="calcStop" type="number" step="any" value="1.0800" /></label>
+          </div>
+          <div class="position-results">
+            <p><span>Risk Amount</span><strong class="green-text" id="calcRiskAmount">—</strong></p>
+            <p><span>Estimated Quantity</span><strong class="green-text" id="calcPositionSize">—</strong></p>
+            <p><span>Price Risk</span><strong class="green-text" id="calcPriceRisk">—</strong></p>
+          </div>
+          <small class="estimate-note">Journal estimate only. Contract size and pip value are not stored by the current backend.</small>
+        </article>
+
+        <article class="panel risk-score-card">
+          <div class="risk-card-title"><span class="risk-chip green">◎</span><h3>Risk Score</h3></div>
+          <div class="risk-score-ring" id="riskScoreRing"><div><strong id="riskScoreRingValue">—</strong><small>/100</small></div></div>
+          <div class="risk-breakdown" id="riskBreakdown"></div>
+        </article>
+
+        <article class="panel ai-risk-card">
+          <div class="risk-card-title"><span class="risk-chip purple">♧</span><h3>AI Risk Manager</h3></div>
+          <div class="ai-status"><span>Overall Analysis</span><strong id="aiOverall">Loading</strong></div>
+          <p id="aiSummary">Analysing your recorded trades and risk settings…</p>
+          <div class="ai-advice"><span>💡</span><div><small>Top Suggestion</small><p id="aiSuggestion">Loading…</p></div></div>
+          <div class="ai-advice"><span>◎</span><div><small>Focus Area</small><p id="aiFocus">Loading…</p></div></div>
+          <div class="ai-status"><span>Risk Status</span><strong id="aiRiskStatus">Loading</strong></div>
+          <small class="estimate-note">Rules-based analysis from real journal data; no external AI model is called.</small>
+        </article>
+      </section>
+
+      <section class="risk-middle-grid">
+        <article class="panel risk-list-card">
+          <div class="risk-card-title"><span class="risk-chip green">◇</span><h3>Risk Limits</h3></div>
+          <div class="limit-list" id="riskLimitsList"></div>
+        </article>
+        <article class="panel open-risk-card">
+          <div class="risk-card-title"><span class="risk-chip blue">▣</span><h3>Open Position Risk</h3></div>
+          <div class="open-risk-list" id="openRiskList"></div>
+        </article>
+        <article class="panel stop-card">
+          <div class="risk-card-title"><span class="risk-chip green">◇</span><h3>Stop-Loss Status</h3></div>
+          <div class="stop-layout">
+            <div class="stop-ring" id="stopRing"><div><strong id="stopComplianceValue">—</strong><small>Compliance</small></div></div>
+            <div class="stop-stats">
+              <p><span>Trades with Stop-Loss</span><strong class="green-text" id="withStopCount">0</strong></p>
+              <p><span>Trades without Stop-Loss</span><strong class="orange-text" id="withoutStopCount">0</strong></p>
+              <p><span>Total Trades</span><strong id="stopTotalCount">0</strong></p>
+            </div>
+          </div>
+          <p class="stop-message" id="stopMessage">Loading stop-loss compliance…</p>
+        </article>
+      </section>
+
+      <section class="risk-chart-grid">
+        <article class="panel heatmap-card">
+          <div class="risk-card-title"><span class="risk-chip red">♨</span><h3>Risk Heatmap</h3><button class="info-dot" type="button" data-info="heatmap">i</button></div>
+          <div class="risk-heatmap-wrap"><div class="risk-heatmap" id="riskHeatmap"></div><div class="heat-legend"><span>High<br />Risk</span><i></i><span>Low<br />Risk</span></div></div>
+          <div class="heat-hours"><span>12 AM</span><span>4 AM</span><span>8 AM</span><span>12 PM</span><span>4 PM</span><span>8 PM</span></div>
+        </article>
+        <article class="panel chart-card">
+          <div class="risk-card-title"><span class="risk-chip blue">↗</span><h3>Drawdown Trend</h3><button class="info-dot" type="button" data-info="drawdown">i</button></div>
+          <div class="risk-canvas-wrap"><canvas id="drawdownCanvas"></canvas></div>
+        </article>
+        <article class="panel chart-card">
+          <div class="risk-card-title"><span class="risk-chip purple">◉</span><h3>Risk vs P&amp;L</h3><button class="info-dot" type="button" data-info="scatter">i</button></div>
+          <div class="risk-canvas-wrap"><canvas id="riskScatterCanvas"></canvas></div>
+        </article>
+      </section>
+    </section>
+
+    <footer class="bottom-summary">
+      <div class="quote"><span class="diamond">◇</span><span>Protect capital first. Opportunity comes second.</span></div>
+      <div class="summary-stat"><small>Total Trades</small><strong id="footerTotalTrades">0</strong></div>
+      <div class="summary-stat"><small>Open Trades</small><strong id="footerOpenTrades">0</strong></div>
+      <div class="summary-stat"><small>Stop-Loss Compliance</small><strong class="positive" id="footerStopCompliance">0%</strong></div>
+      <div class="summary-stat"><small>Current Drawdown</small><strong class="negative" id="footerDrawdown">0%</strong></div>
+    </footer>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="tradeModal" hidden>
+  <form class="modal wide-modal" id="tradeForm">
+    <div class="modal-head"><div><h3>Add New Trade</h3><p>Save a trade directly to MongoDB.</p></div><button type="button" data-close="tradeModal">×</button></div>
+    <div class="form-grid three">
+      <label>Trade Date<input id="tradeDate" name="tradeDate" type="date" required /></label>
+      <label>Symbol<input id="symbol" name="symbol" type="text" placeholder="EURUSD" required /></label>
+      <label>Direction<select id="direction" name="direction"><option value="Long">Long</option><option value="Short">Short</option></select></label>
+      <label>Session<select id="session" name="session"><option value="Asian">Asian</option><option value="London">London</option><option value="New York">New York</option><option value="Other">Other</option></select></label>
+      <label>Strategy / Model<input id="model" name="model" type="text" /></label>
+      <label>Protocol<input id="protocol" name="protocol" type="text" /></label>
+      <label>Entry Time<input id="entryTime" name="entryTime" type="time" /></label>
+      <label>Exit Time<input id="exitTime" name="exitTime" type="time" /></label>
+      <label>Entry Price<input id="entryPrice" name="entryPrice" type="number" step="any" required /></label>
+      <label>Exit Price<input id="exitPrice" name="exitPrice" type="number" step="any" /></label>
+      <label>Stop Loss<input id="stopLoss" name="stopLoss" type="number" step="any" /></label>
+      <label>Take Profit<input id="takeProfit" name="takeProfit" type="number" step="any" /></label>
+      <label>Quantity<input id="quantity" name="quantity" type="number" min="0" step="any" value="1" /></label>
+      <label>Commission<input id="commission" name="commission" type="number" min="0" step="any" value="0" /></label>
+      <label>Net P&amp;L<input id="profitLoss" name="profitLoss" type="number" step="any" value="0" /></label>
+      <label>R Multiple<input id="rr" name="rr" type="number" step="any" value="0" /></label>
+      <label>Result<select id="result" name="result"><option value="Open">Open</option><option value="Win">Win</option><option value="Loss">Loss</option><option value="Breakeven">Breakeven</option></select></label>
+      <label>Rating<select id="rating" name="rating"><option value="">No rating</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>
+      <label class="full-span">Notes<textarea id="notes" name="notes" maxlength="5000" rows="3"></textarea></label>
+    </div>
+    <div class="modal-actions"><button class="secondary" type="button" data-close="tradeModal">Cancel</button><button class="primary" type="submit">Save Trade</button></div>
+  </form>
+</div>
+
+<div class="modal-backdrop" id="infoModal" hidden>
+  <div class="modal">
+    <div class="modal-head"><div><h3 id="infoTitle">Information</h3><p id="infoSubtitle">Risk calculation details</p></div><button type="button" data-close="infoModal">×</button></div>
+    <div class="info-body" id="infoBody"></div>
+    <div class="modal-actions"><button class="primary" type="button" data-close="infoModal">Done</button></div>
+  </div>
+</div>
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+<script src="auth.js"></script>
+<script src="risk-management.js"></script>
+</body>
+</html>

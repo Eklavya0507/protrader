@@ -1,0 +1,391 @@
+/* ProTrade Risk Management — page-specific styles.
+   The global shell, sidebar and top bar intentionally come from styles.css. */
+
+.risk-view {
+  padding-top: 15px;
+  display: grid;
+  gap: 13px;
+}
+
+.risk-page-heading {
+  min-height: 62px;
+  padding: 0 7px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.risk-page-heading h1 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: -.45px;
+}
+
+.risk-page-heading p {
+  margin: 5px 0 0;
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.risk-page-heading small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.risk-page-heading small[data-state="success"] { color: var(--green); }
+.risk-page-heading small[data-state="error"] { color: var(--red); }
+
+.risk-title-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 42px;
+  border-radius: 13px;
+  color: #54df7a;
+  background: linear-gradient(145deg, rgba(34, 197, 94, .22), rgba(18, 96, 49, .08));
+  border: 1px solid rgba(54, 211, 104, .26);
+  box-shadow: inset 0 0 20px rgba(46, 208, 102, .07), 0 8px 24px rgba(0, 0, 0, .12);
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.risk-range-popover { min-width: 150px; }
+
+.risk-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.risk-kpi-card {
+  min-height: 126px;
+  padding: 14px 15px;
+  overflow: hidden;
+}
+
+.risk-kpi-label,
+.risk-card-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.risk-kpi-label > span:last-child,
+.risk-card-title h3 {
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 720;
+}
+
+.risk-card-title h3 {
+  margin: 0;
+  font-size: 12px;
+}
+
+.risk-chip {
+  width: 27px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 27px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.risk-chip.green { color: #57e877; background: rgba(34, 197, 94, .15); }
+.risk-chip.blue { color: #5ea5ff; background: rgba(37, 124, 255, .16); }
+.risk-chip.purple { color: #a478ff; background: rgba(119, 92, 255, .17); }
+.risk-chip.red { color: #ff654c; background: rgba(240, 80, 86, .16); }
+
+.risk-kpi-card > strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 25px;
+  line-height: 1;
+  letter-spacing: -.6px;
+}
+
+.risk-kpi-card > small {
+  display: block;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.risk-kpi-value-line {
+  margin-top: 8px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.risk-kpi-value-line strong {
+  font-size: 25px;
+  line-height: 1;
+}
+
+.risk-spark {
+  width: 100px;
+  height: 32px;
+  overflow: visible;
+}
+
+.risk-spark path {
+  fill: none;
+  stroke: #24c660;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 5px 6px rgba(34, 197, 94, .22));
+}
+
+.green-text { color: #32d466 !important; }
+.blue-text { color: #4b97ff !important; }
+.purple-text { color: #9a65ff !important; }
+.red-text { color: #ff5a43 !important; }
+.orange-text { color: #ff8e33 !important; }
+
+.risk-progress-caption {
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.risk-progress {
+  height: 7px;
+  margin-top: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted) 22%, transparent);
+}
+
+.risk-progress i {
+  width: 0;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2f7fff, #6eb0ff);
+  transition: width .45s ease;
+}
+
+.risk-progress.purple i { background: linear-gradient(90deg, #7857ff, #a769ff); }
+.risk-progress.red i { background: linear-gradient(90deg, #ff6a31, #ff4f3b); }
+
+.risk-main-grid {
+  display: grid;
+  grid-template-columns: .95fr 1.42fr .78fr .97fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.risk-main-grid > article { min-height: 278px; padding: 14px; }
+
+.risk-budget-layout {
+  min-height: 190px;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.risk-ring,
+.risk-score-ring,
+.stop-ring {
+  --ring-value: 0deg;
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: conic-gradient(#53dd5f 0 var(--ring-value), rgba(119, 142, 165, .22) var(--ring-value) 360deg);
+  box-shadow: inset 0 0 18px rgba(58, 218, 93, .08);
+}
+
+.risk-ring { width: 150px; height: 150px; margin: auto; }
+.risk-score-ring { width: 102px; height: 102px; margin: 15px auto 12px; }
+.stop-ring { width: 108px; height: 108px; }
+
+.risk-ring::before,
+.risk-score-ring::before,
+.stop-ring::before {
+  content: "";
+  position: absolute;
+  inset: 13px;
+  border-radius: 50%;
+  background: var(--panel-solid);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, .12);
+}
+
+.risk-score-ring::before { inset: 10px; }
+.stop-ring::before { inset: 11px; }
+
+.risk-ring > div,
+.risk-score-ring > div,
+.stop-ring > div {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  text-align: center;
+}
+
+.risk-ring strong { font-size: 25px; }
+.risk-score-ring strong { font-size: 26px; }
+.stop-ring strong { font-size: 22px; }
+
+.risk-ring small,
+.risk-score-ring small,
+.stop-ring small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.risk-budget-stats { display: grid; gap: 18px; }
+.risk-budget-stats p { margin: 0; display: grid; gap: 5px; }
+.risk-budget-stats strong { font-size: 20px; }
+.risk-budget-stats span { color: var(--muted); font-size: 10px; }
+.risk-reset { color: var(--muted); font-size: 9px; }
+
+.position-card { display: grid; grid-template-columns: 1.1fr .9fr; column-gap: 16px; }
+.position-card .risk-card-title { grid-column: 1 / -1; }
+.position-grid { display: grid; gap: 8px; align-content: start; }
+.position-grid label {
+  display: grid;
+  grid-template-columns: 1fr minmax(92px, 110px);
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  font-size: 9px;
+}
+.position-grid input,
+.input-suffix {
+  width: 100%;
+  min-height: 33px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  color: var(--text);
+  background: color-mix(in srgb, var(--panel-solid) 86%, transparent);
+}
+.position-grid input { padding: 0 9px; }
+.input-suffix { display: flex; align-items: center; }
+.input-suffix input { border: 0; background: transparent; }
+.input-suffix span { padding-right: 9px; color: var(--muted); }
+.position-results { display: grid; align-content: center; gap: 16px; }
+.position-results p { margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.position-results span { color: var(--muted); font-size: 9px; }
+.position-results strong { font-size: 12px; }
+.estimate-note { grid-column: 1 / -1; color: var(--muted); font-size: 8px; line-height: 1.45; }
+
+.risk-breakdown { display: grid; gap: 7px; }
+.risk-breakdown-item { display: grid; grid-template-columns: 1fr 42px; gap: 7px; align-items: center; font-size: 8px; }
+.risk-breakdown-item span:first-child { grid-column: 1 / -1; color: var(--muted); }
+.risk-breakdown-track { height: 4px; overflow: hidden; border-radius: 999px; background: color-mix(in srgb, var(--muted) 22%, transparent); }
+.risk-breakdown-track i { height: 100%; display: block; border-radius: inherit; background: linear-gradient(90deg, #63dc57, #3ac85f); }
+.risk-breakdown-item strong { text-align: right; font-size: 8px; }
+
+.ai-risk-card { display: flex; flex-direction: column; gap: 10px; }
+.ai-status { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 9px; }
+.ai-status strong { padding: 5px 9px; border-radius: 6px; color: #65e378; background: rgba(34, 197, 94, .14); }
+.ai-risk-card > p { margin: 0; color: var(--muted); font-size: 9px; line-height: 1.55; }
+.ai-advice { display: grid; grid-template-columns: 20px 1fr; gap: 7px; }
+.ai-advice small { color: var(--muted); font-size: 8px; }
+.ai-advice p { margin: 3px 0 0; color: var(--text); font-size: 9px; line-height: 1.45; }
+.ai-risk-card .estimate-note { margin-top: auto; }
+
+.risk-middle-grid {
+  display: grid;
+  grid-template-columns: 1.08fr 1.08fr 1.2fr;
+  gap: 12px;
+}
+.risk-middle-grid > article { min-height: 160px; padding: 14px; }
+.limit-list,
+.open-risk-list { margin-top: 12px; display: grid; gap: 10px; }
+.limit-row { display: grid; grid-template-columns: 1fr 112px 48px; align-items: center; gap: 8px; }
+.limit-row > span,
+.open-risk-list p span { color: var(--text); font-size: 9px; }
+.limit-row > strong,
+.open-risk-list p strong { text-align: right; font-size: 9px; }
+.limit-track { height: 5px; overflow: hidden; border-radius: 999px; background: color-mix(in srgb, var(--muted) 22%, transparent); }
+.limit-track i { height: 100%; display: block; border-radius: inherit; background: linear-gradient(90deg, #2cc45a, #72d855); }
+.open-risk-list p { margin: 0; display: flex; justify-content: space-between; gap: 10px; }
+.stop-layout { margin-top: 9px; display: grid; grid-template-columns: 125px 1fr; align-items: center; gap: 12px; }
+.stop-stats { display: grid; gap: 10px; }
+.stop-stats p { margin: 0; display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 9px; }
+.stop-message { margin: 4px 0 0; color: var(--green); text-align: center; font-size: 8px; }
+
+.risk-chart-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 1.05fr 1.2fr;
+  gap: 12px;
+}
+.risk-chart-grid > article { min-height: 205px; padding: 13px; }
+.info-dot {
+  width: 16px;
+  height: 16px;
+  margin-left: 1px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--primary) 55%, var(--line));
+  border-radius: 50%;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  font-size: 8px;
+}
+.risk-heatmap-wrap { margin-top: 10px; display: grid; grid-template-columns: 1fr 34px; gap: 8px; align-items: stretch; }
+.risk-heatmap { display: grid; grid-template-columns: 28px repeat(12, minmax(9px, 1fr)); gap: 2px; }
+.heat-label { display: grid; place-items: center start; color: var(--muted); font-size: 7px; }
+.heat-cell { min-height: 13px; border-radius: 1px; background: rgba(42, 128, 69, .25); }
+.heat-cell[data-level="1"] { background: #245d31; }
+.heat-cell[data-level="2"] { background: #5e7c1f; }
+.heat-cell[data-level="3"] { background: #b56a16; }
+.heat-cell[data-level="4"] { background: #dc3f25; }
+.heat-legend { display: grid; grid-template-rows: auto 1fr auto; gap: 4px; color: var(--muted); text-align: center; font-size: 7px; }
+.heat-legend i { border-radius: 3px; background: linear-gradient(180deg, #ef3a29, #ffb21f 45%, #2fa33f); }
+.heat-hours { margin: 5px 36px 0 31px; display: flex; justify-content: space-between; color: var(--muted); font-size: 7px; }
+.risk-canvas-wrap { height: 158px; margin-top: 8px; }
+.risk-canvas-wrap canvas { width: 100%; height: 100%; display: block; }
+
+@media (max-width: 1240px) {
+  .risk-main-grid { grid-template-columns: 1fr 1.4fr 1fr; }
+  .ai-risk-card { grid-column: 1 / -1; min-height: auto !important; }
+  .risk-chart-grid { grid-template-columns: 1fr 1fr; }
+  .risk-chart-grid > :last-child { grid-column: 1 / -1; }
+}
+
+@media (max-width: 980px) {
+  .risk-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .risk-main-grid,
+  .risk-middle-grid,
+  .risk-chart-grid { grid-template-columns: 1fr 1fr; }
+  .risk-main-grid > article,
+  .risk-middle-grid > article,
+  .risk-chart-grid > article { grid-column: auto; }
+  .position-card { grid-column: 1 / -1 !important; }
+  .ai-risk-card { grid-column: 1 / -1 !important; }
+  .risk-chart-grid > :last-child { grid-column: 1 / -1; }
+}
+
+@media (max-width: 720px) {
+  .risk-page-heading { align-items: flex-start; }
+  .risk-page-heading h1 { font-size: 19px; }
+  .risk-kpi-grid,
+  .risk-main-grid,
+  .risk-middle-grid,
+  .risk-chart-grid { grid-template-columns: 1fr; }
+  .position-card { display: block; }
+  .position-grid { margin-top: 13px; }
+  .position-results { margin-top: 16px; }
+  .estimate-note { display: block; margin-top: 13px; }
+  .risk-budget-layout { grid-template-columns: 1fr; }
+  .risk-ring { width: 138px; height: 138px; }
+  .stop-layout { grid-template-columns: 1fr; justify-items: center; }
+  .stop-stats { width: 100%; }
+}

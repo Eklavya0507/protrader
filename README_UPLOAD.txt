@@ -1,49 +1,38 @@
-PROTRADE — UNIFIED BACKEND-CONNECTED FRONTEND
+PROTRADE RISK MANAGEMENT — DASHBOARD COLOR + BACKEND CONNECTED
 
-This package contains the corrected Dashboard, Trades, Calendar and Settings pages.
-Calendar and Settings now use the same light/dark background palette and 246px sidebar width as Dashboard/Trades.
+UPLOAD TO THE ROOT OF:
+https://github.com/Eklavya0507/protrader
 
-UPLOAD/REPLACE these files in the frontend repository root:
-- dashboard.html
-- dashboard.js
-- trades.html
-- trades.js
-- calendar.html
-- calendar.css
-- calendar.js
-- settings.html
-- settings.css
-- settings.js
-- styles.css
+Upload / replace:
+1. risk-management.html
+2. risk-management.css
+3. risk-management.js
+4. auth.js
 
-DO NOT delete or replace these existing repository files:
-- auth.js
-- new-device-login-popup.js
-- security-activity.js
-- security-alerts.js
-- index.html
-- login.html
-- register.html
-- account-action.html
-- security-action.html
+styles.css:
+- This package includes the dashboard-matched styles.css for testing and recovery.
+- If your current main ProTrade repository already contains the latest dashboard styles.css, do not replace it.
+- Upload this styles.css only when the file is missing or the Risk page appears as plain white HTML.
 
-Backend changes are NOT required for the included working features.
-Existing APIs used:
-- /api/trades
-- /api/settings
-- /api/security/alerts/summary
-- /api/auth/me
-- /api/auth/change-password
-- /api/auth/sessions
-- /api/account/email-change/*
-- /api/account/export
-- /api/account
+DO NOT upload the old index.html from risk-management.test2-main because it can replace the cinematic landing page.
 
-Intentionally unavailable because the current backend has no models/routes/provider integration:
-- Live broker connections and multi-account sync
-- Subscription and billing
-- Direct avatar image upload
-- Browser-controlled server database backup/restore
+COMMIT MESSAGE:
+Connect risk management page to backend and dashboard theme
 
-Recommended GitHub commit message:
-Unify dashboard trades calendar and settings backend integration
+LIVE URL:
+https://eklavya0507.github.io/protrader/risk-management.html
+
+BACKEND ROUTES USED:
+GET  /api/trades
+POST /api/trades
+GET  /api/settings
+PUT  /api/settings
+GET  /api/security/alerts/summary
+DELETE /api/auth/sessions/current (through auth.js logout)
+
+CURRENT BACKEND LIMITATIONS:
+- No live broker positions or live market price feed.
+- No contract-size / pip-value metadata.
+- No maxOpenExposure or maxDrawdownLimit setting fields.
+- Open exposure and position-size values are journal-based estimates.
+- 5% open-exposure and 15% drawdown references are frontend fallback thresholds.

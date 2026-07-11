@@ -18,11 +18,25 @@
     "calendar.html",
     "analytics.html",
     "psychology.html",
+    "risk-management.html",
     "ai-journal.html",
     "settings.html",
   ]);
 
   const isProtectedPage = protectedPages.has(currentPage);
+
+  const wireRiskManagementRoute = () => {
+    document.querySelectorAll('[data-page="Risk Management"]').forEach((node) => {
+      node.dataset.route = "risk-management.html";
+      if (node.tagName === "A") node.setAttribute("href", "risk-management.html");
+    });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", wireRiskManagementRoute, { once: true });
+  } else {
+    wireRiskManagementRoute();
+  }
 
   const safeNextPage = (value) => {
     const candidate = String(value || "").trim();
