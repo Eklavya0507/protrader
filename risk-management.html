@@ -795,6 +795,7 @@
   </div>
   <div class="toast-stack" id="toastStack" aria-live="polite"></div>
 
+  <script src="auth.js"></script>
   <script>
   (function () {
     "use strict";
@@ -979,14 +980,14 @@
         accountBalance: firstValue(candidate, ["accountBalance", "balance", "startingBalance"], undefined),
         currency: firstValue(candidate, ["currency", "accountCurrency"], undefined),
         riskPerTradePct: firstValue(candidate, ["riskPerTradePct", "riskPerTrade", "maxRiskPerTrade"], undefined),
-        dailyRiskLimitPct: firstValue(candidate, ["dailyRiskLimitPct", "dailyRiskLimit", "maxDailyRisk"], undefined),
+        dailyRiskLimitPct: firstValue(candidate, ["dailyRiskLimitPct", "dailyRiskLimit", "maxDailyRisk", "maxDailyLoss"], undefined),
         maxOpenRiskPct: firstValue(candidate, ["maxOpenRiskPct", "maxOpenRisk", "openRiskLimit"], undefined),
         maxDrawdownPct: firstValue(candidate, ["maxDrawdownPct", "maxDrawdown", "drawdownLimit"], undefined)
       };
     }
 
     function authToken() {
-      var keys = ["protrade_token", "protrader_token", "protradeToken", "authToken", "token", "accessToken", "jwt"];
+      var keys = ["protrade_auth_token", "protrade_token", "protrader_token", "protradeToken", "authToken", "token", "accessToken", "jwt"];
       for (var i = 0; i < keys.length; i += 1) {
         var raw = localStorage.getItem(keys[i]) || sessionStorage.getItem(keys[i]);
         if (!raw) continue;
@@ -1018,7 +1019,6 @@
       var token = authToken();
       if (token) {
         headers.Authorization = "Bearer " + token;
-        headers["x-auth-token"] = token;
       }
       return headers;
     }
@@ -1039,7 +1039,8 @@
         var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
         var timeoutId = controller ? setTimeout(function () { controller.abort(); }, 8000) : null;
         try {
-          response = await fetch(state.apiBase + paths[i], {
+          var protectedFetch = window.ProTradeAuth && typeof window.ProTradeAuth.apiFetch === "function" ? window.ProTradeAuth.apiFetch : window.fetch.bind(window);
+          response = await protectedFetch(state.apiBase + paths[i], {
             method: method,
             headers: apiHeaders(Boolean(options.body)),
             body: options.body ? JSON.stringify(options.body) : undefined,
@@ -1098,7 +1099,7 @@
       setConnectionStatus("", "Connecting to ProTrade backend…");
       var localTrades = loadLocalTrades();
       var tradeRequest = requestFirst(["/api/trades", "/api/trade", "/trades"], { method: "GET" });
-      var settingsRequest = requestFirst(["/api/settings/risk", "/api/risk/settings", "/api/settings"], { method: "GET" });
+      var settingsRequest = requestFirst(["/api/settings", "/api/settings/risk", "/api/risk/settings"], { method: "GET" });
       var results = await Promise.allSettled([tradeRequest, settingsRequest]);
       if (results[1].status === "fulfilled") mergeRemoteSettings(results[1].value);
       if (results[0].status === "fulfilled") {
