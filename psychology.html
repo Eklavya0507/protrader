@@ -5,7 +5,8 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta content="#06111f" name="theme-color"/>
 <title>ProTrade — Psychology</title>
-<link href="styles.css?v=14" rel="stylesheet"/>
+<link href="styles.css" rel="stylesheet"/>
+<link href="protrade-shell.css" rel="stylesheet"/>
 <script src="auth.js?v=6"></script>
 <style>
 /* Psychology content uses the exact Dashboard color tokens from styles.css. */
@@ -67,7 +68,7 @@ html[data-theme="light"] .psychology-page .card{background:linear-gradient(145de
 .bottom{height:142px;display:grid;grid-template-columns:1.22fr 1fr 1.05fr 1.05fr .95fr 1fr 1.02fr 1.2fr 1.15fr;gap:8px}.mini{height:142px;padding:9px 9px 8px;display:flex;flex-direction:column}.mini-title{text-align:center;font-size:8px;font-weight:600}.mini-value{text-align:center;font-size:21px;margin-top:14px}.mini-value span{font-size:10px;color:var(--green);margin-left:5px}.mini-sub{text-align:center;color:#8ca2b1;font-size:7px;margin-top:4px}.mini-chart{width:100%;height:43px;margin-top:auto}.count-only .mini-value{font-size:32px;line-height:1;margin:auto 0 7px;color:var(--text)}.count-only .mini-sub{margin:0 0 auto}.heat-wrap{display:grid;grid-template-columns:21px repeat(7,1fr);gap:3px;margin-top:7px;color:#879dab;font-size:6px;align-items:center;text-align:center}.heat{height:13px;border-radius:1px}.g1{background:#15884f}.g2{background:#47b857}.y{background:#d7ac36}.o{background:#e8762d}.r{background:#d94636}.gauge{width:110px;height:66px;margin:6px auto 0;position:relative;overflow:hidden}.gauge:before{content:"";position:absolute;width:104px;height:104px;border-radius:50%;left:3px;top:3px;background:conic-gradient(from 270deg,#42cf70,#bed64c,#ffbc35,#ff7a31,#ff4d43 50%,transparent 50%)}.gauge:after{content:"";position:absolute;width:72px;height:72px;border-radius:50%;left:19px;top:19px;background:var(--card)}.gauge b{position:absolute;z-index:2;left:0;right:0;bottom:0;text-align:center;font-size:22px;font-weight:500}.scatter{position:relative;height:70px;margin-top:5px;border-left:1px solid #2a4658;border-bottom:1px solid #2a4658}.scatter:before{content:"";position:absolute;left:6px;right:4px;bottom:9px;height:1px;background:var(--yellow);transform:rotate(-25deg);transform-origin:left}.s-dot{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--yellow)}.ai-mini{display:flex;gap:8px;align-items:flex-start;margin-top:12px;color:#91a7b5;font-size:8px;line-height:1.45}.ai-mini .ico{width:25px;height:25px;color:var(--blue)}.mini-link{margin-top:auto;border:0;background:none;color:#68baf0;text-align:left;font-size:7px;cursor:pointer;padding:0}.plan{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;color:#91a7b5;font-size:7px}.plan li{display:flex;align-items:center;gap:6px}.checkmark{width:12px;height:12px;border:1px solid var(--green);border-radius:3px;color:var(--green);display:grid;place-items:center;font-size:8px}
 </style>
 </head>
-<body>
+<body class="protrade-page">
 <svg height="0" style="position:absolute" width="0"><defs>
 <symbol id="home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></symbol>
 <symbol id="swap" viewBox="0 0 24 24"><path d="M7 7h13l-3-3m3 3-3 3M17 17H4l3 3m-3-3 3-3"></path></symbol>
@@ -100,20 +101,16 @@ html[data-theme="light"] .psychology-page .card{background:linear-gradient(145de
 </defs></svg>
 <div class="app-shell">
 <aside class="sidebar" id="sidebar">
-  <div class="brand-row"><div aria-hidden="true" class="brand-mark"><span></span><span></span><span></span><span></span></div><div class="brand-copy"><h1>ProTrade</h1><p>TRADING JOURNAL</p></div></div>
+  <div class="brand-row"><div aria-hidden="true" class="brand-mark"><span></span><span></span><span></span><span></span></div><div class="brand-copy"><h1>ProTrade</h1><p>TRADING JOURNAL</p></div><button aria-label="Collapse sidebar" class="sidebar-collapse" id="sidebarCollapseBtn" title="Collapse sidebar" type="button">‹</button></div>
   <nav aria-label="Primary navigation" class="sidebar-nav" id="sidebarNav">
-    <button class="nav-item" data-route="dashboard.html" type="button"><span class="nav-icon">▣</span><span>Dashboard</span></button>
-    <button class="nav-item" data-route="trades.html" type="button"><span class="nav-icon">↻</span><span>Trades</span></button>
-    <button class="nav-item" data-route="calendar.html" type="button"><span class="nav-icon">▦</span><span>Calendar</span></button>
-    <button class="nav-item" data-route="analytics.html" type="button"><span class="nav-icon">⌁</span><span>Analytics</span><small class="pro-pill">Pro</small></button>
-    <button class="nav-item" data-route="analytics.html" type="button"><span class="nav-icon">▥</span><span>Performance</span></button>
-    <button class="nav-item" data-route="risk-management.html" type="button"><span class="nav-icon">◇</span><span>Risk Management</span></button>
-    <button class="nav-item active" data-route="psychology.html" type="button"><span class="nav-icon">♡</span><span>Psychology</span><span class="nav-tail">›</span></button>
-    <button class="nav-item" data-route="ai-journal.html" type="button"><span class="nav-icon">▤</span><span>Journal</span></button>
-    <button class="nav-item" data-route="analytics.html" type="button"><span class="nav-icon">▧</span><span>Reports</span></button>
-    <button class="nav-item" id="importTradesBtn" type="button"><span class="nav-icon">⇩</span><span>Import Trades</span></button>
-    <input accept=".csv,.json" hidden id="importTradesInput" type="file"/>
-    <button class="nav-item" data-route="settings.html" type="button"><span class="nav-icon">⚙</span><span>Settings</span></button>
+    <button class="nav-item" data-page="Dashboard" data-route="dashboard.html" type="button"><span class="nav-icon">▣</span><span>Dashboard</span></button>
+    <button class="nav-item" data-page="Trades" data-route="trades.html" type="button"><span class="nav-icon">↻</span><span>Trades</span></button>
+    <button class="nav-item" data-page="Calendar" data-route="calendar.html" type="button"><span class="nav-icon">▦</span><span>Calendar</span></button>
+    <button class="nav-item" data-page="Risk Management" data-route="risk-management.html" type="button"><span class="nav-icon">◇</span><span>Risk Management</span></button>
+    <button class="nav-item active" data-page="Psychology" data-route="psychology.html" type="button"><span class="nav-icon">♡</span><span>Psychology</span><span class="nav-tail">›</span></button>
+    <button class="nav-item" data-page="Journal" data-route="journal.html" type="button"><span class="nav-icon">▤</span><span>Journal</span></button>
+    <button class="nav-item" data-page="Reports" data-route="reports.html" type="button"><span class="nav-icon">▧</span><span>Reports</span></button>
+    <button class="nav-item" data-page="Settings" data-route="settings.html" type="button"><span class="nav-icon">⚙</span><span>Settings</span></button>
   </nav>
   <div class="sidebar-bottom">
     <div class="profile-wrap"><button class="profile-card" id="profileBtn" type="button"><span class="avatar auth-user-initials">T</span><span class="profile-copy"><strong class="auth-user-name">Trader</strong><small id="profileRole">Independent Trader</small></span><span>⌄</span></button><div class="popover profile-popover" hidden id="profilePopover"><button data-profile-action="profile" type="button">My Profile</button><button data-profile-action="account" type="button">Account Settings</button><button data-profile-action="logout" type="button">Sign Out</button></div></div>
@@ -123,9 +120,9 @@ html[data-theme="light"] .psychology-page .card{background:linear-gradient(145de
 </aside>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <main class="main">
-<header class="top-header">
-  <div class="welcome-area"><button aria-label="Open menu" class="mobile-menu" id="mobileMenuBtn" type="button">☰</button><div><h2>Welcome back, <span class="auth-user-name">Trader</span><span> ♛</span></h2><p>Discipline today, freedom tomorrow.</p></div></div>
-  <div class="header-actions"><button class="header-control" id="dateRangeBtn" type="button"><span id="dateRangeLabel">Last 30 Days</span><span>▦</span></button><div class="dropdown-wrap"><button class="header-control" id="accountSelectorBtn" type="button"><span id="accountLabel">All Accounts</span><span>⌄</span></button><div class="popover dropdown-popover" hidden id="accountPopover"><button type="button">All Accounts</button></div></div><button aria-label="Notifications" class="notification-btn" id="notificationBtn" type="button">♧<span id="notificationCount">0</span></button><button class="new-trade-btn" id="newTradeBtn" type="button">＋ New Trade</button></div>
+<header class="top-header topbar">
+  <div class="welcome-area welcome welcome-block"><button aria-label="Open menu" class="mobile-menu" id="mobileMenuBtn" type="button">☰</button><div><h2>Welcome back, <span class="auth-user-name" id="welcomeName">Trader</span><span> ♛</span></h2><p>Discipline today, freedom tomorrow.</p></div></div>
+  <div class="header-actions top-actions topbar-actions"><button class="header-control" id="dateRangeBtn" type="button"><span id="dateRangeLabel">Last 30 Days</span><span>▦</span></button><div class="dropdown-wrap"><button class="header-control" id="accountSelectorBtn" type="button"><span id="accountLabel">All Accounts</span><span>⌄</span></button><div class="popover dropdown-popover" hidden id="accountPopover"><button data-account="all" type="button">All Accounts</button></div></div><button aria-label="Notifications" class="notification-btn" id="notificationBtn" type="button">♧<span id="notificationCount">0</span></button><button class="new-trade-btn" data-new-trade="" id="newTradeBtn" type="button">＋ New Trade</button></div>
 </header>
 <section class="center-content psychology-page">
 <div class="psychology-canvas"><div class="page-title"><svg class="ico"><use href="#brain"></use></svg><div><h1>Psychology</h1><p>Master Your Mind. Master the Market.</p></div></div><div aria-live="polite" class="psychology-status" id="psychologyStatus" role="status">Connecting to protected MongoDB journal…</div><section class="kpis">
@@ -297,6 +294,8 @@ html[data-theme="light"] .psychology-page .card{background:linear-gradient(145de
 
   $$('.nav-item[data-route]').forEach(b=>b.addEventListener('click',()=>location.href=b.dataset.route));
   $('#mobileMenuBtn').addEventListener('click',()=>document.body.classList.add('sidebar-open'));$('#sidebarOverlay').addEventListener('click',()=>document.body.classList.remove('sidebar-open'));
+  const sidebarCollapseBtn=$('#sidebarCollapseBtn');
+  if(sidebarCollapseBtn){const collapseKey='protrade-sidebar-collapsed';if(innerWidth>980&&localStorage.getItem(collapseKey)==='1')document.body.classList.add('sidebar-collapsed');sidebarCollapseBtn.addEventListener('click',()=>{document.body.classList.toggle('sidebar-collapsed');localStorage.setItem(collapseKey,document.body.classList.contains('sidebar-collapsed')?'1':'0')})}
   $('#profileBtn').addEventListener('click',e=>{e.stopPropagation();$('#profilePopover').hidden=!$('#profilePopover').hidden});document.addEventListener('click',()=>{$('#profilePopover').hidden=true;$('#accountPopover').hidden=true});
   $$('[data-profile-action]').forEach(b=>b.addEventListener('click',async()=>{const action=b.dataset.profileAction;if(action==='logout'){try{await apiJson(`${API_BASE}/auth/logout`,{method:'POST'})}catch{}window.ProTradeAuth.logout()}else location.href='settings.html'}));
   $('#accountSelectorBtn').addEventListener('click',e=>{e.stopPropagation();$('#accountPopover').hidden=!$('#accountPopover').hidden});
@@ -304,7 +303,6 @@ html[data-theme="light"] .psychology-page .card{background:linear-gradient(145de
   $('#notificationBtn').addEventListener('click',()=>location.href='settings.html#security-alerts');$('#newTradeBtn').addEventListener('click',()=>showModal('tradeModal'));$('#tradeForm').addEventListener('submit',saveTrade);
   $$('[data-close]').forEach(b=>b.addEventListener('click',()=>hideModal(b.dataset.close)));$$('.modal-backdrop').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.hidden=true}));
   $('#balanceVisibilityBtn').addEventListener('click',()=>{state.balanceHidden=!state.balanceHidden;updateBalance()});$('#themeSwitch').addEventListener('click',()=>applyTheme(document.documentElement.dataset.theme==='dark'?'Light':'Dark',true));
-  $('#importTradesBtn').addEventListener('click',()=>$('#importTradesInput').click());$('#importTradesInput').addEventListener('change',e=>{const file=e.target.files?.[0];if(file)importTrades(file);e.target.value=''});
   $('#saveReflectionBtn').addEventListener('click',()=>{localStorage.setItem('protrade-psychology-reflection',$('#reflectionNote').value.trim());toast('Reflection saved','Current backend has no psychology-note collection, so this note is saved on this browser.')});
   $('#openJournalBtn').addEventListener('click',()=>location.href='ai-journal.html');$('#viewInsightsBtn').addEventListener('click',()=>location.href='ai-journal.html');$('#viewPlanBtn').addEventListener('click',()=>info('Personalized Psychology Plan',$('#personalPlan').outerHTML));
   $('#reflectionNote').value=localStorage.getItem('protrade-psychology-reflection')||'';setDefaultTradeDate();load();
