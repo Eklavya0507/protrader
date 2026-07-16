@@ -7,7 +7,33 @@
 <meta content="dark light" name="color-scheme"/>
 <title>ProTrade — Log Trade</title>
 <script defer="" src="auth.js?v=9"></script><link href="trade-log.css" rel="stylesheet"/>
-<link href="protrade-shell.css" rel="stylesheet"/><meta content="#06111f" name="theme-color"/><link href="app-loader.css" rel="stylesheet"/></head>
+<link href="protrade-shell.css" rel="stylesheet"/><meta content="#06111f" name="theme-color"/><link href="app-loader.css" rel="stylesheet"/>
+<style id="tradeLogFixStyles">
+.selection-help,.calculation-help{display:block;margin:7px 0 0;color:var(--muted,#89959e);font-size:11px;line-height:1.45}
+.choice-chip{position:relative}
+.choice-chip.active::after{content:"✓";margin-left:6px;font-size:11px;font-weight:900}
+.tag-list{display:flex;flex-wrap:wrap;gap:8px}
+.selectable-tag{display:inline-flex;min-height:32px;align-items:center;overflow:hidden;border:1px solid var(--border-strong,rgba(255,255,255,.16));border-radius:999px;background:color-mix(in srgb,var(--surface-2,#0a1827) 92%,transparent)}
+.selectable-tag label{display:inline-flex;align-items:center;gap:7px;padding:6px 8px 6px 10px;cursor:pointer}
+.selectable-tag input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.selectable-tag .tag-check{display:grid;width:17px;height:17px;place-items:center;border:1px solid var(--border-strong,rgba(255,255,255,.2));border-radius:50%;color:transparent;background:transparent;font-size:11px;font-weight:900}
+.selectable-tag.is-selected{border-color:color-mix(in srgb,var(--green,#20ad60) 68%,transparent);background:var(--green-soft,rgba(40,200,154,.13))}
+.selectable-tag.is-selected .tag-check{border-color:var(--green,#20ad60);color:#061109;background:var(--green,#20ad60)}
+.tag-remove{display:grid;width:27px;height:27px;margin-right:3px;place-items:center;border:0;border-radius:50%;color:var(--muted,#89959e);background:transparent;font-size:17px;line-height:1}
+.tag-remove:hover{color:var(--red,#f05056);background:var(--red-soft,rgba(240,80,86,.12))}
+#pnlBreakdown{line-height:1.45}
+.result-win{color:var(--green,#20ad60)!important}.result-loss{color:var(--red,#f05056)!important}.result-open{color:var(--muted,#89959e)!important}
+.instrument-profile{margin-top:14px;padding:13px;border:1px solid var(--border,rgba(255,255,255,.1));border-radius:11px;background:color-mix(in srgb,var(--surface-2,#0a1827) 94%,transparent)}
+.profile-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px}
+.profile-title-row h3{margin:0;font-size:13px}
+.profile-badge{padding:4px 8px;border:1px solid color-mix(in srgb,var(--green,#20ad60) 35%,transparent);border-radius:999px;color:var(--green,#20ad60);background:var(--green-soft,rgba(40,200,154,.13));font-size:10px;font-weight:800}
+.profile-grid{display:grid;grid-template-columns:1.15fr repeat(3,minmax(0,1fr));gap:10px}
+.profile-grid input,.profile-grid select{min-width:0}
+.conversion-warning{display:block;margin-top:9px;padding:7px 9px;border:1px solid rgba(245,166,34,.22);border-radius:8px;color:#f5a622;background:rgba(245,166,34,.07);font-size:11px;line-height:1.45}
+.conversion-warning.is-valid{border-color:color-mix(in srgb,var(--green,#20ad60) 28%,transparent);color:var(--green,#20ad60);background:var(--green-soft,rgba(40,200,154,.09))}
+@media(max-width:760px){.profile-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.profile-grid{grid-template-columns:1fr}}
+</style></head>
 <body class="protrade-page"><div aria-label="Loading ProTrade" aria-live="polite" class="app-loading" id="appLoading">
 <aside aria-hidden="true" class="loading-sidebar">
 <div class="sk sk-logo"></div>
@@ -80,16 +106,31 @@
 <div class="instrument-grid">
 <label class="field">
 <span class="field-label">Symbol</span>
-<span class="control-wrap select-wrap">
-<select id="symbol" name="symbol" required="">
-<option value="XAUUSD">XAUUSD</option>
-<option value="EURUSD">EURUSD</option>
-<option value="GBPUSD">GBPUSD</option>
-<option value="USDJPY">USDJPY</option>
-<option value="NAS100">NAS100</option>
-<option value="US30">US30</option>
-<option value="BTCUSD">BTCUSD</option>
-</select>
+<span class="control-wrap">
+<input autocomplete="off" id="symbol" list="symbolOptions" name="symbol" required="" type="text" value="XAUUSD"/>
+<datalist id="symbolOptions">
+<option value="DXY">U.S. Dollar Index</option>
+<option value="XAUUSD">Gold / U.S. Dollar</option>
+<option value="XAGUSD">Silver / U.S. Dollar</option>
+<option value="USOIL">WTI Crude Oil CFD</option>
+<option value="BTCUSD">Bitcoin / U.S. Dollar</option>
+<option value="NAS100">Nasdaq 100 CFD</option>
+<option value="US30">Dow 30 CFD</option>
+<option value="EURGBP"></option><option value="EURJPY"></option><option value="EURCHF"></option>
+<option value="EURUSD"></option><option value="EURCAD"></option><option value="NZDJPY"></option>
+<option value="GBPUSD"></option><option value="GBPJPY"></option><option value="GBPCHF"></option>
+<option value="GBPCAD"></option><option value="USDJPY"></option><option value="USDCHF"></option>
+<option value="USDCAD"></option><option value="AUDJPY"></option><option value="AUDUSD"></option>
+<option value="NZDUSD"></option><option value="NZDCAD"></option>
+<option value="NSE:RELIANCE">Reliance Industries — Indian Cash</option>
+<option value="NSE:TCS">TCS — Indian Cash</option>
+<option value="NSE:INFY">Infosys — Indian Cash</option>
+<option value="NSE:HDFCBANK">HDFC Bank — Indian Cash</option>
+<option value="NSE:ICICIBANK">ICICI Bank — Indian Cash</option>
+<option value="NSE:SBIN">State Bank of India — Indian Cash</option>
+<option value="NSE:NIFTY">NIFTY F&amp;O — enter current lot size</option>
+<option value="NSE:BANKNIFTY">BANKNIFTY F&amp;O — enter current lot size</option>
+</datalist>
 </span>
 </label>
 <fieldset class="field direction-fieldset">
@@ -118,6 +159,23 @@
 </span>
 </label>
 </div>
+<div class="instrument-profile">
+<div class="profile-title-row">
+<h3>Instrument Calculation Profile</h3>
+<span class="profile-badge" id="profileBadge">Auto • Editable</span>
+</div>
+<div class="profile-grid">
+<label class="field"><span class="field-label">Market Type</span><span class="control-wrap select-wrap">
+<select id="marketType"><option value="forex">Forex</option><option value="metal">Metal CFD</option><option value="energy">Energy CFD</option><option value="index">Index CFD</option><option value="crypto">Crypto CFD</option><option value="indian-cash">Indian Cash Stock</option><option value="indian-fo">Indian F&amp;O</option><option value="custom">Custom</option></select>
+</span></label>
+<label class="field"><span class="field-label">Pip / Tick Size</span><span class="control-wrap"><input id="pipSize" min="0.00000001" step="any" type="number" value="0.1"/></span></label>
+<label class="field"><span class="field-label">Contract Size / Lot</span><span class="control-wrap"><input id="contractSize" min="0.00000001" step="any" type="number" value="100"/></span></label>
+<label class="field"><span class="field-label">Quote Currency</span><span class="control-wrap"><input id="quoteCurrency" maxlength="3" type="text" value="USD"/></span></label>
+<label class="field"><span class="field-label">Quote → Account Rate</span><span class="control-wrap"><input id="quoteConversion" min="0" placeholder="0 = Auto" step="any" type="number" value="0"/></span></label>
+</div>
+<small class="selection-help" id="profileHelp">XAUUSD default: 1 lot = 100 oz; your pip convention = 0.10. Change these values if your broker specification differs.</small>
+<small class="conversion-warning is-valid" id="conversionWarning">USD quote matches USD account — conversion rate 1.</small>
+</div>
 </section>
 <section class="form-section price-section">
 <div class="section-heading">
@@ -144,9 +202,9 @@
 </div>
 <div class="lower-price-grid">
 <label class="field">
-<span class="field-label">Contracts</span>
+<span class="field-label" id="positionSizeLabel">Lot Size</span>
 <span class="control-wrap">
-<input id="contracts" min="0.01" name="contracts" required="" step="0.01" type="number" value="1"/>
+<input id="contracts" min="0.01" name="contracts" required="" step="0.01" type="number" value="0.01"/>
 </span>
 </label><label class="field"><span class="field-label">Commission</span><span class="control-wrap"><input id="commission" min="0" name="commission" step="any" type="number" value="0"/></span></label>
 <label class="field">
@@ -157,6 +215,7 @@
 </span>
 </label>
 </div>
+<small class="calculation-help" id="instrumentFormulaHelp">P&amp;L = signed pips × pip value for this position − commission.</small>
 </section>
 </div>
 <div class="form-column right-column">
@@ -173,6 +232,7 @@
 </section>
 <section class="panel emotional-panel">
 <h2>Emotional State</h2>
+<small class="selection-help">Multi-select enabled — choose every emotion you felt.</small>
 <div aria-label="Emotional state" class="chip-group" id="emotionChips" role="group">
 <button class="choice-chip active" data-emotion="Calm" type="button">☻ Calm</button>
 <button class="choice-chip" data-emotion="Confident" type="button">☼ Confident</button>
@@ -197,6 +257,7 @@
 <div class="two-panel-grid journal-grid">
 <section class="panel tag-panel">
 <h2>Trade Tags</h2>
+<small class="selection-help">Only checked tags are saved. A custom tag is added unchecked so you can tick it deliberately.</small>
 <div aria-live="polite" class="tag-list" id="tagList">
 <button aria-label="Remove ICT tag" class="tag-pill" data-tag="ICT" type="button">ICT <span>×</span></button>
 <button aria-label="Remove Breaker tag" class="tag-pill" data-tag="Breaker" type="button">Breaker <span>×</span></button>
@@ -259,14 +320,15 @@
 <small id="rewardPercent">0.00% of account</small>
 </div>
 <div class="summary-item">
-<span>Risk : Reward</span>
+<span>R-Multiple</span>
 <strong id="riskReward">—</strong>
 <small id="rrQuality">Waiting for prices</small>
 </div>
 <div class="summary-item pnl-summary-item">
-<span>Estimated P&amp;L</span>
+<span>Auto P&amp;L / Result</span>
 <strong id="estimatedPnl">$0.00</strong>
 <small id="estimatedPnlPercent">0.00%</small>
+<small id="pnlBreakdown">Waiting for entry and exit</small>
 </div>
 </div>
 </section>
@@ -325,7 +387,7 @@
 <strong id="footerPnl">$0.00</strong>
 </div>
 <div>
-<span>R:R</span>
+<span>R-Multiple</span>
 <strong id="footerRr">—</strong>
 </div>
 </div>
@@ -341,6 +403,1018 @@
 </section>
 </main>
 <div aria-atomic="true" aria-live="polite" class="toast-region" id="toastRegion"></div>
-<script defer="" src="trade-log.js?v=2"></script>
+<script defer="" src="trade-log.js?v=3"></script>
+<script id="protradeTradeLogFix">
+(() => {
+  "use strict";
+
+  const ready = (callback) => {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", callback, { once: true });
+    } else {
+      callback();
+    }
+  };
+
+  ready(() => {
+    const form = document.getElementById("tradeForm");
+    if (!form || form.dataset.calculationFix === "1") return;
+    form.dataset.calculationFix = "1";
+
+    const byId = (id) => document.getElementById(id);
+    const all = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+    const makeProfile = (
+      market,
+      pipSize,
+      contractSize,
+      quoteCurrency,
+      unit,
+      defaultSize,
+      help,
+      requiresLiveLot = false
+    ) => ({
+      market,
+      pipSize,
+      contractSize,
+      quoteCurrency,
+      unit,
+      defaultSize,
+      help,
+      requiresLiveLot
+    });
+
+    const instrumentProfiles = {
+      DXY: makeProfile("index", 0.001, 1, "USD", "ticks", 1, "DXY CFD defaults vary by broker. Verify the tick and contract size shown in your broker specification."),
+      XAUUSD: makeProfile("metal", 0.1, 100, "USD", "pips", 0.01, "XAUUSD default follows your example: pip size 0.10 and 1 lot = 100 oz. Both values remain editable."),
+      XAGUSD: makeProfile("metal", 0.01, 5000, "USD", "pips", 0.01, "XAGUSD default uses 5,000 oz per lot. Confirm it with your broker before saving."),
+      USOIL: makeProfile("energy", 0.01, 100, "USD", "pips", 0.01, "USOIL CFD default uses 100 barrels per lot. Broker contract specifications can differ."),
+      BTCUSD: makeProfile("crypto", 1, 1, "USD", "ticks", 0.01, "BTCUSD default treats 1 lot as 1 BTC. Change contract size if your broker uses another specification."),
+      NAS100: makeProfile("index", 1, 1, "USD", "points", 1, "NAS100 point value is broker-dependent. Enter your broker's contract size."),
+      US30: makeProfile("index", 1, 1, "USD", "points", 1, "US30 point value is broker-dependent. Enter your broker's contract size."),
+      "NSE:RELIANCE": makeProfile("indian-cash", 0.05, 1, "INR", "ticks", 1, "Indian cash stock: quantity means shares. Tick size is editable because exchange price steps can change."),
+      "NSE:TCS": makeProfile("indian-cash", 0.05, 1, "INR", "ticks", 1, "Indian cash stock: quantity means shares. Tick size is editable because exchange price steps can change."),
+      "NSE:INFY": makeProfile("indian-cash", 0.05, 1, "INR", "ticks", 1, "Indian cash stock: quantity means shares. Tick size is editable because exchange price steps can change."),
+      "NSE:HDFCBANK": makeProfile("indian-cash", 0.05, 1, "INR", "ticks", 1, "Indian cash stock: quantity means shares. Tick size is editable because exchange price steps can change."),
+      "NSE:ICICIBANK": makeProfile("indian-cash", 0.05, 1, "INR", "ticks", 1, "Indian cash stock: quantity means shares. Tick size is editable because exchange price steps can change."),
+      "NSE:SBIN": makeProfile("indian-cash", 0.05, 1, "INR", "ticks", 1, "Indian cash stock: quantity means shares. Tick size is editable because exchange price steps can change."),
+      "NSE:NIFTY": makeProfile("indian-fo", 0.05, 1, "INR", "ticks", 1, "Enter the latest NSE lot size before saving; exchange lot sizes may be revised.", true),
+      "NSE:BANKNIFTY": makeProfile("indian-fo", 0.05, 1, "INR", "ticks", 1, "Enter the latest NSE lot size before saving; exchange lot sizes may be revised.", true)
+    };
+
+    [
+      "EURGBP", "EURJPY", "EURCHF", "EURUSD", "EURCAD", "NZDJPY",
+      "GBPUSD", "GBPJPY", "GBPCHF", "GBPCAD", "USDJPY", "USDCHF",
+      "USDCAD", "AUDJPY", "AUDUSD", "NZDUSD", "NZDCAD"
+    ].forEach((symbol) => {
+      const quote = symbol.slice(3);
+      instrumentProfiles[symbol] = makeProfile(
+        "forex",
+        quote === "JPY" ? 0.01 : 0.0001,
+        100000,
+        quote,
+        "pips",
+        0.01,
+        quote === "JPY"
+          ? "JPY Forex pair: 1 pip = 0.01. P&L is first calculated in JPY, then converted to the account currency."
+          : "Forex pair: 1 pip = 0.0001. P&L is first calculated in the quote currency."
+      );
+    });
+
+    const context = { currency: "USD", accountSize: 15000 };
+    const profileStorageKey = "protrade.instrument-profiles.v1";
+    const savedProfiles = (() => {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(profileStorageKey) || "{}");
+        return parsed && typeof parsed === "object" ? parsed : {};
+      } catch {
+        return {};
+      }
+    })();
+    const selectedEmotions = new Set(
+      all("#emotionChips .choice-chip.active")
+        .map((button) => button.dataset.emotion)
+        .filter(Boolean)
+    );
+    if (!selectedEmotions.size) selectedEmotions.add("Calm");
+
+    let tags = all("#tagList [data-tag]").map((node) => ({
+      name: String(node.dataset.tag || "").trim(),
+      selected: true
+    })).filter((tag) => tag.name);
+
+    const numberFrom = (id) => {
+      const input = byId(id);
+      if (!input || String(input.value || "").trim() === "") return null;
+      const value = Number(input.value);
+      return Number.isFinite(value) ? value : null;
+    };
+
+    const normalizeSymbol = (value) => String(value || "")
+      .trim()
+      .toUpperCase()
+      .replace(/\s+/g, "");
+
+    const currencyCodes = new Set([
+      "USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "NZD", "INR"
+    ]);
+
+    const inferProfile = (rawSymbol) => {
+      const symbol = normalizeSymbol(rawSymbol);
+      if (instrumentProfiles[symbol]) return { ...instrumentProfiles[symbol] };
+
+      if (symbol.startsWith("NSE:") || symbol.startsWith("BSE:")) {
+        return makeProfile(
+          "indian-cash",
+          0.05,
+          1,
+          "INR",
+          "ticks",
+          1,
+          "Indian cash stock: quantity means shares. Confirm the current tick size for this security."
+        );
+      }
+
+      if (/^[A-Z]{6}$/.test(symbol)) {
+        const base = symbol.slice(0, 3);
+        const quote = symbol.slice(3);
+        if (currencyCodes.has(base) && currencyCodes.has(quote)) {
+          return makeProfile(
+            "forex",
+            quote === "JPY" ? 0.01 : 0.0001,
+            100000,
+            quote,
+            "pips",
+            0.01,
+            quote === "JPY"
+              ? "Detected JPY Forex pair: default pip size 0.01 and contract size 100,000."
+              : "Detected Forex pair: default pip size 0.0001 and contract size 100,000."
+          );
+        }
+      }
+
+      return makeProfile(
+        "custom",
+        1,
+        1,
+        context.currency,
+        "points",
+        1,
+        "Custom instrument: enter the exact pip/tick size, contract size, and quote currency from your broker."
+      );
+    };
+
+    let currentProfile = null;
+    let profileIsApplying = false;
+
+    const marketNames = {
+      forex: "Forex",
+      metal: "Metal CFD",
+      energy: "Energy CFD",
+      index: "Index CFD",
+      crypto: "Crypto CFD",
+      "indian-cash": "Indian Cash",
+      "indian-fo": "Indian F&O",
+      custom: "Custom"
+    };
+
+    const updatePositionSizeField = (profile) => {
+      const label = byId("positionSizeLabel");
+      const input = byId("contracts");
+      if (!label || !input) return;
+
+      if (profile.market === "indian-cash") {
+        label.textContent = "Quantity (Shares)";
+        input.min = "1";
+        input.step = "1";
+      } else if (profile.market === "indian-fo") {
+        label.textContent = "Number of Lots";
+        input.min = "1";
+        input.step = "1";
+      } else {
+        label.textContent = "Lot Size";
+        input.min = "0.01";
+        input.step = "0.01";
+      }
+    };
+
+    const applyInstrumentProfile = (rawSymbol, resetPositionSize = true) => {
+      const symbol = normalizeSymbol(rawSymbol) || "XAUUSD";
+      const automatic = inferProfile(symbol);
+      const saved = savedProfiles[symbol] || {};
+      const profile = { ...automatic, ...saved };
+      profile.symbol = symbol;
+      profile.quoteCurrency = normalizeSymbol(profile.quoteCurrency || automatic.quoteCurrency).slice(0, 3);
+      profile.pipSize = Number(profile.pipSize) > 0 ? Number(profile.pipSize) : automatic.pipSize;
+      profile.contractSize = Number(profile.contractSize) > 0
+        ? Number(profile.contractSize)
+        : automatic.contractSize;
+      profile.defaultSize = Number(profile.defaultSize) > 0
+        ? Number(profile.defaultSize)
+        : automatic.defaultSize;
+      profile.quoteConversion = Number(profile.quoteConversion) > 0
+        ? Number(profile.quoteConversion)
+        : 0;
+      currentProfile = profile;
+      profileIsApplying = true;
+
+      byId("symbol").value = symbol;
+      byId("marketType").value = profile.market;
+      byId("pipSize").value = String(profile.pipSize);
+      byId("contractSize").value = String(profile.contractSize);
+      byId("quoteCurrency").value = profile.quoteCurrency;
+      byId("quoteConversion").value = profile.quoteConversion > 0
+        ? String(profile.quoteConversion)
+        : "0";
+      if (resetPositionSize) byId("contracts").value = String(profile.defaultSize);
+      updatePositionSizeField(profile);
+
+      const badge = byId("profileBadge");
+      if (badge) {
+        badge.textContent = savedProfiles[symbol]
+          ? "Custom Saved"
+          : "Auto • Editable";
+      }
+      const help = byId("profileHelp");
+      if (help) help.textContent = profile.help;
+      profileIsApplying = false;
+      return profile;
+    };
+
+    const readProfileFields = () => {
+      const fallback = currentProfile || inferProfile(byId("symbol")?.value);
+      return {
+        ...fallback,
+        market: byId("marketType")?.value || fallback.market,
+        pipSize: Math.max(numberFrom("pipSize") || 0, 0),
+        contractSize: Math.max(numberFrom("contractSize") || 0, 0),
+        quoteCurrency: normalizeSymbol(byId("quoteCurrency")?.value || fallback.quoteCurrency).slice(0, 3),
+        quoteConversion: Math.max(numberFrom("quoteConversion") || 0, 0)
+      };
+    };
+
+    const saveCurrentProfile = () => {
+      if (profileIsApplying) return;
+      const symbol = normalizeSymbol(byId("symbol")?.value);
+      if (!symbol) return;
+      const profile = readProfileFields();
+      currentProfile = profile;
+      savedProfiles[symbol] = {
+        market: profile.market,
+        pipSize: profile.pipSize,
+        contractSize: profile.contractSize,
+        quoteCurrency: profile.quoteCurrency,
+        quoteConversion: profile.quoteConversion,
+        unit: profile.market === "indian-cash" || profile.market === "indian-fo"
+          ? "ticks"
+          : profile.unit,
+        defaultSize: profile.defaultSize,
+        help: profile.help,
+        requiresLiveLot: profile.requiresLiveLot
+      };
+      try {
+        localStorage.setItem(profileStorageKey, JSON.stringify(savedProfiles));
+      } catch {
+        // The calculator still works when browser storage is unavailable.
+      }
+      const badge = byId("profileBadge");
+      if (badge) badge.textContent = "Custom Saved";
+      updatePositionSizeField(profile);
+    };
+
+    const activeValue = (selector, dataName, fallback) => {
+      const active = document.querySelector(selector + ".active");
+      return active && active.dataset[dataName] ? active.dataset[dataName] : fallback;
+    };
+
+    const signed = (value, digits = 2) => {
+      if (!Number.isFinite(value)) return "0.00";
+      const prefix = value > 0 ? "+" : "";
+      return prefix + value.toFixed(digits);
+    };
+
+    const money = (value, currency = context.currency) => {
+      const safe = Number.isFinite(value) ? value : 0;
+      try {
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+          signDisplay: safe === 0 ? "never" : safe > 0 ? "always" : "auto"
+        }).format(safe);
+      } catch {
+        const prefix = safe > 0 ? "+" : safe < 0 ? "-" : "";
+        return prefix + currency + " " + Math.abs(safe).toFixed(2);
+      }
+    };
+
+    const setTone = (element, value) => {
+      if (!element) return;
+      element.style.color = value < 0
+        ? "var(--red,#f05056)"
+        : value > 0
+          ? "var(--green,#20ad60)"
+          : "var(--muted,#89959e)";
+    };
+
+    const resolveConversion = (profile, symbol, entry, exit) => {
+      const quote = profile.quoteCurrency || context.currency;
+      const manualRate = Number(profile.quoteConversion);
+      if (quote === context.currency) {
+        return { rate: 1, valid: true, source: "same-currency" };
+      }
+      if (Number.isFinite(manualRate) && manualRate > 0) {
+        return { rate: manualRate, valid: true, source: "manual" };
+      }
+
+      const base = symbol.length === 6 ? symbol.slice(0, 3) : "";
+      const referencePrice = exit || entry;
+      if (
+        profile.market === "forex" &&
+        base === context.currency &&
+        Number.isFinite(referencePrice) &&
+        referencePrice > 0
+      ) {
+        return { rate: 1 / referencePrice, valid: true, source: "inverse-trade-price" };
+      }
+
+      return { rate: 1, valid: false, source: "required" };
+    };
+
+    const calculate = () => {
+      const entry = numberFrom("entryPrice");
+      const exit = numberFrom("exitPrice");
+      const stop = numberFrom("stopLoss");
+      const target = numberFrom("takeProfit");
+      const size = Math.max(numberFrom("contracts") || 0, 0);
+      const commission = Math.max(numberFrom("commission") || 0, 0);
+      const override = numberFrom("pnlOverride");
+      const symbol = normalizeSymbol(byId("symbol")?.value || "XAUUSD");
+      const direction = activeValue(".direction-option", "direction", "Long");
+      const status = activeValue(".status-option", "status", "Executed");
+      const profile = readProfileFields();
+      const pipSize = Number(profile.pipSize);
+      const contractSize = Number(profile.contractSize);
+      const profileValid = Number.isFinite(pipSize) && pipSize > 0 &&
+        Number.isFinite(contractSize) && contractSize > 0;
+      const conversion = resolveConversion(profile, symbol, entry, exit);
+      const conversionRate = conversion.valid ? conversion.rate : 1;
+      const hasExit = exit !== null;
+      const hasActual = hasExit || override !== null;
+      const pointMove = entry !== null && exit !== null
+        ? (direction === "Long" ? exit - entry : entry - exit)
+        : null;
+      const pips = pointMove === null || !profileValid
+        ? null
+        : pointMove / pipSize;
+      const pipValueForPosition = profileValid
+        ? pipSize * contractSize * size * conversionRate
+        : 0;
+      const grossPnl = pips === null ? 0 : pips * pipValueForPosition;
+      const pnl = override !== null ? override : grossPnl - commission;
+      const riskPips = entry !== null && stop !== null && profileValid
+        ? Math.abs(entry - stop) / pipSize
+        : 0;
+      const risk = riskPips * pipValueForPosition;
+      const rewardDistance = entry !== null && target !== null
+        ? (direction === "Long" ? target - entry : entry - target)
+        : 0;
+      const rewardPips = rewardDistance > 0 && profileValid
+        ? rewardDistance / pipSize
+        : 0;
+      const reward = rewardPips * pipValueForPosition;
+      const rMultiple = risk > 0
+        ? (hasActual ? pnl / risk : reward > 0 ? reward / risk : null)
+        : null;
+      const displayCurrency = conversion.valid
+        ? context.currency
+        : profile.quoteCurrency || context.currency;
+
+      let result = "Open";
+      if (status === "Executed" && hasActual) {
+        result = pnl > 0 ? "Win" : pnl < 0 ? "Loss" : "Breakeven";
+      }
+
+      return {
+        entry,
+        exit,
+        stop,
+        target,
+        size,
+        commission,
+        override,
+        symbol,
+        direction,
+        status,
+        pointMove,
+        pips,
+        pipSize,
+        contractSize,
+        pipValueForPosition,
+        conversionRate,
+        conversionValid: conversion.valid,
+        conversionSource: conversion.source,
+        quoteCurrency: profile.quoteCurrency,
+        displayCurrency,
+        profileValid,
+        profile,
+        pnl,
+        risk,
+        reward,
+        rMultiple,
+        result,
+        hasActual,
+        unit: profile.market === "indian-cash" || profile.market === "indian-fo"
+          ? "ticks"
+          : profile.unit
+      };
+    };
+
+    const render = () => {
+      const metrics = calculate();
+      const riskAmount = byId("riskAmount");
+      const rewardAmount = byId("rewardAmount");
+      const estimatedPnl = byId("estimatedPnl");
+      const footerPnl = byId("footerPnl");
+      const riskReward = byId("riskReward");
+      const footerRr = byId("footerRr");
+      const rrQuality = byId("rrQuality");
+      const pnlPercent = byId("estimatedPnlPercent");
+      const pnlBreakdown = byId("pnlBreakdown");
+
+      if (riskAmount) riskAmount.textContent = money(metrics.risk, metrics.displayCurrency);
+      if (rewardAmount) rewardAmount.textContent = money(metrics.reward, metrics.displayCurrency);
+      if (estimatedPnl) estimatedPnl.textContent = money(metrics.pnl, metrics.displayCurrency);
+      if (footerPnl) footerPnl.textContent = money(metrics.pnl, metrics.displayCurrency);
+      if (byId("riskPercent")) {
+        byId("riskPercent").textContent = metrics.conversionValid
+          ? ((metrics.risk / context.accountSize) * 100).toFixed(2) + "% of account"
+          : "Conversion required";
+      }
+      if (byId("rewardPercent")) {
+        byId("rewardPercent").textContent = metrics.conversionValid
+          ? ((metrics.reward / context.accountSize) * 100).toFixed(2) + "% of account"
+          : "Conversion required";
+      }
+      if (pnlPercent) {
+        pnlPercent.textContent = metrics.conversionValid
+          ? signed((metrics.pnl / context.accountSize) * 100) + "% of account"
+          : "Shown in " + metrics.displayCurrency + " • conversion required";
+      }
+
+      [estimatedPnl, footerPnl, pnlPercent].forEach((element) => setTone(element, metrics.pnl));
+
+      if (metrics.rMultiple === null || !Number.isFinite(metrics.rMultiple)) {
+        if (riskReward) riskReward.textContent = "—";
+        if (footerRr) footerRr.textContent = "—";
+        if (rrQuality) {
+          rrQuality.textContent = metrics.stop === null ? "Add stop loss to calculate R" : "Waiting for target or exit";
+          rrQuality.style.color = "var(--muted,#89959e)";
+        }
+      } else {
+        const rText = signed(metrics.rMultiple) + "R";
+        if (riskReward) riskReward.textContent = rText;
+        if (footerRr) footerRr.textContent = rText;
+        [riskReward, footerRr].forEach((element) => setTone(element, metrics.rMultiple));
+        if (rrQuality) {
+          if (metrics.hasActual) {
+            rrQuality.textContent = metrics.result === "Win"
+              ? "Closed winner"
+              : metrics.result === "Loss"
+                ? "Closed loss"
+                : "Breakeven";
+          } else {
+            rrQuality.textContent = "Planned R";
+          }
+          setTone(rrQuality, metrics.rMultiple);
+        }
+      }
+
+      if (pnlBreakdown) {
+        pnlBreakdown.className = metrics.result === "Win"
+          ? "result-win"
+          : metrics.result === "Loss"
+            ? "result-loss"
+            : "result-open";
+        if (metrics.pointMove === null) {
+          pnlBreakdown.textContent = "Waiting for entry and exit";
+        } else {
+          const moveText = signed(metrics.pointMove) + " points";
+          const unitText = Number.isFinite(metrics.pips)
+            ? " • " + signed(metrics.pips) + " " + metrics.unit
+            : "";
+          const valueText = metrics.profileValid
+            ? " • " + money(metrics.pipValueForPosition, metrics.displayCurrency) + "/" + metrics.unit.replace(/s$/, "")
+            : "";
+          pnlBreakdown.textContent = metrics.direction + " • " + moveText + unitText + valueText + " • " + metrics.result.toUpperCase();
+        }
+      }
+
+      const formulaHelp = byId("instrumentFormulaHelp");
+      if (formulaHelp) {
+        formulaHelp.textContent = metrics.pointMove === null
+          ? "P&L = signed " + metrics.unit + " × value per " + metrics.unit.replace(/s$/, "") + " for this position − commission."
+          : signed(metrics.pips) + " " + metrics.unit + " × " +
+            money(metrics.pipValueForPosition, metrics.displayCurrency) + "/" +
+            metrics.unit.replace(/s$/, "") + " − commission = " +
+            money(metrics.pnl, metrics.displayCurrency) + ".";
+      }
+
+      const conversionWarning = byId("conversionWarning");
+      if (conversionWarning) {
+        conversionWarning.classList.toggle("is-valid", metrics.conversionValid && metrics.profileValid);
+        if (!metrics.profileValid) {
+          conversionWarning.textContent = "Enter a pip/tick size and contract size greater than zero.";
+        } else if (!metrics.conversionValid) {
+          conversionWarning.textContent = "Enter " + metrics.quoteCurrency + " → " +
+            context.currency + " rate before saving. Preview is currently shown in " +
+            metrics.quoteCurrency + ".";
+        } else if (metrics.conversionSource === "inverse-trade-price") {
+          conversionWarning.textContent = "Auto conversion: " + metrics.quoteCurrency + " → " +
+            context.currency + " uses inverse trade price (" +
+            metrics.conversionRate.toFixed(8) + ").";
+        } else if (metrics.conversionSource === "manual") {
+          conversionWarning.textContent = "Manual conversion: " + metrics.quoteCurrency + " → " +
+            context.currency + " = " + metrics.conversionRate.toFixed(8) + ".";
+        } else {
+          conversionWarning.textContent = metrics.quoteCurrency + " quote matches " +
+            context.currency + " account — conversion rate 1.";
+        }
+      }
+
+      return metrics;
+    };
+
+    const syncEmotionButtons = () => {
+      all("#emotionChips .choice-chip").forEach((button) => {
+        const selected = selectedEmotions.has(button.dataset.emotion);
+        button.classList.toggle("active", selected);
+        button.setAttribute("aria-pressed", selected ? "true" : "false");
+      });
+    };
+
+    const emotionGroup = byId("emotionChips");
+    if (emotionGroup) {
+      emotionGroup.addEventListener("click", (event) => {
+        const button = event.target.closest(".choice-chip");
+        if (!button || !emotionGroup.contains(button)) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        const emotion = button.dataset.emotion;
+        if (selectedEmotions.has(emotion)) selectedEmotions.delete(emotion);
+        else selectedEmotions.add(emotion);
+        syncEmotionButtons();
+      }, true);
+      syncEmotionButtons();
+    }
+
+    const tagList = byId("tagList");
+    const renderTags = () => {
+      if (!tagList) return;
+      tagList.replaceChildren();
+      tags.forEach((tag, index) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "selectable-tag" + (tag.selected ? " is-selected" : "");
+
+        const label = document.createElement("label");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = tag.selected;
+        checkbox.dataset.tagIndex = String(index);
+        checkbox.setAttribute("aria-label", "Select " + tag.name + " tag");
+
+        const check = document.createElement("span");
+        check.className = "tag-check";
+        check.textContent = "✓";
+        const text = document.createElement("span");
+        text.textContent = tag.name;
+        label.append(checkbox, check, text);
+
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "tag-remove";
+        remove.dataset.removeTagIndex = String(index);
+        remove.setAttribute("aria-label", "Remove " + tag.name + " tag");
+        remove.textContent = "×";
+        wrapper.append(label, remove);
+        tagList.append(wrapper);
+      });
+    };
+
+    if (tagList) {
+      tagList.addEventListener("change", (event) => {
+        const checkbox = event.target.closest("input[data-tag-index]");
+        if (!checkbox) return;
+        const index = Number(checkbox.dataset.tagIndex);
+        if (!tags[index]) return;
+        tags[index].selected = checkbox.checked;
+        renderTags();
+      });
+      tagList.addEventListener("click", (event) => {
+        const remove = event.target.closest("[data-remove-tag-index]");
+        if (!remove) return;
+        const index = Number(remove.dataset.removeTagIndex);
+        tags.splice(index, 1);
+        renderTags();
+      });
+    }
+
+    const oldShowTagInput = byId("showTagInput");
+    const oldTagInput = byId("tagInput");
+    const showTagInput = oldShowTagInput ? oldShowTagInput.cloneNode(true) : null;
+    const tagInput = oldTagInput ? oldTagInput.cloneNode(true) : null;
+    if (oldShowTagInput && showTagInput) oldShowTagInput.replaceWith(showTagInput);
+    if (oldTagInput && tagInput) oldTagInput.replaceWith(tagInput);
+
+    const addTag = () => {
+      if (!tagInput) return;
+      const name = tagInput.value.trim().replace(/\s+/g, " ");
+      if (!name) return;
+      if (tags.some((tag) => tag.name.toLowerCase() === name.toLowerCase())) {
+        showToast("Tag already exists", name + " is already available.");
+        return;
+      }
+      if (tags.length >= 12) {
+        showToast("Tag limit reached", "Maximum 12 tags are allowed.", true);
+        return;
+      }
+      tags.push({ name, selected: false });
+      tagInput.value = "";
+      renderTags();
+      showToast("Tag added", "Tick " + name + " if it applies to this trade.");
+    };
+
+    if (showTagInput && tagInput) {
+      showTagInput.addEventListener("click", () => {
+        showTagInput.hidden = true;
+        tagInput.hidden = false;
+        tagInput.focus();
+      });
+      tagInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          addTag();
+        } else if (event.key === "Escape") {
+          tagInput.value = "";
+          tagInput.hidden = true;
+          showTagInput.hidden = false;
+        }
+      });
+      tagInput.addEventListener("blur", () => {
+        if (tagInput.value.trim()) addTag();
+        tagInput.hidden = true;
+        showTagInput.hidden = false;
+      });
+    }
+    renderTags();
+
+    const showToast = (title, message, isError = false) => {
+      const region = byId("toastRegion");
+      if (!region) return;
+      const toast = document.createElement("div");
+      toast.className = "toast" + (isError ? " error" : "");
+      const heading = document.createElement("strong");
+      heading.textContent = title;
+      const copy = document.createElement("span");
+      copy.textContent = message;
+      toast.append(heading, copy);
+      region.append(toast);
+      window.setTimeout(() => toast.remove(), 4200);
+    };
+
+    const checkedRules = () => all("#ruleList .check-row input").map((input) => ({
+      name: input.value,
+      followed: input.checked
+    }));
+
+    const buildPayload = () => {
+      const metrics = calculate();
+      const rules = checkedRules();
+      const followedRules = rules.filter((rule) => rule.followed).map((rule) => rule.name);
+      const violatedRules = rules.filter((rule) => !rule.followed).map((rule) => rule.name);
+      const emotions = Array.from(selectedEmotions);
+      const negativeEmotionNames = new Set(["FOMO", "Fearful", "Revenge", "Overconfident"]);
+      const negativeEmotions = emotions.filter((emotion) => negativeEmotionNames.has(emotion));
+      const selectedTags = tags.filter((tag) => tag.selected).map((tag) => tag.name);
+      const screenshotUrl = String(byId("screenshotUrl")?.value || "").trim();
+      const localScreenshots = all(".upload-preview").some((preview) => !preview.hidden);
+
+      const noteSections = [
+        String(byId("notes")?.value || "").trim(),
+        "Trade Status: " + metrics.status,
+        "Instrument Profile: " + (marketNames[metrics.profile.market] || metrics.profile.market),
+        "Pip / Tick Size: " + metrics.pipSize,
+        "Contract Size / Lot: " + metrics.contractSize,
+        "Quote Currency: " + metrics.quoteCurrency,
+        "Quote → Account Rate: " + metrics.conversionRate,
+        Number.isFinite(metrics.pips)
+          ? "Directional Move: " + signed(metrics.pips) + " " + metrics.unit
+          : "",
+        "Value / " + metrics.unit.replace(/s$/, "") + " for Position: " +
+          money(metrics.pipValueForPosition, metrics.displayCurrency),
+        "Emotional States: " + (emotions.length ? emotions.join(", ") : "Not selected"),
+        "Discipline Score: " + Number(byId("disciplineScore")?.value || 0) + "/10",
+        "Confidence Score: " + Number(byId("confidenceScore")?.value || 0) + "%",
+        String(byId("emotionNote")?.value || "").trim()
+          ? "Emotion Note: " + String(byId("emotionNote").value).trim()
+          : "",
+        String(byId("analysis")?.value || "").trim()
+          ? "Analysis: " + String(byId("analysis").value).trim()
+          : "",
+        selectedTags.length ? "Trade Tags: " + selectedTags.join(", ") : "",
+        violatedRules.length ? "Rules / Mistakes: " + violatedRules.join(", ") : "",
+        localScreenshots
+          ? "Local screenshot previews were selected but were not uploaded because the current backend stores URL only."
+          : ""
+      ].filter(Boolean);
+
+      const mistakeTags = Array.from(new Set(negativeEmotions.concat(violatedRules)));
+      return {
+        symbol: metrics.symbol,
+        tradeDate: byId("tradeDate").value,
+        entryTime: byId("entryTime").value || "",
+        exitTime: byId("exitTime").value || "",
+        session: byId("session").value,
+        model: byId("setup").value,
+        protocol: metrics.status,
+        direction: metrics.direction,
+        entryPrice: metrics.entry,
+        exitPrice: metrics.exit,
+        stopLoss: metrics.stop,
+        takeProfit: metrics.target,
+        commission: metrics.commission,
+        quantity: metrics.size,
+        profitLoss: Number(metrics.pnl.toFixed(4)),
+        rr: Number.isFinite(metrics.rMultiple) ? Number(metrics.rMultiple.toFixed(4)) : 0,
+        result: metrics.result,
+        rating: Math.max(1, Math.min(5, Math.round(Number(byId("disciplineScore").value) / 2))),
+        checklist: followedRules,
+        mistakeTags,
+        notes: noteSections.join("\n\n").slice(0, 5000),
+        screenshotUrl
+      };
+    };
+
+    const validate = () => {
+      let valid = true;
+      [byId("tradeDate"), byId("symbol"), byId("entryPrice"), byId("contracts")].forEach((input) => {
+        const empty = !input || String(input.value || "").trim() === "";
+        if (input) input.classList.toggle("invalid", empty);
+        if (empty) valid = false;
+      });
+
+      const metrics = calculate();
+      if (metrics.size <= 0) {
+        byId("contracts")?.classList.add("invalid");
+        valid = false;
+      }
+      if (!metrics.profileValid) {
+        byId("pipSize")?.classList.toggle("invalid", !(metrics.pipSize > 0));
+        byId("contractSize")?.classList.toggle("invalid", !(metrics.contractSize > 0));
+        valid = false;
+        showToast(
+          "Check instrument profile",
+          "Pip/tick size and contract size must both be greater than zero.",
+          true
+        );
+      }
+      if (!metrics.conversionValid) {
+        byId("quoteConversion")?.classList.add("invalid");
+        valid = false;
+        showToast(
+          "Conversion rate required",
+          "Enter " + metrics.quoteCurrency + " → " + context.currency +
+            " rate so P&L is saved in the account currency.",
+          true
+        );
+      } else {
+        byId("quoteConversion")?.classList.remove("invalid");
+      }
+      if (
+        metrics.profile.market === "indian-fo" &&
+        metrics.profile.requiresLiveLot &&
+        metrics.contractSize === 1
+      ) {
+        byId("contractSize")?.classList.add("invalid");
+        valid = false;
+        showToast(
+          "Enter current NSE lot size",
+          "NSE F&O lot sizes can change. Use the current exchange/broker contract size.",
+          true
+        );
+      }
+      if (metrics.entry !== null && metrics.stop !== null) {
+        const invalidStop = metrics.direction === "Long"
+          ? metrics.stop >= metrics.entry
+          : metrics.stop <= metrics.entry;
+        byId("stopLoss")?.classList.toggle("invalid", invalidStop);
+        if (invalidStop) {
+          valid = false;
+          showToast("Check stop loss", metrics.direction + " trade stop is on the wrong side of entry.", true);
+        }
+      }
+      if (metrics.entry !== null && metrics.target !== null) {
+        const invalidTarget = metrics.direction === "Long"
+          ? metrics.target <= metrics.entry
+          : metrics.target >= metrics.entry;
+        byId("takeProfit")?.classList.toggle("invalid", invalidTarget);
+        if (invalidTarget) {
+          valid = false;
+          showToast("Check target", metrics.direction + " trade target is on the wrong side of entry.", true);
+        }
+      }
+      const screenshotUrl = String(byId("screenshotUrl")?.value || "").trim();
+      if (screenshotUrl && !/^https?:\/\//i.test(screenshotUrl)) {
+        byId("screenshotUrl")?.classList.add("invalid");
+        valid = false;
+        showToast("Check screenshot URL", "Use a complete http:// or https:// URL.", true);
+      }
+      if (!valid) document.querySelector(".invalid")?.focus();
+      return valid;
+    };
+
+    const setSubmitting = (submitting) => {
+      const button = byId("submitButton");
+      const text = button?.querySelector(".button-text");
+      const loader = button?.querySelector(".button-loader");
+      if (button) button.disabled = submitting;
+      if (text) text.hidden = submitting;
+      if (loader) loader.hidden = !submitting;
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (!validate()) return;
+
+      const payload = buildPayload();
+      setSubmitting(true);
+      try {
+        await window.ProTradeAuth?.ready;
+        if (!window.ProTradeAuth?.apiFetch || !window.ProTradeAuth?.API_BASE) {
+          throw new Error("ProTrade authentication is not available.");
+        }
+        const response = await window.ProTradeAuth.apiFetch(
+          window.ProTradeAuth.API_BASE + "/trades",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          }
+        );
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok || body.success === false) {
+          throw new Error(body.message || "Trade could not be saved.");
+        }
+
+        showToast(
+          "Trade logged",
+          payload.result + " • " + money(payload.profitLoss) + " • " +
+            (payload.rr === 0 ? "0.00R" : signed(payload.rr) + "R")
+        );
+        const connection = byId("backendConnection");
+        if (connection) {
+          connection.className = "backend-connection is-online";
+          connection.textContent = "Saved to MongoDB";
+        }
+
+        const query = new URLSearchParams(window.location.search);
+        const embedded = query.get("embed") === "1";
+        const requestedReturn = String(query.get("return") || "dashboard.html");
+        const returnPage = /^[a-z0-9-]+\.html$/i.test(requestedReturn)
+          ? requestedReturn
+          : "dashboard.html";
+        window.setTimeout(() => {
+          if (embedded && window.parent !== window) {
+            window.parent.postMessage(
+              { type: "protrade:trade-created", trade: body.data || null },
+              window.location.origin
+            );
+          } else {
+            window.location.assign(returnPage);
+          }
+        }, 700);
+      } catch (error) {
+        const connection = byId("backendConnection");
+        if (connection) {
+          connection.className = "backend-connection is-error";
+          connection.textContent = "Save failed";
+        }
+        showToast("Could not save trade", error.message || "Please try again.", true);
+      } finally {
+        setSubmitting(false);
+      }
+    }, true);
+
+    const scheduleRender = () => queueMicrotask(render);
+    form.addEventListener("input", scheduleRender, true);
+    form.addEventListener("change", scheduleRender, true);
+    form.addEventListener("click", scheduleRender, true);
+
+    const symbolInput = byId("symbol");
+    const changeInstrument = () => {
+      applyInstrumentProfile(symbolInput?.value, true);
+      render();
+    };
+    symbolInput?.addEventListener("change", changeInstrument);
+    symbolInput?.addEventListener("blur", () => {
+      const normalized = normalizeSymbol(symbolInput.value);
+      if (normalized && normalized !== symbolInput.value) {
+        symbolInput.value = normalized;
+      }
+      if (currentProfile === null || normalized !== normalizeSymbol(currentProfile.symbol)) {
+        applyInstrumentProfile(normalized, true);
+      }
+      render();
+    });
+
+    byId("marketType")?.addEventListener("change", () => {
+      const market = byId("marketType").value;
+      const symbol = normalizeSymbol(symbolInput?.value);
+      const profile = readProfileFields();
+      profile.market = market;
+
+      if (market === "indian-cash") {
+        profile.quoteCurrency = "INR";
+        profile.pipSize = 0.05;
+        profile.contractSize = 1;
+        profile.unit = "ticks";
+        profile.defaultSize = 1;
+        profile.help = "Indian cash stock: P&L = directional price move × number of shares − charges.";
+      } else if (market === "indian-fo") {
+        profile.quoteCurrency = "INR";
+        profile.pipSize = 0.05;
+        profile.unit = "ticks";
+        profile.defaultSize = 1;
+        profile.requiresLiveLot = true;
+        profile.help = "Indian F&O: enter the latest NSE lot size; exchange contract sizes can change.";
+      } else if (market === "forex" && /^[A-Z]{6}$/.test(symbol)) {
+        profile.quoteCurrency = symbol.slice(3);
+        profile.pipSize = profile.quoteCurrency === "JPY" ? 0.01 : 0.0001;
+        profile.contractSize = 100000;
+        profile.unit = "pips";
+        profile.defaultSize = 0.01;
+        profile.requiresLiveLot = false;
+        profile.help = profile.quoteCurrency === "JPY"
+          ? "JPY Forex pair: default pip size 0.01."
+          : "Forex pair: default pip size 0.0001.";
+      }
+
+      currentProfile = profile;
+      profileIsApplying = true;
+      byId("pipSize").value = String(profile.pipSize);
+      byId("contractSize").value = String(profile.contractSize);
+      byId("quoteCurrency").value = profile.quoteCurrency;
+      byId("profileHelp").textContent = profile.help;
+      profileIsApplying = false;
+      updatePositionSizeField(profile);
+      saveCurrentProfile();
+      render();
+    });
+
+    ["pipSize", "contractSize", "quoteCurrency", "quoteConversion"].forEach((id) => {
+      byId(id)?.addEventListener("change", () => {
+        if (id === "quoteCurrency") {
+          byId(id).value = normalizeSymbol(byId(id).value).slice(0, 3);
+        }
+        currentProfile = readProfileFields();
+        saveCurrentProfile();
+        render();
+      });
+    });
+
+    const loadAccountContext = async () => {
+      try {
+        await window.ProTradeAuth?.ready;
+        if (!window.ProTradeAuth?.apiFetch || !window.ProTradeAuth?.API_BASE) return;
+        const [settingsResponse, tradesResponse] = await Promise.all([
+          window.ProTradeAuth.apiFetch(window.ProTradeAuth.API_BASE + "/settings"),
+          window.ProTradeAuth.apiFetch(window.ProTradeAuth.API_BASE + "/trades")
+        ]);
+        const settingsBody = await settingsResponse.json().catch(() => ({}));
+        const tradesBody = await tradesResponse.json().catch(() => ({}));
+        const settings = settingsBody.data || {};
+        const trades = Array.isArray(tradesBody.data) ? tradesBody.data : [];
+        const startingBalance = Number(settings.startingBalance);
+        const recordedPnl = trades.reduce((sum, trade) => sum + (Number(trade.profitLoss) || 0), 0);
+        context.currency = ["USD", "INR", "EUR", "GBP", "JPY"].includes(settings.currency)
+          ? settings.currency
+          : "USD";
+        context.accountSize = Math.max(
+          (Number.isFinite(startingBalance) ? startingBalance : 15000) + recordedPnl,
+          1
+        );
+        render();
+      } catch {
+        render();
+      }
+    };
+
+    applyInstrumentProfile(byId("symbol")?.value || "XAUUSD", true);
+    render();
+    loadAccountContext();
+  });
+})();
+</script>
 <script src="app-loader.js"></script><script src="protrade-shell.js"></script></body>
 </html>
