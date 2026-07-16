@@ -212,8 +212,8 @@
     .theme-card { min-height: 38px; margin-top: 6px; padding: 7px 9px; font-size: 10px; }
     .theme-switch { position: relative; width: 37px; height: 21px; padding: 0; border: 1px solid rgba(132, 157, 181, .22); border-radius: 999px; background: #14263a; cursor: pointer; }
     .theme-switch span { position: absolute; top: 3px; left: 3px; width: 13px; height: 13px; border-radius: 50%; background: var(--green); transition: transform .22s ease; }
-     html[data-theme="light"] .theme-switch span { transform: translateX(0) !important; }
-     html[data-theme="dark"] .theme-switch span { transform: translateX(20px) !important; }
+    html[data-theme="light"] .theme-switch span { transform: translateX(0) !important; }
+    html[data-theme="dark"] .theme-switch span { transform: translateX(20px) !important; }
 
     .popover {
       position: absolute;
@@ -566,6 +566,7 @@
     }
   </style>
   <link href="styles.css" rel="stylesheet">
+  <link href="app-loader.css" rel="stylesheet">
   <link href="protrade-shell.css" rel="stylesheet">
   <style id="risk-dashboard-theme-sync">
     :root,
@@ -586,7 +587,7 @@
     .toolbar-btn.primary { color: #fff; border-color: rgba(40,200,154,.25); background: linear-gradient(180deg,#43d7b2,var(--primary-deep)); }
   </style>
 </head>
-<body>
+<body class="protrade-page">
   <div class="app-loading" id="appLoading" aria-label="Loading ProTrade" aria-live="polite"><div class="loader-mark"></div></div>
 
   <div class="app-shell">
@@ -609,20 +610,20 @@
       <div class="sidebar-bottom">
         <div class="profile-wrap">
           <button class="profile-card" id="profileBtn" type="button">
-            <span class="avatar auth-user-initials">AR</span>
-            <span class="profile-copy"><strong class="auth-user-name">AKA RED_MOON</strong><small>Independent Trader</small></span><span>⌄</span>
+            <span class="avatar auth-user-initials">T</span>
+            <span class="profile-copy"><strong class="auth-user-name">Trader</strong><small id="profileRole">Independent Trader</small></span><span>⌄</span>
           </button>
           <div class="popover profile-popover" id="profilePopover" hidden>
-            <button data-route="profile.html" type="button">My Profile</button>
-            <button data-route="settings.html" type="button">Account Settings</button>
-            <button id="signOutBtn" type="button">Sign Out</button>
+            <button data-profile-action="profile" data-route="profile.html" type="button">My Profile</button>
+            <button data-profile-action="account" data-route="settings.html" type="button">Account Settings</button>
+            <button data-profile-action="logout" id="signOutBtn" type="button">Sign Out</button>
           </div>
         </div>
         <div class="account-card">
           <div class="account-head"><span>Account Balance</span><button class="ghost-icon" id="balanceVisibilityBtn" type="button" aria-label="Hide or show balance">◉</button></div>
           <strong id="sidebarBalance">—</strong>
           <div class="equity-block"><span>Equity</span><b id="sidebarEquity">—</b></div>
-          <div class="broker-block"><span>Data Source</span><strong id="dataSourceLabel">Connecting…</strong><i id="dataSourceDot"></i></div>
+          <div class="broker-block"><span>Data Source</span><strong id="dataSourceLabel">MongoDB Journal</strong><i id="dataSourceDot"></i></div>
         </div>
         <div class="theme-card"><span id="themeLabel">Dark Mode</span><button class="theme-switch" id="themeSwitch" type="button" aria-label="Switch light and dark mode"><span></span></button></div>
       </div>
@@ -631,7 +632,7 @@
 
     <main class="main">
       <header class="top-header topbar">
-        <div class="welcome-area welcome welcome-block"><button class="mobile-menu" id="mobileMenuBtn" type="button" aria-label="Open menu">☰</button><div><h2>Welcome back, <span class="auth-user-name">AKA RED_MOON</span><span> ♛</span></h2><p>Discipline today, freedom tomorrow.</p></div></div>
+        <div class="welcome-area welcome welcome-block"><button class="mobile-menu" id="mobileMenuBtn" type="button" aria-label="Open menu">☰</button><div><h2>Welcome back, <span class="auth-user-name" id="welcomeName">Trader</span><span> ♛</span></h2><p>Discipline today, freedom tomorrow.</p></div></div>
         <div class="header-actions top-actions topbar-actions">
           <button class="header-control" id="dateRangeBtn" type="button"><span id="dateRangeLabel">Last 30 Days</span><span>▦</span></button>
           <div class="dropdown-wrap">
@@ -639,7 +640,7 @@
             <div class="popover dropdown-popover" id="accountPopover" hidden><button type="button">All Accounts</button></div>
           </div>
           <button class="notification-btn" id="notificationBtn" type="button" aria-label="Notifications">♧<span id="notificationCount">0</span></button>
-          <button class="new-trade-btn" id="newTradeBtn" type="button">＋ New Trade</button>
+          <button class="new-trade-btn" data-new-trade id="newTradeBtn" type="button">＋ New Trade</button>
         </div>
       </header>
 
@@ -841,13 +842,36 @@
         riskPerTradePct: 1,
         dailyRiskLimitPct: 2,
         maxOpenRiskPct: 3,
-        maxDrawdownPct: 10
+        maxDrawdownPct: 10,
+        theme: null
       },
+      acceptRemoteTheme: false,
       metrics: null
     };
 
     function normalizeUrl(value) {
       return String(value || "").trim().replace(/\/+$/, "");
+    }
+
+    function normalizedTheme(value) {
+      var theme = String(value || "").trim().toLowerCase();
+      if (theme === "system") {
+        return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      return theme.indexOf("light") >= 0 ? "light" : "dark";
+    }
+
+    function applySharedTheme(value) {
+      var theme = normalizedTheme(value);
+      document.documentElement.dataset.theme = theme;
+      state.settings.theme = theme;
+      localStorage.setItem("protrade-theme", theme);
+      localStorage.setItem("protrade_theme", theme);
+      var label = $("#themeLabel");
+      if (label) label.textContent = theme === "dark" ? "Dark Mode" : "Light Mode";
+      var themeMeta = $("meta[name='theme-color']");
+      if (themeMeta) themeMeta.setAttribute("content", theme === "dark" ? "#06111f" : "#f5f9fc");
+      return theme;
     }
 
     function escapeHtml(value) {
@@ -1000,7 +1024,8 @@
         riskPerTradePct: firstValue(candidate, ["riskPerTradePct", "riskPerTrade", "maxRiskPerTrade"], undefined),
         dailyRiskLimitPct: firstValue(candidate, ["dailyRiskLimitPct", "dailyRiskLimit", "maxDailyRisk", "maxDailyLoss"], undefined),
         maxOpenRiskPct: firstValue(candidate, ["maxOpenRiskPct", "maxOpenRisk", "openRiskLimit"], undefined),
-        maxDrawdownPct: firstValue(candidate, ["maxDrawdownPct", "maxDrawdown", "drawdownLimit"], undefined)
+        maxDrawdownPct: firstValue(candidate, ["maxDrawdownPct", "maxDrawdown", "drawdownLimit"], undefined),
+        theme: firstValue(candidate, ["theme", "colorTheme", "appearanceTheme"], firstValue(candidate.appearance || candidate.preferences, ["theme"], undefined))
       };
     }
 
@@ -1099,6 +1124,7 @@
       Object.keys(incoming).forEach(function (key) {
         if (incoming[key] === undefined || incoming[key] === null || incoming[key] === "") return;
         if (key === "currency") state.settings[key] = String(incoming[key]).toUpperCase();
+        else if (key === "theme") state.settings[key] = normalizedTheme(incoming[key]);
         else state.settings[key] = number(incoming[key], state.settings[key]);
       });
     }
@@ -1119,7 +1145,13 @@
       var tradeRequest = requestFirst(["/api/trades", "/api/trade", "/trades"], { method: "GET" });
       var settingsRequest = requestFirst(["/api/settings", "/api/settings/risk", "/api/risk/settings"], { method: "GET" });
       var results = await Promise.allSettled([tradeRequest, settingsRequest]);
-      if (results[1].status === "fulfilled") mergeRemoteSettings(results[1].value);
+      if (results[1].status === "fulfilled") {
+        mergeRemoteSettings(results[1].value);
+        if (state.acceptRemoteTheme && state.settings.theme) {
+          applySharedTheme(state.settings.theme);
+          state.acceptRemoteTheme = false;
+        }
+      }
       if (results[0].status === "fulfilled") {
         state.allTrades = extractTrades(results[0].value);
         state.backendOnline = true;
@@ -1565,7 +1597,8 @@
         riskPerTradePct: clamp(number($("#settingRiskPerTrade").value, 1), .01, 100),
         dailyRiskLimitPct: clamp(number($("#settingDailyRisk").value, 2), .01, 100),
         maxOpenRiskPct: clamp(number($("#settingOpenRisk").value, 3), .01, 100),
-        maxDrawdownPct: clamp(number($("#settingDrawdown").value, 10), .01, 100)
+        maxDrawdownPct: clamp(number($("#settingDrawdown").value, 10), .01, 100),
+        theme: normalizedTheme(document.documentElement.dataset.theme)
       };
       state.apiBase = normalizeUrl($("#settingApiBase").value);
       localStorage.setItem(LOCAL_SETTINGS_KEY, JSON.stringify(state.settings));
@@ -1588,13 +1621,12 @@
     function bindEvents() {
       $("#themeSwitch").addEventListener("click", function () {
         var next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-        document.documentElement.dataset.theme = next;
-        localStorage.setItem("protrade-theme", next);
-        localStorage.setItem("protrade_theme", next);
-        $("#themeLabel").textContent = next === "dark" ? "Dark Mode" : "Light Mode";
+        applySharedTheme(next);
+        state.acceptRemoteTheme = false;
+        localStorage.setItem(LOCAL_SETTINGS_KEY, JSON.stringify(state.settings));
         renderAll();
+        requestFirst(["/api/settings"], { method: "PUT", body: { theme: next } }).catch(function () { /* Local shared theme remains active. */ });
       });
-      $("#sidebarCollapseBtn").addEventListener("click", function () { document.body.classList.toggle("sidebar-collapsed"); });
       $("#mobileMenuBtn").addEventListener("click", function () { document.body.classList.add("sidebar-open"); });
       $("#sidebarOverlay").addEventListener("click", function () { document.body.classList.remove("sidebar-open"); });
       $("#profileBtn").addEventListener("click", function () { $("#profilePopover").hidden = !$("#profilePopover").hidden; });
@@ -1619,7 +1651,7 @@
       $$("[data-info]").forEach(function (button) {
         button.addEventListener("click", function () { var info = infoContent(button.dataset.info); $("#infoTitle").textContent = info[0]; $("#infoSubtitle").textContent = info[1]; $("#infoBody").innerHTML = info[2]; showModal("infoModal"); });
       });
-      $$("[data-route]").forEach(function (button) { button.addEventListener("click", function () { if (button.dataset.route) window.location.href = button.dataset.route; }); });
+      $$("[data-route]:not(.nav-item)").forEach(function (button) { button.addEventListener("click", function () { if (button.dataset.route) window.location.href = button.dataset.route; }); });
       $("#signOutBtn").addEventListener("click", function () { showToast("Sign out", "Use the main ProTrade authentication page to end the current session."); });
       document.addEventListener("click", function (event) {
         if (!event.target.closest(".profile-wrap")) $("#profilePopover").hidden = true;
@@ -1628,14 +1660,22 @@
       document.addEventListener("keydown", function (event) { if (event.key === "Escape") $$(".modal-backdrop:not([hidden])").forEach(function (modal) { closeModal(modal.id); }); });
       var resizeTimer;
       window.addEventListener("resize", function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(function () { if (state.metrics) { drawDrawdown($("#drawdownCanvas"), state.metrics.drawdownSeries); drawScatter($("#riskScatterCanvas"), state.filteredTrades); } }, 120); });
+      window.addEventListener("storage", function (event) {
+        if ((event.key === "protrade-theme" || event.key === "protrade_theme") && event.newValue) {
+          applySharedTheme(event.newValue);
+          state.acceptRemoteTheme = false;
+          renderAll();
+        }
+      });
       setInterval(updateResetTimer, 60000);
     }
 
     function init() {
       loadSavedSettings();
-      var theme = localStorage.getItem("protrade-theme") || localStorage.getItem("protrade_theme") || "dark";
-      document.documentElement.dataset.theme = theme;
-      $("#themeLabel").textContent = theme === "dark" ? "Dark Mode" : "Light Mode";
+      var sharedTheme = localStorage.getItem("protrade-theme") || localStorage.getItem("protrade_theme");
+      var rememberedTheme = sharedTheme || state.settings.theme;
+      state.acceptRemoteTheme = !rememberedTheme;
+      applySharedTheme(rememberedTheme || document.documentElement.dataset.theme || "dark");
       $("#tradeDate").value = todayISO();
       bindEvents();
       loadData(false).catch(function (error) {
@@ -1648,5 +1688,6 @@
     init();
   }());
   </script>
+  <script src="protrade-shell.js"></script>
 </body>
 </html>
