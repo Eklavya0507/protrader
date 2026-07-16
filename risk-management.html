@@ -564,6 +564,26 @@
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
     }
   </style>
+  <link href="styles.css" rel="stylesheet">
+  <link href="protrade-shell.css" rel="stylesheet">
+  <style id="risk-dashboard-theme-sync">
+    :root,
+    html[data-theme="light"],
+    html[data-theme="dark"] {
+      --page: var(--bg);
+      --sidebar-2: var(--bg-alt);
+      --panel-2: var(--panel-soft);
+      --panel-hover: var(--surface-2);
+      --line-soft: var(--line);
+      --green-2: var(--primary-deep);
+    }
+    .risk-view { flex: 1; }
+    .bottom-summary { position: static; bottom: auto; }
+    .risk-page-heading,
+    .risk-view .panel { border-color: var(--line); background: var(--panel); box-shadow: var(--shadow-soft); }
+    .risk-title-icon { color: var(--primary); border-color: rgba(40,200,154,.22); background: var(--primary-soft); }
+    .toolbar-btn.primary { color: #fff; border-color: rgba(40,200,154,.25); background: linear-gradient(180deg,#43d7b2,var(--primary-deep)); }
+  </style>
 </head>
 <body>
   <div class="app-loading" id="appLoading" aria-label="Loading ProTrade" aria-live="polite"><div class="loader-mark"></div></div>
@@ -576,17 +596,17 @@
         <button class="sidebar-collapse" id="sidebarCollapseBtn" type="button" aria-label="Collapse sidebar">‹</button>
       </div>
       <nav class="sidebar-nav" id="sidebarNav" aria-label="Primary navigation">
-        <button class="nav-item" data-route="dashboard.html" type="button"><span class="nav-icon">▣</span><span>Dashboard</span></button>
-        <button class="nav-item" data-route="trades.html" type="button"><span class="nav-icon">↻</span><span>Trades</span></button>
-        <button class="nav-item" data-route="calendar.html" type="button"><span class="nav-icon">▦</span><span>Calendar</span></button>
-        <button class="nav-item" data-route="analytics.html" type="button"><span class="nav-icon">⌁</span><span>Analytics</span><span class="pro-badge">PRO</span></button>
-        <button class="nav-item" data-route="performance.html" type="button"><span class="nav-icon">↗</span><span>Performance</span></button>
-        <button class="nav-item active" data-route="risk-management.html" type="button"><span class="nav-icon">◇</span><span>Risk Management</span><span class="nav-tail">›</span></button>
-        <button class="nav-item" data-route="psychology.html" type="button"><span class="nav-icon">♡</span><span>Psychology</span></button>
-        <button class="nav-item" data-route="journal.html" type="button"><span class="nav-icon">▤</span><span>Journal</span></button>
-        <button class="nav-item" data-route="reports.html" type="button"><span class="nav-icon">▧</span><span>Reports</span></button>
-        <button class="nav-item" data-route="import-trades.html" type="button"><span class="nav-icon">⇩</span><span>Import Trades</span></button>
-        <button class="nav-item" data-route="settings.html" type="button"><span class="nav-icon">⚙</span><span>Settings</span></button>
+        <button class="nav-item" data-page="Dashboard" data-route="dashboard.html" type="button"><span class="nav-icon">▣</span><span>Dashboard</span></button>
+        <button class="nav-item" data-page="Trades" data-route="trades.html" type="button"><span class="nav-icon">↻</span><span>Trades</span></button>
+        <button class="nav-item" data-page="Calendar" data-route="calendar.html" type="button"><span class="nav-icon">▦</span><span>Calendar</span></button>
+        <button class="nav-item" data-page="Analytics" data-route="analytics.html" type="button"><span class="nav-icon">⌁</span><span>Analytics</span><span class="pro-pill pro-badge">PRO</span></button>
+        <button class="nav-item" data-page="Performance" data-route="performance.html" type="button"><span class="nav-icon">↗</span><span>Performance</span></button>
+        <button class="nav-item active" data-page="Risk Management" data-route="risk-management.html" type="button"><span class="nav-icon">◇</span><span>Risk Management</span><span class="nav-tail">›</span></button>
+        <button class="nav-item" data-page="Psychology" data-route="psychology.html" type="button"><span class="nav-icon">♡</span><span>Psychology</span></button>
+        <button class="nav-item" data-page="Journal" data-route="journal.html" type="button"><span class="nav-icon">▤</span><span>Journal</span></button>
+        <button class="nav-item" data-page="Reports" data-route="reports.html" type="button"><span class="nav-icon">▧</span><span>Reports</span></button>
+        <button class="nav-item" data-page="Import Trades" data-route="import-trades.html" type="button"><span class="nav-icon">⇩</span><span>Import Trades</span></button>
+        <button class="nav-item" data-page="Settings" data-route="settings.html" type="button"><span class="nav-icon">⚙</span><span>Settings</span></button>
       </nav>
       <div class="sidebar-bottom">
         <div class="profile-wrap">
@@ -612,9 +632,9 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <main class="main">
-      <header class="topbar">
-        <div class="welcome"><button class="mobile-menu" id="mobileMenuBtn" type="button" aria-label="Open menu">☰</button><div><h2>Welcome back, <span class="auth-user-name">AKA RED_MOON</span> ♛</h2><p>Discipline today, freedom tomorrow.</p></div></div>
-        <div class="top-actions">
+      <header class="top-header topbar">
+        <div class="welcome-area welcome welcome-block"><button class="mobile-menu" id="mobileMenuBtn" type="button" aria-label="Open menu">☰</button><div><h2>Welcome back, <span class="auth-user-name">AKA RED_MOON</span><span> ♛</span></h2><p>Discipline today, freedom tomorrow.</p></div></div>
+        <div class="header-actions top-actions topbar-actions">
           <button class="header-control" id="dateRangeBtn" type="button"><span id="dateRangeLabel">Last 30 Days</span><span>▦</span></button>
           <div class="dropdown-wrap">
             <button class="header-control" id="accountSelectorBtn" type="button"><span id="accountLabel">All Accounts</span><span>⌄</span></button>
@@ -1570,7 +1590,9 @@
     function bindEvents() {
       $("#themeSwitch").addEventListener("click", function () {
         var next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-        document.documentElement.dataset.theme = next; localStorage.setItem("protrade_theme", next);
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem("protrade-theme", next);
+        localStorage.setItem("protrade_theme", next);
         $("#themeLabel").textContent = next === "dark" ? "Dark Mode" : "Light Mode";
         renderAll();
       });
@@ -1613,7 +1635,7 @@
 
     function init() {
       loadSavedSettings();
-      var theme = localStorage.getItem("protrade_theme") || "dark";
+      var theme = localStorage.getItem("protrade-theme") || localStorage.getItem("protrade_theme") || "dark";
       document.documentElement.dataset.theme = theme;
       $("#themeLabel").textContent = theme === "dark" ? "Dark Mode" : "Light Mode";
       $("#tradeDate").value = todayISO();
