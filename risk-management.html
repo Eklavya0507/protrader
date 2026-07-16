@@ -212,7 +212,8 @@
     .theme-card { min-height: 38px; margin-top: 6px; padding: 7px 9px; font-size: 10px; }
     .theme-switch { position: relative; width: 37px; height: 21px; padding: 0; border: 1px solid rgba(132, 157, 181, .22); border-radius: 999px; background: #14263a; cursor: pointer; }
     .theme-switch span { position: absolute; top: 3px; left: 3px; width: 13px; height: 13px; border-radius: 50%; background: var(--green); transition: transform .22s ease; }
-    html[data-theme="light"] .theme-switch span { transform: translateX(16px); }
+     html[data-theme="light"] .theme-switch span { transform: translateX(0) !important; }
+     html[data-theme="dark"] .theme-switch span { transform: translateX(20px) !important; }
 
     .popover {
       position: absolute;
