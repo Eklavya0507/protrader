@@ -403,7 +403,7 @@
 </section>
 </main>
 <div aria-atomic="true" aria-live="polite" class="toast-region" id="toastRegion"></div>
-<script defer="" src="trade-log.js?v=3"></script>
+<script defer="" src="trade-log.js?v=4"></script>
 <script id="protradeTradeLogFix">
 (() => {
   "use strict";
@@ -1408,6 +1408,21 @@
       } catch {
         render();
       }
+    };
+
+    // Public bridge used by trade-log.js v4. This keeps one calculator as the
+    // source of truth even after asynchronous backend/account loading completes.
+    window.ProTradeCalculator = {
+      calculateMetrics() {
+        const metrics = calculate();
+        render();
+        return {
+          ...metrics,
+          rr: metrics.rMultiple,
+          multiplier: metrics.contractSize
+        };
+      },
+      render
     };
 
     applyInstrumentProfile(byId("symbol")?.value || "XAUUSD", true);
