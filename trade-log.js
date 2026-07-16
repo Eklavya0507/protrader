@@ -125,6 +125,13 @@
   }
 
   function calculateMetrics() {
+    // The modern, instrument-aware calculator is registered by trade-log.html.
+    // Delegate to it once available so this legacy UI controller can never
+    // overwrite the correct pip/tick based P&L after backend data finishes loading.
+    if (typeof window.ProTradeCalculator?.calculateMetrics === "function") {
+      return window.ProTradeCalculator.calculateMetrics();
+    }
+
     const entry = numberValue(elements.entryPrice);
     const exit = numberValue(elements.exitPrice);
     const stop = numberValue(elements.stopLoss);
