@@ -1,0 +1,14 @@
+ProTrader Frontend - Corrected Complete Build
+
+Corrections applied:
+1. Fixed the landing-page backend status 404 by changing /api/route-test to /api/health.
+2. Fixed Calendar top-bar Account selector button (HTML/JS ID mismatch).
+3. Fixed Calendar balance visibility button (HTML/JS ID mismatch).
+4. Made Dashboard KPI cards actionable; clicking a KPI now opens its live metric detail and Reports link.
+5. Made Journal top date-range button work by cycling 30 days / 60 days / all available data.
+6. Made Risk Management "All Accounts" dropdown option actionable.
+
+Validation:
+- All local HTML/CSS/JS/image/video references resolve inside this package.
+- All JavaScript files pass Node.js syntax validation.
+- Existing authentication, MongoDB trade/journal/settings integration and UI files are preserved.

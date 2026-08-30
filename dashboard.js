@@ -750,6 +750,17 @@
       catch (error) { toast("Import failed", error.message); }
     });
 
+    $$("[data-dash-metric]").forEach((button) => button.addEventListener("click", () => {
+      const metric = button.dataset.dashMetric || "Performance Metric";
+      const value = button.querySelector("strong")?.textContent?.trim() || "—";
+      const note = button.querySelector("small")?.textContent?.trim() || "Calculated from your synchronized trades.";
+      info(
+        metric,
+        "Live MongoDB performance metric",
+        `<p><strong>${escapeHtml(value)}</strong></p><p>${escapeHtml(note)}</p><p><a href="reports.html">Open detailed reports →</a></p>`
+      );
+    }));
+
     $("#dateRangeBtn")?.addEventListener("click", () => openModal("dateModal"));
     $("#dateForm")?.addEventListener("submit", (event) => {
       event.preventDefault();

@@ -253,7 +253,7 @@ if (canvas) {
     const timeout = window.setTimeout(() => controller.abort(), 20000);
 
     try {
-      const response = await fetch(`${apiBase}/route-test`, {
+      const response = await fetch(`${apiBase}/health`, {
         method: "GET",
         headers: { Accept: "application/json" },
         cache: "no-store",

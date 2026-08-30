@@ -1256,7 +1256,7 @@
       });
     });
 
-    $("#balanceBtn")?.addEventListener("click", () => {
+    $("#balanceVisibilityBtn, #balanceBtn")?.addEventListener("click", () => {
       state.balanceHidden = !state.balanceHidden;
       updateBalance();
       toast(state.balanceHidden ? "Balance hidden" : "Balance visible");
@@ -1282,7 +1282,7 @@
       openModal("dateModal");
     });
 
-    $("#accountBtn")?.addEventListener("click", (event) => {
+    $("#accountSelectorBtn, #accountBtn")?.addEventListener("click", (event) => {
       event.stopPropagation();
       $("#accountPopover").hidden = !$("#accountPopover").hidden;
       $("#profilePopover").hidden = true;
@@ -1290,6 +1290,7 @@
 
     $$('[data-account]').forEach((button) => {
       button.addEventListener("click", () => {
+        setText("#accountLabel", "All Accounts");
         setText("#accountText", "All Accounts");
         $("#accountPopover").hidden = true;
         toast("All Accounts", "Separate broker accounts are not in the current backend yet.");

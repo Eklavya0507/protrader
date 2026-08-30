@@ -42,6 +42,14 @@
     q("#profileBtn")?.addEventListener("click",e=>{e.stopPropagation();const p=q("#profilePopover");if(p)p.hidden=!p.hidden});
     qa("[data-profile-action]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.profileAction;if(a==="logout")window.ProTradeAuth?.logout?.();else location.href="settings.html"}));
     q("#accountSelectorBtn")?.addEventListener("click",e=>{e.stopPropagation();const p=q("#accountPopover");if(p)p.hidden=!p.hidden});
+    q("#dateRangeBtn")?.addEventListener("click",()=>{
+      const select=q("#analyticsRange");
+      if(!select)return;
+      const values=["30","60","all"],current=values.indexOf(select.value),next=values[(current+1+values.length)%values.length];
+      select.value=next;
+      setText("dateRangeLabel",next==="30"?"Last 30 Days":next==="60"?"Last 60 Days":"All Available Data");
+      select.dispatchEvent(new Event("change",{bubbles:true}));
+    });
     document.addEventListener("click",()=>{const a=q("#accountPopover"),p=q("#profilePopover");if(a)a.hidden=true;if(p)p.hidden=true});
   }
   async function init(){try{await window.ProTradeAuth?.ready;bindBackendActions();await reload()}catch(err){console.error("Journal backend integration:",err);const n=q(".sync-strip");if(n)n.innerHTML=`<span class="badge danger">Backend unavailable</span><span>${String(err.message||err)}</span>`;window.dispatchEvent(new CustomEvent("protrade:page-ready"))}}
